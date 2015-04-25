@@ -1,6 +1,6 @@
 [submodule "YODA-File"]
 	path = YODA-File
-	url = git@github.com:CZOData/YODA-File.git
+	url = https://github.com/CZOData/YODA-File.git
 [submodule "ODM2PythonAPI"]
 	path = ODM2PythonAPI
-	url = git@github.com:ODM2/ODM2PythonAPI.git
+	url = https://github.com/ODM2/ODM2PythonAPI.git
