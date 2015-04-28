@@ -2,8 +2,8 @@
 Example using bootalchemy (if the model is within the same module)
 """
 from _yaml import ScannerError
-from bootalchemy.loader import Loader, YamlLoader
-from .. import serviceBase
+from .bootalchemy.loader import Loader, YamlLoader
+from ODM2 import serviceBase
 import ODM2.models as models
 import yaml
 from collections import OrderedDict
