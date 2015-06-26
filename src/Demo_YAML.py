@@ -40,12 +40,12 @@ except ImportError as e:
 # ----------------------------------------
 # conn = dbconnection.createConnection('mysql', 'localhost', 'odm2', 'ODM', 'ODM123!!')
 
-session_factory = dbconnection.createConnection('mysql', 'localhost', 'odm2', 'root', 'zxc')
-# session_factory = dbconnection.createConnection('mysql', 'jws.uwrl.usu.edu', 'odm2', 'ODM', 'ODM123!!')
+#session_factory = dbconnection.createConnection('mysql', 'localhost', 'odm2', 'root', 'zxc')
+session_factory = dbconnection.createConnection('mysql', 'jws.uwrl.usu.edu', 'odm2', 'ODM', 'ODM123!!')
 
 # session_factory = dbconnection.createConnection('mssql', '(local)', 'ODM2SS', 'ODM', 'odm')
 # conn = dbconnection.createConnection('postgresql', 'arroyo.uwrl.usu.edu:5432', 'ODMSS', 'Stephanie', 'odm')
-# conn = dbconnection.createConnection('mysql', '127.0.0.1:3306', 'ODM2', 'Stephanie', 'odm')
+#session_factory = dbconnection.createConnection('mysql', "localhost", 'ODM2', 'ODM', 'odm')
 
 # Create a connection for each of the schemas. Currently the schemas each have a different
 # connection but it will be changed to all the services sharing a connection
@@ -71,8 +71,8 @@ files = []
 # files.append(os.path.join('.', 'ODM2/YAML/Examples/iUTAH_MultiTimeSeriesExample_LongHeader+AKA.yaml'))
 # files.append(os.path.join('.', 'ODM2/YAML/Examples/iUTAH_MultiTimeSeriesExample_LongHeader.yaml'))
 # files.append(os.path.join('.', 'ODM2/YAML/Examples/test.yaml'))
-# files.append(os.path.join('.', 'YODA-File', 'ExcelTemplates', 'Prototypes', 'Timeseries_Template_Working.yaml'))
-files.append(os.path.join('.', 'YODA-File', 'ExcelTemplates', 'Prototypes', 'Timeseries_Template_Working_modified.yaml'))
+files.append(os.path.join('.', 'YODA-File', 'ExcelTemplates', 'Prototypes', 'Timeseries_Template_Working.yaml'))
+# files.append(os.path.join('.', 'YODA-File', 'ExcelTemplates', 'Prototypes', 'Timeseries_Template_Working_modified.yaml'))
 
 ## Working files
 # files.append(os.path.join('.', 'ODM2/YAML/Examples/iUTAH_MultiTimeSeriesExample_CompactHeader.yaml'))
