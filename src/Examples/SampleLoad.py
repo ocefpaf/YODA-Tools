@@ -8,7 +8,7 @@ print("This file: ", this_file)
 directory = os.path.dirname(os.path.dirname(os.path.dirname(this_file)))
 print("Directory: ", directory, os.listdir(directory))
 
-api_directory = os.path.join(directory, 'ODM2PythonAPI', 'src', 'api')
+api_directory = os.path.join(directory, 'ODM2PythonAPI', 'src')
 src_directory = os.path.join(directory, 'src')
 
 print("API_PATH: ", api_directory)
@@ -20,15 +20,13 @@ if not api_directory in sys.path:
 if not src_directory in sys.path:
     sys.path.append(src_directory)
 
-try:
-    # check to make sure that these imports happen
-    from ODM2.models import *
-    # from ODM2PythonAPI.src.api.ODM2.new_services import createService
-    from ODMconnection import dbconnection
-    from YAML.yamlFunctions import YamlFunctions
-except ImportError as e:
-    print(e)
-    sys.exit(0)
+
+# check to make sure that these imports happen
+from api.ODM2.models import *
+# from ODM2PythonAPI.src.api.ODM2.new_services import createService
+from api.ODMconnection import dbconnection
+from YAML.yamlFunctions import YamlFunctions
+
 
 
 
@@ -66,9 +64,11 @@ yaml_load = YamlFunctions(_session, _engine)
 
 #Load the data into odm2 session from the yaml file
 yaml_load.loadFromFile(file)
+print yaml_load
 
 #save to the database
-#yaml_load._session.commit()
+#yaml_load.saveToDB()
+
 
 
 

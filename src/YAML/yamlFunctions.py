@@ -3,8 +3,8 @@ Example using bootalchemy (if the model is within the same module)
 """
 from _yaml import ScannerError
 from .bootalchemy.loader import Loader, YamlLoader
-from ODM2 import serviceBase
-import ODM2.models as models
+from api.ODM2 import serviceBase
+import api.ODM2.models as models
 import yaml
 from collections import OrderedDict
 
@@ -102,6 +102,9 @@ class YamlFunctions(object):
         print "PWD: ", os.getcwd()
         with open('data.yaml', 'w') as outfile:
             outfile.write(yaml.dump(s, default_flow_style=True))
+
+    def saveToDB(self):
+        self._session.commit()
 
     def printValues(self, s):
 
