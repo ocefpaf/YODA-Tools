@@ -21,13 +21,13 @@ if not api_directory in sys.path:
 if not src_directory in sys.path:
     sys.path.append(src_directory)
 
-pp.pprint(sys.path)
+# pp.pprint(sys.path)
 
 try:
     # check to make sure that these imports happen
-    from ODM2.models import *
+    from src.api.ODM2.models import *
     # from ODM2PythonAPI.src.api.ODM2.new_services import createService
-    from ODMconnection import dbconnection
+    from src.api.ODMconnection import dbconnection
     from YAML.yamlFunctions import YamlFunctions
 except ImportError as e:
     print(e)
@@ -37,19 +37,19 @@ except ImportError as e:
 
 
 # Create a connection to the ODM2 database
-# ----------------------------------------
-# conn = dbconnection.createConnection('mysql', 'localhost', 'odm2', 'ODM', 'ODM123!!')
 
-#session_factory = dbconnection.createConnection('mysql', 'localhost', 'odm2', 'root', 'zxc')
-session_factory = dbconnection.createConnection('mysql', 'jws.uwrl.usu.edu', 'odm2', 'ODM', 'ODM123!!')
+
+#session_factory = dbconnection.createConnection('mysql', 'jws.uwrl.usu.edu', 'odm2', 'ODM', 'ODM123!!')
 
 # session_factory = dbconnection.createConnection('mssql', '(local)', 'ODM2SS', 'ODM', 'odm')
-# conn = dbconnection.createConnection('postgresql', 'arroyo.uwrl.usu.edu:5432', 'ODMSS', 'Stephanie', 'odm')
-#session_factory = dbconnection.createConnection('mysql', "localhost", 'ODM2', 'ODM', 'odm')
+# conn = dbconnection.createConnection('postgresql', 'localhost', 'ODMSS', 'Stephanie', 'odm')
+session_factory = dbconnection.createConnection('mysql', "localhost", 'ODM2', 'ODM', 'odm')
 
 # Create a connection for each of the schemas. Currently the schemas each have a different
 # connection but it will be changed to all the services sharing a connection
 # ----------------------------------------------------------------------------------------
+
+
 
 _session = session_factory.getSession()
 _engine = session_factory.engine
@@ -71,9 +71,9 @@ files = []
 # files.append(os.path.join('.', 'ODM2/YAML/Examples/iUTAH_MultiTimeSeriesExample_LongHeader+AKA.yaml'))
 # files.append(os.path.join('.', 'ODM2/YAML/Examples/iUTAH_MultiTimeSeriesExample_LongHeader.yaml'))
 # files.append(os.path.join('.', 'ODM2/YAML/Examples/test.yaml'))
-files.append(os.path.join('.', 'YODA-File', 'ExcelTemplates', 'Prototypes', 'Timeseries_Template_Working.yaml'))
+# files.append(os.path.join('.', 'YODA-File', 'ExcelTemplates', 'Prototypes', 'Timeseries_Template_Working.yaml'))
 # files.append(os.path.join('.', 'YODA-File', 'ExcelTemplates', 'Prototypes', 'Timeseries_Template_Working_modified.yaml'))
-
+files.append(os.path.join('.', 'test.yaml'))
 ## Working files
 # files.append(os.path.join('.', 'ODM2/YAML/Examples/iUTAH_MultiTimeSeriesExample_CompactHeader.yaml'))
 
@@ -92,25 +92,28 @@ print("Loaded YAML file in ", timeit.default_timer() - start, " seconds")
 
 # yaml_load._session.autoflush = False
 _session.flush()
-persons = _session.query(People).all()
-datasets = _session.query(Datasets).all()
-citations = _session.query(Citations).all()
-authorlists = _session.query(AuthorLists).all()
-spatial_references = _session.query(SpatialReferences).all()
+persons = _session.query(People).limit(50).all()
+datasets = _session.query(DataSets).limit(50).all()
+citations = _session.query(Citations).limit(50).all()
+authorlists = _session.query(AuthorLists).limit(50).all()
+spatial_references = _session.query(SpatialReferences).limit(50).all()
 
-sampling_features = _session.query(SamplingFeatures).all()
-sites = _session.query(Sites).all()
+sampling_features = _session.query(SamplingFeatures).limit(50).all()
+sites = _session.query(Sites).limit(50).all()
 
-methods = _session.query(Methods).all()
-variables = _session.query(Variables).all()
-units = _session.query(Units).all()
-processing_levels = _session.query(ProcessingLevels).all()
-actions = _session.query(Actions).all()
-results = _session.query(Results).all()
+methods = _session.query(Methods).limit(50).all()
+variables = _session.query(Variables).alimit(50).ll()
+units = _session.query(Units).limit(50).all()
+processing_levels = _session.query(ProcessingLevels).limit(50).all()
+actions = _session.query(Actions).limit(50).all()
+results = _session.query(Results).limit(50).all()
 # noinspection PyUnboundLocalVariable
-time_series_results = _session.query(TimeSeriesResults).all()
-
+time_series_results = _session.query(TimeSeriesResults).limit(50).all()
+time_series_result_values = _session.query(TimeSeriesResultValues).limit(50).all()
 # yaml_load._session.commit()
+
+measurement_results = _session.query(MeasurementResults).all()
+meas_result_values = _session.query(MeasurementResultValues).limit(50).all()
 
 print()
 pp.pprint("---Example YAML reading <People>---")
@@ -158,6 +161,16 @@ pp.pprint("---Example YAML reading <TimeSeriesResults>---")
 pp.pprint(time_series_results)
 print
 
+pp.pprint("--Example YAML reading <TimeSeriesResultValues>--")
+pp.pprint(time_series_result_values)
+print()
+
+pp.pprint("---Example YAML reading <MeasResults>---")
+pp.pprint(measurement_results)
+print()
+pp.pprint("--Example YAML reading <MeasResultValues>--")
+pp.pprint(meas_result_values)
+print()
 
 
 

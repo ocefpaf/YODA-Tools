@@ -22,9 +22,9 @@ if not src_directory in sys.path:
 
 
 # check to make sure that these imports happen
-from api.ODM2.models import *
+from src.api.ODM2.models import *
 # from ODM2PythonAPI.src.api.ODM2.new_services import createService
-from api.ODMconnection import dbconnection
+from src.api.ODMconnection import dbconnection
 from YAML.yamlFunctions import YamlFunctions
 
 
