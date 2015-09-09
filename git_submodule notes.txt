@@ -1,0 +1,10 @@
+On first download:
+git submodule init
+git submodule update
+
+Occassionally:
+git submodule update
+git commit
+
+Issues with a deatched head on a submodules
+git submodule foreach git pull origin master
