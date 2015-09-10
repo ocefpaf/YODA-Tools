@@ -5,7 +5,9 @@ if __name__ == '__main__':
         sys.path.append(path.dirname(path.abspath(__file__)))
         from ODM2PythonAPI.src.api.base import modelBase
 else:
-    from ODM2PythonAPI.src.api.base import modelBase
+    import sys
+    sys.path.append('../../ODM2PythonAPI')
+    from src.api.base import *
 
 from sqlalchemy import *
 

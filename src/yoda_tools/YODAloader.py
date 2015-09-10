@@ -7,11 +7,13 @@ if __name__ == '__main__':
         from ODM2PythonAPI.src.api.ODMconnection import dbconnection
         import ODM2PythonAPI.src.api.ODM2.models as models
 else:
-    from ODM2PythonAPI.src.api.ODMconnection import dbconnection
-    import ODM2PythonAPI.src.api.ODM2.models as models
+    import sys
+    sys.path.append('../../ODM2PythonAPI')
+    from src.api.ODMconnection import dbconnection
+    import src.api.ODM2.models as models
 
 from YODAqueries import yodaService as yodaservice
-from .db_schema.create_schema import odm2CreateSchema as odm2schema
+from db_schema.create_schema import odm2CreateSchema as odm2schema
 
 
 import yaml

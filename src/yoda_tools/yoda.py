@@ -2,7 +2,7 @@ __author__ = 'Choonhan Youn'
 
 import valideer as V
 import yaml
-from .validate.valideer_ts_schema import TimeseriesSchema, Datacolummn0, Datacolummn1, Datacolummn2, To_bool
+from validate.valideer_ts_schema import TimeseriesSchema, Datacolummn0, Datacolummn1, Datacolummn2, To_bool
 from valideer import String, Integer, ValidationError, Validator, Datetime, Number, Date
 import datetime
 
@@ -38,7 +38,7 @@ def yoda_logger(file_log_level, console_log_level = None):
 def yoda_validate(args):
     print "Type: %s Level: %s" % (args.type,args.level)
     if args.type == 'timeseries':
-        validate_timeseries(args.yoda_file)
+        validate_timeseries(args.yoda_file,args.level)
 
 def yoda_load(args):
     #print "Type: %s Level: %s" % (args.type,args.level)

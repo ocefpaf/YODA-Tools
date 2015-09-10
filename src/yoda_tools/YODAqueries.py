@@ -10,8 +10,10 @@ if __name__ == '__main__':
         from ODM2PythonAPI.src.api.base import serviceBase
         from ODM2PythonAPI.src.api.ODM2.models import *
 else:
-        from ODM2PythonAPI.src.api.base import serviceBase
-        from ODM2PythonAPI.src.api.ODM2.models import *
+    import sys
+    sys.path.append('../../ODM2PythonAPI')
+    from src.api.base import serviceBase
+    from src.api.ODM2.models import *
 
 from datetime import datetime, date, timedelta
 
