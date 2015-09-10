@@ -1,7 +1,31 @@
-ODM2 Python API
+YODA-Tools
 ====
+Prototyping a tool to validate and manage loading of YODA files
 
-A Python-based application programmer's interface for the Observations Data Model 2 (ODM2) 
+Command line:
+```
+yoda [command] [options]
+```
+
+Intitial thoguhts:
+  * yoda validate [format] [file] [strict?]
+     * validates a yoda file. formats [TS-timeseries, SP-Specimens]
+     * [strict] true(default). follow vocabs. false = allow loose
+  * yoda loaddatabase [connection] [options] [strict?]
+     * loads data to a specified database connection
+     * [strict] true(default). follow vocabs. false = ADD terms
+  * yoda load [yodafile] [url] [--validate=true]
+     * load yoda file to a specified ODM2 Webservice
+     * option to turn off validate
+  * yoda get [datasetid] [url] [--format]
+     *  get dataset from a ODM2 webservice in a specified format
+  * yoda generate [input xlsx file] [output file]
+     * generate and validate a yoda from specified XLSX file, save to file
+  * yoda
+     * opens a gui
+  * yoda help
+  * yoda cvsubmit [format] [file]
+    * submit unknown controlled terms to cv service
 
 ### Credits
 
