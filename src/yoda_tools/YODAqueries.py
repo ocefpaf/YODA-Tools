@@ -7,13 +7,13 @@ if __name__ == '__main__':
         import sys
         from os import path
         sys.path.append(path.dirname(path.abspath(__file__)))
-        from ODM2PythonAPI.src.api.base import serviceBase
-        from ODM2PythonAPI.src.api.ODM2.models import *
+        from api.base import serviceBase
+        from api.ODM2.models import *
 else:
     import sys
     sys.path.append('../../ODM2PythonAPI')
-    from src.api.base import serviceBase
-    from src.api.ODM2.models import *
+    from api.base import serviceBase
+    from api.ODM2.models import *
 
 from datetime import datetime, date, timedelta
 

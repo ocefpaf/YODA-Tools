@@ -4,12 +4,12 @@ if __name__ == '__main__':
         import sys
         from os import path
         sys.path.append(path.dirname(path.abspath(__file__)))
-        from ODM2PythonAPI.src.api.ODMconnection import dbconnection
+        from api.ODMconnection import dbconnection
         import ODM2PythonAPI.src.api.ODM2.models as models
 else:
     import sys
     sys.path.append('../../ODM2PythonAPI')
-    from src.api.ODMconnection import dbconnection
+    from api.ODMconnection import dbconnection
     import src.api.ODM2.models as models
 
 from YODAqueries import yodaService as yodaservice

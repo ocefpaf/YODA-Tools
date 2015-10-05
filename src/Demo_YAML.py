@@ -4,30 +4,30 @@ import os
 import pprint
 
 pp = pprint.PrettyPrinter(indent=8)
+#
+# this_file = os.path.realpath(__file__)
+# print("This file: ", this_file)
+# directory = os.path.dirname(this_file)
+# print("Directory: ", directory, os.listdir(directory))
+# api_directory = os.path.join(directory, 'ODM2PythonAPI', 'src', 'api')
+# src_directory = os.path.join(directory, 'src')
+#
+# print("API_PATH: ", api_directory)
+# print("SRC_PATH: ", src_directory)
 
-this_file = os.path.realpath(__file__)
-print("This file: ", this_file)
-directory = os.path.dirname(this_file)
-print("Directory: ", directory, os.listdir(directory))
-api_directory = os.path.join(directory, 'ODM2PythonAPI', 'src', 'api')
-src_directory = os.path.join(directory, 'src')
 
-print("API_PATH: ", api_directory)
-print("SRC_PATH: ", src_directory)
-
-
-if not api_directory in sys.path:
-    sys.path.append(api_directory)
-if not src_directory in sys.path:
-    sys.path.append(src_directory)
+# if not api_directory in sys.path:
+#     sys.path.append(api_directory)
+# if not src_directory in sys.path:
+#     sys.path.append(src_directory)
 
 # pp.pprint(sys.path)
 
 try:
     # check to make sure that these imports happen
-    from src.api.ODM2.models import *
+    from api.ODM2.models import *
     # from ODM2PythonAPI.src.api.ODM2.new_services import createService
-    from src.api.ODMconnection import dbconnection
+    from api.ODMconnection import dbconnection
     from YAML.yamlFunctions import YamlFunctions
 except ImportError as e:
     print(e)
