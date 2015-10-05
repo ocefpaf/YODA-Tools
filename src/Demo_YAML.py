@@ -4,11 +4,7 @@ import os
 import pprint
 
 pp = pprint.PrettyPrinter(indent=8)
-#
-# this_file = os.path.realpath(__file__)
-# print("This file: ", this_file)
-# directory = os.path.dirname(this_file)
-# print("Directory: ", directory, os.listdir(directory))
+
 # api_directory = os.path.join(directory, 'ODM2PythonAPI', 'src', 'api')
 # src_directory = os.path.join(directory, 'src')
 #
@@ -36,6 +32,7 @@ except ImportError as e:
 
 
 
+
 # Create a connection to the ODM2 database
 
 
@@ -43,8 +40,9 @@ except ImportError as e:
 
 # session_factory = dbconnection.createConnection('mssql', '(local)', 'ODM2SS', 'ODM', 'odm')
 # conn = dbconnection.createConnection('postgresql', 'localhost', 'ODMSS', 'Stephanie', 'odm')
-session_factory = dbconnection.createConnection('mysql', "localhost", 'ODM2', 'ODM', 'odm')
+# session_factory = dbconnection.createConnection('mysql', "localhost", 'ODM2', 'ODM', 'odm')
 
+session_factory = dbconnection.createConnection('mysql', 'jws.uwrl.usu.edu', 'ODM2', 'ODM', 'ODM123!!')
 # Create a connection for each of the schemas. Currently the schemas each have a different
 # connection but it will be changed to all the services sharing a connection
 # ----------------------------------------------------------------------------------------
@@ -74,6 +72,7 @@ files = []
 # files.append(os.path.join('.', 'YODA-File', 'ExcelTemplates', 'Prototypes', 'Timeseries_Template_Working.yaml'))
 # files.append(os.path.join('.', 'YODA-File', 'ExcelTemplates', 'Prototypes', 'Timeseries_Template_Working_modified.yaml'))
 files.append(os.path.join('.', 'test.yaml'))
+# files.append('/Users/stephanie/Documents/YODA_Specimen_TEMPLATE_NOERRORS.xlsm')
 ## Working files
 # files.append(os.path.join('.', 'ODM2/YAML/Examples/iUTAH_MultiTimeSeriesExample_CompactHeader.yaml'))
 
@@ -102,7 +101,7 @@ sampling_features = _session.query(SamplingFeatures).limit(50).all()
 sites = _session.query(Sites).limit(50).all()
 
 methods = _session.query(Methods).limit(50).all()
-variables = _session.query(Variables).alimit(50).ll()
+variables = _session.query(Variables).limit(50).all()
 units = _session.query(Units).limit(50).all()
 processing_levels = _session.query(ProcessingLevels).limit(50).all()
 actions = _session.query(Actions).limit(50).all()
