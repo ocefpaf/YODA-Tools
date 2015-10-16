@@ -5,7 +5,7 @@ from pprint import pformat
 from converters import timestamp, timeonly
 from sqlalchemy.orm import class_mapper
 from sqlalchemy import Unicode, Date, DateTime, Time, Integer, Float, Boolean, String, Binary, inspect
-
+from datetime import datetime
 try:
     from sqlalchemy.exc import IntegrityError
 except ImportError:
@@ -293,7 +293,10 @@ class Loader(object):
             if value and isinstance(value, basestring) and value.startswith('*'):
                 value = self.obtain_object_id(key, value)
                 # key, value = self.obtain_key_value(key, value, resolved_values)
-
+            elif "date" in key.lower() and not ("utc" in key.lower()):
+                print "%s is a date type. %s"%(key, value)
+                if value is not None:
+                    value = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
 
             resolved_values[key] = self.resolve_value(value)
 

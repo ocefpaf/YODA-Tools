@@ -5,29 +5,23 @@ import os
 
 this_file = os.path.realpath(__file__)
 print("This file: ", this_file)
-directory = os.path.dirname(os.path.dirname(os.path.dirname(this_file)))
+directory = os.path.dirname(os.path.dirname(this_file))
 print("Directory: ", directory, os.listdir(directory))
 
-api_directory = os.path.join(directory, 'ODM2PythonAPI', 'src')
-src_directory = os.path.join(directory, 'src')
-
-print("API_PATH: ", api_directory)
-print("SRC_PATH: ", src_directory)
+sys.path.append(directory)
 
 
-if not api_directory in sys.path:
-    sys.path.append(api_directory)
-if not src_directory in sys.path:
-    sys.path.append(src_directory)
 
 
-# check to make sure that these imports happen
-from src.api.ODM2.models import *
-# from ODM2PythonAPI.src.api.ODM2.new_services import createService
-from src.api.ODMconnection import dbconnection
-from YAML.yamlFunctions import YamlFunctions
-
-
+try:
+    # check to make sure that these imports happen
+    from api.ODM2.models import *
+    # from ODM2PythonAPI.src.api.ODM2.new_services import createService
+    from api.ODMconnection import dbconnection
+    from YAML.yamlFunctions import YamlFunctions
+except ImportError as e:
+    print(e)
+    sys.exit(0)
 
 
 

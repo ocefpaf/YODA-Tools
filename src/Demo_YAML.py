@@ -5,19 +5,9 @@ import pprint
 
 pp = pprint.PrettyPrinter(indent=8)
 
-# api_directory = os.path.join(directory, 'ODM2PythonAPI', 'src', 'api')
-# src_directory = os.path.join(directory, 'src')
-#
-# print("API_PATH: ", api_directory)
-# print("SRC_PATH: ", src_directory)
 
 
-# if not api_directory in sys.path:
-#     sys.path.append(api_directory)
-# if not src_directory in sys.path:
-#     sys.path.append(src_directory)
 
-# pp.pprint(sys.path)
 
 try:
     # check to make sure that these imports happen
@@ -42,12 +32,13 @@ except ImportError as e:
 # conn = dbconnection.createConnection('postgresql', 'localhost', 'ODMSS', 'Stephanie', 'odm')
 # session_factory = dbconnection.createConnection('mysql', "localhost", 'ODM2', 'ODM', 'odm')
 
-session_factory = dbconnection.createConnection('mysql', 'jws.uwrl.usu.edu', 'ODM2', 'ODM', 'ODM123!!')
+#session_factory = dbconnection.createConnection('mysql', 'jws.uwrl.usu.edu', 'ODM2', 'ODM', 'ODM123!!')
+session_factory = dbconnection.createConnection('sqlite', '/Users/stephanie/DEV/DBs/ODM2.sqlite', 2.0)
+
+
 # Create a connection for each of the schemas. Currently the schemas each have a different
 # connection but it will be changed to all the services sharing a connection
 # ----------------------------------------------------------------------------------------
-
-
 
 _session = session_factory.getSession()
 _engine = session_factory.engine
