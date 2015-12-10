@@ -11,9 +11,9 @@ pp = pprint.PrettyPrinter(indent=8)
 
 try:
     # check to make sure that these imports happen
-    from api.ODM2.models import *
+    from odm2api.ODM2.models import *
     # from ODM2PythonAPI.src.api.ODM2.new_services import createService
-    from api.ODMconnection import dbconnection
+    from odm2api.ODMconnection import dbconnection
     from YAML.yamlFunctions import YamlFunctions
 except ImportError as e:
     print(e)
@@ -26,14 +26,14 @@ except ImportError as e:
 # Create a connection to the ODM2 database
 
 
-#session_factory = dbconnection.createConnection('mysql', 'jws.uwrl.usu.edu', 'odm2', 'ODM', 'ODM123!!')
+# session_factory = dbconnection.createConnection('mysql', 'jws.uwrl.usu.edu', 'odm2', 'ODM', 'ODM123!!')
 
-# session_factory = dbconnection.createConnection('mssql', '(local)', 'ODM2SS', 'ODM', 'odm')
-# conn = dbconnection.createConnection('postgresql', 'localhost', 'ODMSS', 'Stephanie', 'odm')
-# session_factory = dbconnection.createConnection('mysql', "localhost", 'ODM2', 'ODM', 'odm')
+# session_factory = dbconnection.createConnection('mssql', 'arroyoodm2', 'LBRODM2', 'ODM', 'odm')
+# session_factory = dbconnection.createConnection('postgresql', 'localhost', 'ODM2', 'odm', 'odm')
+session_factory = dbconnection.createConnection('mysql', "localhost", 'ODM2', 'ODM', 'odm')
 
-#session_factory = dbconnection.createConnection('mysql', 'jws.uwrl.usu.edu', 'ODM2', 'ODM', 'ODM123!!')
-session_factory = dbconnection.createConnection('sqlite', '/Users/stephanie/DEV/DBs/ODM2.sqlite', 2.0)
+# session_factory = dbconnection.createConnection('mysql', 'arroyo.uwrl.usu.edu', 'LBRODM2', 'Stephanie', 'odm')
+# session_factory = dbconnection.createConnection('sqlite', '/Users/stephanie/DEV/DBs/ODM2.sqlite', 2.0)
 
 
 # Create a connection for each of the schemas. Currently the schemas each have a different
@@ -54,16 +54,9 @@ print("---------                                                  ----------")
 print("---------------------------------------------------------------------")
 
 files = []
-# files.append(os.path.join('.', 'ODM2/YAML/iUTAH_MultiTimeSeriesExample_CompactHeader2.yaml'))
-# files.append(os.path.join('.', 'ODM2/YAML/Examples/iUTAH_SpecimenTimeSeriesExample_CompactHeader.yaml'))
-# files.append(os.path.join('.', 'ODM2/YAML/iUTAH_MultiTimeSeriesExample_CompactHeader.yaml'))
-# files.append(os.path.join('.', 'ODM2/YAML/Examples/iUTAH_MultiTimeSeriesExample_LongHeader+AKA.yaml'))
-# files.append(os.path.join('.', 'ODM2/YAML/Examples/iUTAH_MultiTimeSeriesExample_LongHeader.yaml'))
-# files.append(os.path.join('.', 'ODM2/YAML/Examples/test.yaml'))
-# files.append(os.path.join('.', 'YODA-File', 'ExcelTemplates', 'Prototypes', 'Timeseries_Template_Working.yaml'))
-# files.append(os.path.join('.', 'YODA-File', 'ExcelTemplates', 'Prototypes', 'Timeseries_Template_Working_modified.yaml'))
+
 files.append(os.path.join('.', 'test.yaml'))
-# files.append('/Users/stephanie/Documents/YODA_Specimen_TEMPLATE_NOERRORS.xlsm')
+
 ## Working files
 # files.append(os.path.join('.', 'ODM2/YAML/Examples/iUTAH_MultiTimeSeriesExample_CompactHeader.yaml'))
 
@@ -75,13 +68,14 @@ start = timeit.default_timer()
 yaml_load = YamlFunctions(_session, _engine)
 
 yaml_load.loadFromFile(files[0])
+yaml_load.saveToDB()
 
 print()
 print("-------- Performance Results using python module: timeit --------")
 print("Loaded YAML file in ", timeit.default_timer() - start, " seconds")
 
 # yaml_load._session.autoflush = False
-_session.flush()
+
 persons = _session.query(People).limit(50).all()
 datasets = _session.query(DataSets).limit(50).all()
 citations = _session.query(Citations).limit(50).all()
@@ -89,6 +83,7 @@ authorlists = _session.query(AuthorLists).limit(50).all()
 spatial_references = _session.query(SpatialReferences).limit(50).all()
 
 sampling_features = _session.query(SamplingFeatures).limit(50).all()
+
 sites = _session.query(Sites).limit(50).all()
 
 methods = _session.query(Methods).limit(50).all()
@@ -155,13 +150,13 @@ pp.pprint("--Example YAML reading <TimeSeriesResultValues>--")
 pp.pprint(time_series_result_values)
 print()
 
-pp.pprint("---Example YAML reading <MeasResults>---")
-pp.pprint(measurement_results)
-print()
-pp.pprint("--Example YAML reading <MeasResultValues>--")
-pp.pprint(meas_result_values)
-print()
-
+# pp.pprint("---Example YAML reading <MeasResults>---")
+# pp.pprint(measurement_results)
+# print()
+# pp.pprint("--Example YAML reading <MeasResultValues>--")
+# pp.pprint(meas_result_values)
+# print()
+#
 
 
 

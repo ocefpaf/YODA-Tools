@@ -294,7 +294,8 @@ class Loader(object):
                 value = self.obtain_object_id(key, value)
                 # key, value = self.obtain_key_value(key, value, resolved_values)
             elif "date" in key.lower() and not ("utc" in key.lower()):
-                print "%s is a date type. %s"%(key, value)
+                #this has been added to support sqlite,
+                #print "%s is a date type. %s"%(key, value)
                 if value is not None:
                     value = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
 
@@ -425,18 +426,19 @@ class Loader(object):
         # removes the warning message for pandas chained_assignment
         pd.options.mode.chained_assignment = None
 
-        column_labels = data_values[0]
-        data_values = data_values[1:]
+        column_labels = data_values[0][0]
+        data_values = data_values[0][1:]
         df = pd.DataFrame(data_values, columns=column_labels)
         df.set_index(['ValueDateTime', 'ValueDateTimeUTCOffset'], inplace=True)
         dfUnstacked = df.unstack(level=['ValueDateTime', 'ValueDateTimeUTCOffset'])
 
-        df2 = pd.DataFrame(data, columns=['Label', 'ResultID', 'ODM2Field', 'CensorCodeCV', 'TimeAggregationInterval',
+        df2 = pd.DataFrame(data, columns=['Label',  'ODM2Field', 'ResultID', 'CensorCodeCV', 'QualityCodeCV', 'TimeAggregationInterval',
                                           'TimeAggregationIntervalUnitsID'])
         dfUnstacked = dfUnstacked.reset_index()
         df3 = pd.merge(df2, dfUnstacked, left_on="Label", right_on="level_0")
 
         # Remove unnecessary column
+        colval= df3['ODM2Field'][0]
         del df3['ODM2Field']
         del df3['level_0']
 
@@ -457,14 +459,14 @@ class Loader(object):
         del df
 
         # set column names for the last element
-        AVGDataFrame.columns.values[-1] = 'DataValue'
-        MinDataFrame.columns.values[-1] = 'DataValue'
-        MaxDataFrame.columns.values[-1] = 'DataValue'
+        AVGDataFrame.columns.values[-1] = colval
+        MinDataFrame.columns.values[-1] = colval
+        MaxDataFrame.columns.values[-1] = colval
 
         # add missing values
-        AVGDataFrame['QualityCodeCV'] = 'Unknown'
-        MinDataFrame['QualityCodeCV'] = 'Unknown'
-        MaxDataFrame['QualityCodeCV'] = 'Unknown'
+        # AVGDataFrame['QualityCodeCV'] = 'Unknown'
+        # MinDataFrame['QualityCodeCV'] = 'Unknown'
+        # MaxDataFrame['QualityCodeCV'] = 'Unknown'
 
         klass = self.get_klass("TimeSeriesResultValues")
 

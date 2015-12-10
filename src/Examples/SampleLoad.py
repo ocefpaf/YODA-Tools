@@ -15,9 +15,9 @@ sys.path.append(directory)
 
 try:
     # check to make sure that these imports happen
-    from api.ODM2.models import *
+    from odm2api.ODM2.models import *
     # from ODM2PythonAPI.src.api.ODM2.new_services import createService
-    from api.ODMconnection import dbconnection
+    from odm2api.ODMconnection import dbconnection
     from YAML.yamlFunctions import YamlFunctions
 except ImportError as e:
     print(e)

@@ -3,8 +3,8 @@ Example using bootalchemy (if the model is within the same module)
 """
 from _yaml import ScannerError
 from .bootalchemy.loader import Loader, YamlLoader
-from api.ODM2 import serviceBase
-import api.ODM2.models as models
+from odm2api.ODM2 import serviceBase
+import odm2api.ODM2.models as models
 import yaml
 from collections import OrderedDict
 
@@ -83,7 +83,8 @@ class YamlFunctions(object):
         yl.from_list(self._session, [s])
 
         # load the Time Series Result information
-        # yl.loadTimeSeriesResults(self._session, self._engine, timeSeries)
+        #yl.loadTimeSeriesResults(self._session, self._engine, timeSeries)
+        self._session.flush()
 
     def loadFromFiles(self, files):
         """
@@ -94,7 +95,6 @@ class YamlFunctions(object):
 
         for item in files:
             self.loadFromFile(item)
-
 
     def writeValues(self, s):
         import os
