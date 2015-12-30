@@ -57,10 +57,9 @@ files = []
 
 files.append(os.path.join('.', 'test.yaml'))
 
-## Working files
-# files.append(os.path.join('.', 'ODM2/YAML/Examples/iUTAH_MultiTimeSeriesExample_CompactHeader.yaml'))
 
-_session.autoflush = False
+
+
 
 import timeit
 
@@ -68,7 +67,7 @@ start = timeit.default_timer()
 yaml_load = YamlFunctions(_session, _engine)
 
 yaml_load.loadFromFile(files[0])
-yaml_load.saveToDB()
+# yaml_load.saveToDB()
 
 print()
 print("-------- Performance Results using python module: timeit --------")
@@ -95,10 +94,8 @@ results = _session.query(Results).limit(50).all()
 # noinspection PyUnboundLocalVariable
 time_series_results = _session.query(TimeSeriesResults).limit(50).all()
 time_series_result_values = _session.query(TimeSeriesResultValues).limit(50).all()
-# yaml_load._session.commit()
 
-measurement_results = _session.query(MeasurementResults).all()
-meas_result_values = _session.query(MeasurementResultValues).limit(50).all()
+
 
 print()
 pp.pprint("---Example YAML reading <People>---")
@@ -158,6 +155,7 @@ print()
 # print()
 #
 
+yaml_load.saveToDB()
 
 
 

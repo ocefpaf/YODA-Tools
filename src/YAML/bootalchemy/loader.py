@@ -376,10 +376,11 @@ class Loader(object):
                 # print "I: ", i
                 for k, v in i.iteritems():
                     newValue = self.resolve_value(v)
-                    if k == "ResultID":
+                    if "Result" in k:#k == "ResultID":
                         newValue = newValue.ResultID
-                    elif k == "TimeAggregationIntervalUnitsID":
+                    elif "TimeAggregationIntervalUnits" in k: #k == "TimeAggregationIntervalUnitsID":
                         newValue = newValue.UnitsID
+
                     values.append(newValue)
                     # print "K: ", k, " Value: ", newValue
                 dictOfValues[i['Label']] = values
@@ -482,7 +483,11 @@ class Loader(object):
         for value in merged_dicts:
             resolved_values = self._check_types(klass, value)
             obj = self.create_obj(klass, resolved_values)
-            self.session.add(obj)
+            try:
+                self.session.add(obj)
+                self.session.flush()
+            except  Exception as e :
+                print "error adding obj: %s. %s" % (obj, e)
 
 
     def add_klasses(self, klass, items):

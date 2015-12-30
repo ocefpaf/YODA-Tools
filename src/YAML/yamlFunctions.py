@@ -63,7 +63,7 @@ class YamlFunctions(object):
         Open a YAML file to be loaded into the SQLAlchemy connection
         :filename: path to yaml file
         """
-
+        self._session.autoflush = False
         s = self.extractYaml(filename)
 
         if 'YODA' in s:
@@ -82,8 +82,10 @@ class YamlFunctions(object):
         yl = YamlLoader(models)
         yl.from_list(self._session, [s])
 
+
         # load the Time Series Result information
-        #yl.loadTimeSeriesResults(self._session, self._engine, timeSeries)
+        self._session.flush()
+        yl.loadTimeSeriesResults(self._session, self._engine, timeSeries)
         self._session.flush()
 
     def loadFromFiles(self, files):
