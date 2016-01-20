@@ -1,20 +1,8 @@
 __author__ = 'Choonhan Youn'
 
 import uuid
-
-if __name__ == '__main__':
-    if __package__ is None:
-        import sys
-        from os import path
-        sys.path.append(path.dirname(path.abspath(__file__)))
-        from api.base import serviceBase
-        from api.ODM2.models import *
-else:
-    import sys
-    sys.path.append('../../ODM2PythonAPI')
-    from api.base import serviceBase
-    from api.ODM2.models import *
-
+from odm2api.base import serviceBase
+from odm2api.ODM2.models import *
 from datetime import datetime, date, timedelta
 
 class yodaService(serviceBase):

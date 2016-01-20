@@ -1,17 +1,6 @@
 
-if __name__ == '__main__':
-    if __package__ is None:
-        import sys
-        from os import path
-        sys.path.append(path.dirname(path.abspath(__file__)))
-        from api.ODMconnection import dbconnection
-        import ODM2PythonAPI.src.api.ODM2.models as models
-else:
-    import sys
-    sys.path.append('../../ODM2PythonAPI')
-    from api.ODMconnection import dbconnection
-    import src.api.ODM2.models as models
-
+import odm2api.ODM2.models as models
+from odm2api.ODMconnection import dbconnection
 from YODAqueries import yodaService as yodaservice
 from db_schema.create_schema import odm2CreateSchema as odm2schema
 
@@ -35,7 +24,6 @@ class obj(object):
                 setattr(self, a, [obj(x) if isinstance(x, dict) else x for x in b])
             else:
                 setattr(self, a, obj(b) if isinstance(b, dict) else b)
-
 
 class yodaLoad():
     def __init__(self):

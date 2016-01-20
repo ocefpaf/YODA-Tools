@@ -45,7 +45,6 @@ def yoda_load(args):
     if args.type == 'timeseries':
         load_timeseries(args)
 
-
 def validate_timeseries(yodaFile, level=1):
 
     flag = True
