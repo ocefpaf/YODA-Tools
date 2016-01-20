@@ -100,7 +100,7 @@ def validate_timeseries(yodaFile, level=1):
 
     print flag
     if not flag:
-        print "please look into the generate log file."
+        print "please look into the generated log file."
     return flag
 
 def load_timeseries(args):
