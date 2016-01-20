@@ -37,8 +37,13 @@ def yoda_logger(file_log_level, console_log_level = None):
 
 def yoda_validate(args):
     print "Type: %s Level: %s" % (args.type,args.level)
-    if args.type == 'timeseries':
-        validate_timeseries(args.yoda_file,args.level)
+    if args.level in [1,2,3]:
+        if args.type == 'timeseries':
+            validate_timeseries(args.yoda_file,args.level)
+        else:
+            print "data type: measurement, timeseries"
+    else:
+        print "validation level: 1 for coarse, 2 for medium, 3 for fine"
 
 def yoda_load(args):
     #print "Type: %s Level: %s" % (args.type,args.level)
@@ -116,12 +121,12 @@ def main():
     subparsers = parser.add_subparsers(help='sub-command help')
 
     parser_validate = subparsers.add_parser('validate', parents=[default_parser])
-    parser_validate.add_argument('--type', type=str, default="timeseries", required=False, help='data type: specimen, timeseries')
-    parser_validate.add_argument('--level', type=int, default=1, required=False, help='validation level: 1=coarse, 2=medium, 3=fine')
+    parser_validate.add_argument('--type', type=str, default="timeseries", required=False, help='data type: measurement, timeseries')
+    parser_validate.add_argument('--level', type=int, default=1, required=False, help='validation level: 1 for coarse, 2 for medium, 3 for fine')
     parser_validate.set_defaults(func=yoda_validate)
 
     parser_load = subparsers.add_parser('load', parents=[default_parser])
-    parser_load.add_argument('--type', type=str, default="timeseries", required=False, help='data type: specimen, timeseries')
+    parser_load.add_argument('--type', type=str, default="timeseries", required=False, help='data type: measurement, timeseries')
     parser_load.set_defaults(func=yoda_load)
 
     args = parser.parse_args()
