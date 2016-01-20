@@ -266,7 +266,7 @@ class TimeseriesSchema(object):
         aff_schema = {
             "IsPrimaryOrganizationContact": "?boolean",
             "AffiliationStartDate": "date_format",
-            "AffiliationEndDate": "date_format",
+            "AffiliationEndDate": "?date_format",
             "PrimaryPhone": "?string",
             "PrimaryEmail": "string",
             "PrimaryAddress": "?string",
