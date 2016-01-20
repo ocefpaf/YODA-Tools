@@ -265,8 +265,8 @@ class TimeseriesSchema(object):
     def affiliation(self):
         aff_schema = {
             "IsPrimaryOrganizationContact": "?boolean",
-            "AffiliationStartDate": "date_format",
-            "AffiliationEndDate": "?date_format",
+            "AffiliationStartDate": "datetime_format", #"date_format",
+            "AffiliationEndDate": "?datetime_format", #"date_format
             "PrimaryPhone": "?string",
             "PrimaryEmail": "string",
             "PrimaryAddress": "?string",
@@ -353,7 +353,7 @@ class TimeseriesSchema(object):
             ], 
 #            "Data": [[V.HeterogeneousSequence( "datacolumn1", "datacolumn2", "datacolumn3", "datacolumn3", "datacolumn3" )]],
 #            "Data": [[( "datacolumn1", "datacolumn2", "datacolumn3", "datacolumn3", "datacolumn3" )]],
-            "Data": [[( "datacolumn1", "datacolumn2", "datacolumn3" )]],
+            "Data": [( "datacolumn1", "datacolumn2", "datacolumn3" )],
 #            "Data": [[[ "string" ]]],
         }
         return tsrv_schema

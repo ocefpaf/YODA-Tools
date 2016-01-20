@@ -51,19 +51,12 @@ def validate_timeseries(yodaFile, level=1):
     #logger = yoda_logger(logging.INFO,logging.WARNING)
     logger = yoda_logger(logging.INFO)
     stream = file(yodaFile)
-    yaml_data = yaml.load (stream)
+    yaml_data = yaml.load(stream)
 
     data_columns = yaml_data['TimeSeriesResultValues']['ColumnDefinitions']
-    data_firstline = yaml_data['TimeSeriesResultValues']['Data'][0][0]
-    data_values = yaml_data['TimeSeriesResultValues']['Data'][0]
-
-    #blank check
-    for index in range(len(data_values)):
-        if len(data_values[index]) == 0:
-            del yaml_data['TimeSeriesResultValues']['Data'][0][index]
+    data_firstline = yaml_data['TimeSeriesResultValues']['Data'][0]
 
     data_valuelist = []
-
     for index in range(len(data_columns)):
         column_label = "%s" % data_columns[index]['Label']
         data_label = "%s" % data_firstline[index]
@@ -79,7 +72,7 @@ def validate_timeseries(yodaFile, level=1):
             data_valuelist.append("datacolumn%s" % index)
 
     data_tuple = tuple(data_valuelist)
-    del yaml_data['TimeSeriesResultValues']['Data'][0][0]
+    del yaml_data['TimeSeriesResultValues']['Data'][0]
 
     S = TimeseriesSchema()
     if level == 1:
@@ -94,7 +87,7 @@ def validate_timeseries(yodaFile, level=1):
         flag = S.timeseries_detail_validate(logger,yaml_data)
 
     tsv_schema = {"TimeSeriesResultValues": S.timeseriesresultvalue()}
-    tsv_schema['TimeSeriesResultValues']['Data'] = [[data_tuple]]
+    tsv_schema['TimeSeriesResultValues']['Data'] = [data_tuple]
     x,y = S.single_object_validate(tsv_schema,yaml_data,False)
     if not y:
         logger.error("%s" % x)
