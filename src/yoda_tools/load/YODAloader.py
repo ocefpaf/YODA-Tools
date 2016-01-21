@@ -2,7 +2,7 @@
 import odm2api.ODM2.models as models
 from odm2api.ODMconnection import dbconnection
 from YODAqueries import yodaService as yodaservice
-from db_schema.create_schema import odm2CreateSchema as odm2schema
+from src.yoda_tools.db_schema.create_schema import odm2CreateSchema as odm2schema
 
 
 import yaml
@@ -492,8 +492,8 @@ class yodaLoad():
                 print "valuelist", len(valuelist)
                 for x in value.Data:
                     for i in range(len(x)):
-                        for j in range(len(x[i])):
-                            valuelist[j].append(x[i][j])
+                        #for j in range(len(x[i])):
+                        valuelist[i].append(x[i])
 
                 for x in value.ColumnDefinitions:
                     if hasattr(x, 'Result'):
