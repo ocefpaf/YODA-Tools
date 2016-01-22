@@ -1,16 +1,8 @@
-
 import odm2api.ODM2.models as models
 from odm2api.ODMconnection import dbconnection
+
 from YODAqueries import yodaService as yodaservice
-from src.yoda_tools.db_schema.create_schema import odm2CreateSchema as odm2schema
-
-
-import yaml
-from datetime import datetime, date, timedelta
-from time import strftime
-import inspect
-import codecs
-
+from db_schema.create_schema import odm2CreateSchema as odm2schema
 
 class obj(object):
     def __init__(self, d):
