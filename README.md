@@ -7,11 +7,22 @@ Command line:
 yoda [command] [options]
 ```
 
+Testing a validation for timeseries yoda file:
 ```
-Testing a validation for timeseries yoda file
-  usage: yoda.py validate [--type TYPE] [--level LEVEL] yoda_file
-  $ python src/yoda_tools/yoda.py validate --type "timeseries" --level 1 src/yoda_tools/YODA_TimeSeries_Example1_Template_0.3.0-alpha.yaml 
+usage: yoda.py validate [-h] [--type TYPE] [--level LEVEL] [-c] yoda_file
+
+positional arguments:
+  yoda_file      yoda file name
+
+optional arguments:
+  -h, --help     show this help message and exit
+  --type TYPE    data type: measurement, timeseries
+  --level LEVEL  validation level: 1 for coarse, 2 for medium, 3 for fine
+  -c, --cvtype   validate CV types
+Example:
+  $ python src/yoda_tools/yoda.py validate --type timeseries --level 1 src/yoda_tools/examples/YODA_TimeSeries_Example1_Template_0.3.1-alpha.yaml 
 ```
+
 Intitial thoguhts:
   * yoda validate [format] [file] [strict?]
      * validates a yoda file. formats [TS-timeseries, SP-Specimens]
