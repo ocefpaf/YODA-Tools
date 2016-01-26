@@ -101,6 +101,9 @@ class To_bool(Boolean):
 
 class TimeseriesSchema(object):
 
+    def __init__(self,logger):
+        self.logger = logger
+
     def organization(self):
         org_schema = {
             "OrganizationTypeCV": "string",
@@ -462,7 +465,7 @@ class TimeseriesSchema(object):
 
             # ODM2 Results
             "?TimeSeriesResults": [ self.timeseriesresult() ],
-#            "?TimeSeriesResultValues": self.timeseriesresultvalue(),
+            # "?TimeSeriesResultValues": self.timeseriesresultvalue(),
         }
         return ts_schema
 
@@ -487,24 +490,46 @@ class TimeseriesSchema(object):
         except (KeyError, ValueError, TypeError, ValidationError) as detail:
             return '%s%s: %s' % (table_name,col_name,detail), False
 
-    def timeseries_detail_validate(self,logger,data):
+    def timeseries_detail_validate(self,data):
         flag = True
         ts_schema = self.timeseries_schema()
         for key in ts_schema.keys():
             schema = ts_schema[key][0]
+            if key.startswith('?',0,1):
+                table_name = key[1:]
+                try:
+                    table_data = data.pop(table_name)
+                    table_data = {table_name:table_data}
+                except KeyError:
+                    #self.logger.info("there is no data for the table, '{0}'.".format(table_name))
+                    continue
+            else:
+                table_data = data.pop(key)
+                table_data = {key:table_data}
             for col_key in schema.keys():
-                x,y = self.single_object_validate({key: [ {col_key: schema[col_key]} ]},data)
+                x,y = self.single_object_validate({key: [ {col_key: schema[col_key]} ]},table_data)
                 if not y:
-                    logger.error("%s" % x)
+                    self.logger.error("%s" % x)
                     flag = False
         return flag
 
-    def timeseries_object_validate(self,logger,data):
+    def timeseries_object_validate(self,data):
         flag = True
         ts_schema = self.timeseries_schema()
         for key in ts_schema.keys():
-            x,y = self.single_object_validate({key: ts_schema[key]},data,False)
+            if key.startswith('?',0,1):
+                table_name = key[1:]
+                try:
+                    table_data = data.pop(table_name)
+                    table_data = {table_name:table_data}
+                except KeyError:
+                    #self.logger.info("there is no data for the table, '{0}'.".format(table_name))
+                    continue
+            else:
+                table_data = data.pop(key)
+                table_data = {key:table_data}
+            x,y = self.single_object_validate({key: ts_schema[key]},table_data,False)
             if not y:
-                logger.error("%s" % x)
+                self.logger.error("%s" % x)
                 flag = False
         return flag

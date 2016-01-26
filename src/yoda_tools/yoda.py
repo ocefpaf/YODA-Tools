@@ -1,19 +1,15 @@
 __author__ = 'Choonhan Youn'
 
-import valideer as V
-import yaml
-from validate.valideer_ts_schema import TimeseriesSchema, Datacolummn0, Datacolummn1, Datacolummn2, To_bool
-from valideer import String, Integer, ValidationError, Validator, Datetime, Number, Date
-import datetime
-
-import os
 import argparse
-import string
-import logging
+import copy
 import inspect
-from urllib2 import urlopen
+import logging
 
-from YODAloader import yodaLoad
+import yaml
+
+from load.YODAloader import yodaLoad
+from validate.cvvalidator import CVvalidator
+from validate.timeseriesvalidator import TSvalidator
 
 def yoda_logger(file_log_level, console_log_level = None):
     f_name = inspect.stack()[1][3] #getting function name called
@@ -36,69 +32,40 @@ def yoda_logger(file_log_level, console_log_level = None):
     return logger
 
 def yoda_validate(args):
-    print "Type: %s Level: %s" % (args.type,args.level)
+    print "Type: %s Level: %s CV type: %s" % (args.type,args.level,args.cvtype)
     if args.level in [1,2,3]:
         if args.type == 'timeseries':
-            validate_timeseries(args.yoda_file,args.level)
+            validate_timeseries(args.yoda_file,args.level,args.cvtype)
         else:
-            print "data type: measurement, timeseries"
+            print "usage: data type: measurement, timeseries"
     else:
-        print "validation level: 1 for coarse, 2 for medium, 3 for fine"
+        print "usage: validation level: 1 for coarse, 2 for medium, 3 for fine"
 
 def yoda_load(args):
     #print "Type: %s Level: %s" % (args.type,args.level)
     if args.type == 'timeseries':
         load_timeseries(args)
 
-def validate_timeseries(yodaFile, level=1):
+def validate_timeseries(yodaFile, level=1,cvtype=False):
 
-    flag = True
     #logger = yoda_logger(logging.INFO,logging.WARNING)
     logger = yoda_logger(logging.INFO)
     stream = file(yodaFile)
     yaml_data = yaml.load(stream)
 
-    data_columns = yaml_data['TimeSeriesResultValues']['ColumnDefinitions']
-    data_firstline = yaml_data['TimeSeriesResultValues']['Data'][0]
+    if 'YODA' in yaml_data:
+        yaml_data.pop('YODA')
 
-    data_valuelist = []
-    for index in range(len(data_columns)):
-        column_label = "%s" % data_columns[index]['Label']
-        data_label = "%s" % data_firstline[index]
-        #logger.info( column_label )
-        #logger.info( data_label )
+    yaml_data_cv = copy.copy(yaml_data)
+    tsvalidator = TSvalidator(logger)
+    flag = tsvalidator.validate(level,yaml_data)
 
-        if column_label != data_label:
-            logger.error( "Both columns, (%s, %s) should be matched" % (column_label,data_label))
-            raise ValidationError("Both columns, (%s, %s) should be matched" % (column_label,data_label))
-        if index > 2:
-            data_valuelist.append("datacolumn2")
-        else:
-            data_valuelist.append("datacolumn%s" % index)
+    #Validate cv types
+    if cvtype:
+        cvval = CVvalidator(logger)
+        flag = cvval.validate(yaml_data_cv)
 
-    data_tuple = tuple(data_valuelist)
-    del yaml_data['TimeSeriesResultValues']['Data'][0]
-
-    S = TimeseriesSchema()
-    if level == 1:
-        ts_schema = S.timeseries_schema()
-        x,y = S.single_object_validate(ts_schema,yaml_data,False)
-        if not y:
-            logger.error("%s" % x)
-            flag = False
-    elif level == 2:
-        flag = S.timeseries_object_validate(logger,yaml_data)
-    elif level == 3:
-        flag = S.timeseries_detail_validate(logger,yaml_data)
-
-    tsv_schema = {"TimeSeriesResultValues": S.timeseriesresultvalue()}
-    tsv_schema['TimeSeriesResultValues']['Data'] = [data_tuple]
-    x,y = S.single_object_validate(tsv_schema,yaml_data,False)
-    if not y:
-        logger.error("%s" % x)
-        flag = False
-
-    print flag
+    print "Validation Result: %s" % flag
     if not flag:
         print "please look into the generated log file."
     return flag
@@ -125,6 +92,7 @@ def main():
     parser_validate = subparsers.add_parser('validate', parents=[default_parser])
     parser_validate.add_argument('--type', type=str, default="timeseries", required=False, help='data type: measurement, timeseries')
     parser_validate.add_argument('--level', type=int, default=1, required=False, help='validation level: 1 for coarse, 2 for medium, 3 for fine')
+    parser_validate.add_argument('-c','--cvtype', action='store_true', help='validate CV types')
     parser_validate.set_defaults(func=yoda_validate)
 
     parser_load = subparsers.add_parser('load', parents=[default_parser])
@@ -133,7 +101,6 @@ def main():
 
     args = parser.parse_args()
     args.func(args)
-
 
 if __name__ == '__main__':
     main()
