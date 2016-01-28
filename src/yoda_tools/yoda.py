@@ -10,6 +10,7 @@ import yaml
 from load.YODAloader import yodaLoad
 from validate.cvvalidator import CVvalidator
 from validate.timeseriesvalidator import TSvalidator
+from YODAPy.measurement_example.measurement_yoda import MeasurementYoda
 
 def yoda_logger(file_log_level, console_log_level = None):
     f_name = inspect.stack()[1][3] #getting function name called
@@ -36,15 +37,33 @@ def yoda_validate(args):
     if args.level in [1,2,3]:
         if args.type == 'timeseries':
             validate_timeseries(args.yoda_file,args.level,args.cvtype)
+        elif args.type == 'measurement':
+            print 'The measurement type is not implemnted yet.'
+            print "usage: data type: measurement, timeseries"
         else:
             print "usage: data type: measurement, timeseries"
     else:
         print "usage: validation level: 1 for coarse, 2 for medium, 3 for fine"
 
 def yoda_load(args):
-    #print "Type: %s Level: %s" % (args.type,args.level)
+    print "Type: %s" % args.type
     if args.type == 'timeseries':
         load_timeseries(args)
+    elif args.type == 'measurement':
+        print 'The measurement type is not implemnted yet.'
+        print "usage: data type: measurement, timeseries"
+    else:
+        print "usage: data type: measurement, timeseries"
+
+def yoda_generate(args):
+    print "Type: %s" % args.type
+    if args.type == 'measurement':
+        generate_measurement(args)
+    elif args.type == 'timeseries':
+        print 'The timeseries type is not implemnted yet.'
+        print "usage: data type: measurement, timeseries"
+    else:
+        print "usage: data type: measurement, timeseries"
 
 def validate_timeseries(yodaFile, level=1,cvtype=False):
 
@@ -80,24 +99,34 @@ def load_timeseries(args):
 
     yodadb.data_load(yaml_data)
 
+def generate_measurement(args):
+    yoda_format = MeasurementYoda(args.xl_file)
+    yoda_format.create_yoda(args.out_file)
 
 def main():
     parser = argparse.ArgumentParser()
+    subparsers = parser.add_subparsers(help='commands')
 
-    default_parser = argparse.ArgumentParser(add_help=False)
-    default_parser.add_argument('yoda_file', type=str, help='yoda file name')
+    # A validation command
+    validate_parser = subparsers.add_parser('validate', help='Validate yoda file')
+    validate_parser.add_argument('yoda_file', type=str, help='yoda file name')
+    validate_parser.add_argument('--type', type=str, default="timeseries", required=False, help='data type: measurement, timeseries')
+    validate_parser.add_argument('--level', type=int, default=1, required=False, help='validation level: 1 for coarse, 2 for medium, 3 for fine')
+    validate_parser.add_argument('-c','--cvtype', action='store_true', help='validate CV types')
+    validate_parser.set_defaults(func=yoda_validate)
 
-    subparsers = parser.add_subparsers(help='sub-command help')
+    # A generate command
+    generate_parser = subparsers.add_parser('generate', help='Generate YODA file')
+    generate_parser.add_argument('xl_file', type=str, action='store', help='xl file name (input)')
+    generate_parser.add_argument('out_file', type=str, action='store', help='yaml file name (output)')
+    generate_parser.add_argument('--type', type=str, default="measurement", required=False, help='data type: measurement, timeseries')
+    generate_parser.set_defaults(func=yoda_generate)
 
-    parser_validate = subparsers.add_parser('validate', parents=[default_parser])
-    parser_validate.add_argument('--type', type=str, default="timeseries", required=False, help='data type: measurement, timeseries')
-    parser_validate.add_argument('--level', type=int, default=1, required=False, help='validation level: 1 for coarse, 2 for medium, 3 for fine')
-    parser_validate.add_argument('-c','--cvtype', action='store_true', help='validate CV types')
-    parser_validate.set_defaults(func=yoda_validate)
-
-    parser_load = subparsers.add_parser('load', parents=[default_parser])
-    parser_load.add_argument('--type', type=str, default="timeseries", required=False, help='data type: measurement, timeseries')
-    parser_load.set_defaults(func=yoda_load)
+    # A load command
+    # load_parser = subparsers.add_parser('load', help='Load yoda file')
+    # load_parser.add_argument('yoda_file', type=str, help='yoda file name')
+    # load_parser.add_argument('--type', type=str, default="timeseries", required=False, help='data type: measurement, timeseries')
+    # load_parser.set_defaults(func=yoda_load)
 
     args = parser.parse_args()
     args.func(args)
