@@ -22,7 +22,7 @@ optional arguments:
 Example:
   $ python yoda.py validate --type timeseries --level 1 ./examples/YODA_TimeSeries_Example1_Template_0.3.1-alpha.yaml 
 ```
-Testing for generating yodata file from xl file
+Testing for generating yoda file from xl file
 ```
 usage: yoda.py generate [-h] [--type TYPE] xl_file out_file
 
