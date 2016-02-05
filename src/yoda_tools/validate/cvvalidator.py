@@ -96,10 +96,12 @@ class CVvalidator(object):
                 cv_names = self.cv_names(cv_attr)
                 for attr in timeSeries:
                     try:
-                        value = attr[cv_attr]
-                        if value and (not value.lower() in cv_names):
-                            flag = False
-                            self.logger.error("'TimeSeriesResultValues.%s': '%s' is not in vocaburary list." % (cv_attr,value))
+                        if attr['ODM2Field'] == 'DataValue':
+                            value = attr[cv_attr]
+                            if value and (not value.lower() in cv_names):
+                                flag = False
+                                self.logger.error("'TimeSeriesResultValues.%s': '%s' is not in vocaburary list." % (cv_attr,value))
                     except KeyError:
+                        flag = False
                         self.logger.info("'TimeSeriesResultValues.%s' is not existed." % cv_attr)
         return flag

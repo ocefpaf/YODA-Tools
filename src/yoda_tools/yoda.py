@@ -69,6 +69,7 @@ def validate_timeseries(yodaFile, level=1,cvtype=False):
 
     #logger = yoda_logger(logging.INFO,logging.WARNING)
     logger = yoda_logger(logging.INFO)
+    logger.info("Validating YODA file: {0}".format(yodaFile))
     stream = file(yodaFile)
     yaml_data = yaml.load(stream)
 
@@ -78,16 +79,24 @@ def validate_timeseries(yodaFile, level=1,cvtype=False):
     yaml_data_cv = copy.copy(yaml_data)
     tsvalidator = TSvalidator(logger)
     flag = tsvalidator.validate(level,yaml_data)
-
-    #Validate cv types
-    if cvtype:
-        cvval = CVvalidator(logger)
-        flag = cvval.validate(yaml_data_cv)
-
     print "Validation Result: %s" % flag
     if not flag:
         print "please look into the generated log file."
-    return flag
+
+    #Validate cv types
+    cv_flag = True
+    if cvtype:
+        cvval = CVvalidator(logger)
+        cv_flag = cvval.validate(yaml_data_cv)
+
+        print "CV validation Result: %s" % cv_flag
+        if not cv_flag:
+            print "please look into the generated log file."
+
+    if flag and cv_flag:
+        return True
+    else:
+        return False
 
 def load_timeseries(args):
     logger = yoda_logger(logging.INFO,logging.WARNING)
@@ -123,10 +132,10 @@ def main():
     generate_parser.set_defaults(func=yoda_generate)
 
     # A load command
-    # load_parser = subparsers.add_parser('load', help='Load yoda file')
-    # load_parser.add_argument('yoda_file', type=str, help='yoda file name')
-    # load_parser.add_argument('--type', type=str, default="timeseries", required=False, help='data type: measurement, timeseries')
-    # load_parser.set_defaults(func=yoda_load)
+    load_parser = subparsers.add_parser('load', help='Load yoda file')
+    load_parser.add_argument('yoda_file', type=str, help='yoda file name')
+    load_parser.add_argument('--type', type=str, default="timeseries", required=False, help='data type: measurement, timeseries')
+    load_parser.set_defaults(func=yoda_load)
 
     args = parser.parse_args()
     args.func(args)
