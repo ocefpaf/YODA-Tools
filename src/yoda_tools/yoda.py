@@ -86,6 +86,7 @@ def validate_timeseries(yodaFile, level=1,cvtype=False):
     #Validate cv types
     cv_flag = True
     if cvtype:
+        logger.info("Validating CV")
         cvval = CVvalidator(logger)
         cv_flag = cvval.validate(yaml_data_cv)
 
