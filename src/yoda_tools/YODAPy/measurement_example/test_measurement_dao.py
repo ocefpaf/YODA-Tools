@@ -5,7 +5,7 @@ class TestMeasurementDao(object):
     def __init__(self,loader):
         self.loader = loader
 
-    def test_aaffiliations(self):
+    def test_affiliations(self):
         affs = self.loader.get_all_affiliations()
         for x in affs:
             print x.__dict__
@@ -99,7 +99,7 @@ class TestMeasurementDao(object):
                 print org.__dict__
 
     def test_actions(self):
-        a = self.loader.get_all_actions()
+        a = self.loader.get_all_actions
         print "action size: {0}".format(len(a))
         for x in a:
             print x.__dict__
@@ -200,7 +200,7 @@ class TestMeasurementDao(object):
 def main():
     loader = MeasurementXlDao(excelFile='YODA_Specimen_TEMPLATE_WORKING.xlsm')
     test = TestMeasurementDao(loader)
-    #test.test_aaffiliations()
+    #test.test_affiliations()
     #test.test_samplingfeatures()
     test.test_sites()
     test.test_variables()
