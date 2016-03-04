@@ -1,11 +1,26 @@
-from measurement_dao import MeasurementXlDao
+from timeseries_dao import TimeseriesXlDao
 
-class TestMeasurementDao(object):
+class TestTimeSeriesDao(object):
 
     def __init__(self,loader):
         self.loader = loader
 
-    def test_affiliations(self):
+    def test_get_yoda_header(self):
+        yoda_header = self.loader.get_yoda_header()
+        if yoda_header:
+            print yoda_header.__dict__
+
+    def test_get_all_people(self):
+        p = self.loader.get_all_people()
+        for x in p:
+            print x.__dict__
+
+    def test_get_all_organizations(self):
+        o = self.loader.get_all_organizations()
+        for x in o:
+            print x.__dict__
+
+    def test_get_all_affiliations(self):
         affs = self.loader.get_all_affiliations()
         for x in affs:
             print x.__dict__
@@ -16,18 +31,7 @@ class TestMeasurementDao(object):
             if orgobj is not None:
                 print orgobj.__dict__
 
-    def test_personexternalidentifiers(self):
-        pe = self.loader.get_all_personexternalidentifiers()
-        for x in pe:
-            print x.__dict__
-            perobj = getattr(x,'Person')
-            eisobj = getattr(x,'ExternalIdentifierSystem')
-            if perobj is not None:
-                print perobj.__dict__
-            if eisobj is not None:
-                print eisobj.__dict__
-
-    def test_get_dataset(self):
+    def test_get_dataset_with_citation(self):
         ds = self.loader.get_dataset()
         if ds:
             print ds.__dict__
@@ -65,15 +69,6 @@ class TestMeasurementDao(object):
             if sr_obj is not None:
                 print sr_obj.__dict__
 
-    def test_specimens(self):
-        sp = self.loader.get_all_specimens()
-        print "specimens size: {0}".format(len(sp))
-        if sp is not None:
-            print len(sp)
-            for x in sp:
-                sf_obj = getattr(x,'SamplingFeature')
-                print sf_obj.__getattribute__('SamplingFeatureCode'), x.__getattribute__('SpecimenTypeCV')
-
     def test_spatialoffsets(self):
         soo = self.loader.get_all_spatialoffsets()
         for x in soo:
@@ -81,14 +76,15 @@ class TestMeasurementDao(object):
 
     def test_relatedfeatures(self):
         rfs = self.loader.get_all_relatedfeatures()
-        print "relatedfeature size: {0}".format(len(rfs))
         if rfs is not None:
-            print len(rfs)
             for x in rfs:
+                print x.__dict__
                 sf_obj = getattr(x,'SamplingFeature')
                 rf_obj = getattr(x,'RelatedFeature')
+                so_obj = getattr(x,'SpatialOffset')
                 print sf_obj.__dict__
                 print rf_obj.__dict__
+                print so_obj.__dict__
 
     def test_methods(self):
         m = self.loader.get_all_methods()
@@ -99,7 +95,7 @@ class TestMeasurementDao(object):
                 print org.__dict__
 
     def test_actions(self):
-        a = self.loader.get_all_actions
+        a = self.loader.get_all_actions()
         print "action size: {0}".format(len(a))
         for x in a:
             print x.__dict__
@@ -140,21 +136,21 @@ class TestMeasurementDao(object):
             if v is not None:
                 print v.__dict__
 
-    def test_measurementresults(self):
-        rm = self.loader.get_all_measurementresults()
-        print "measurementresult size: {0}".format(len(rm))
-        for x in rm:
+    def test_timeseriesresults(self):
+        tr = self.loader.get_all_timeseriesresults()
+        print "timeseries result size: {0}".format(len(tr))
+        for x in tr:
             print x.__dict__
             r = getattr(x,'Result')
             if r is not None:
                 print r.__dict__
 
-    def test_measurementresultvalues(self):
-        rmv = self.loader.get_all_measurementresultvalues()
-        print "measurementresultvalue size: {0}".format(len(rmv))
-        for x in rmv:
+    def test_timeseriesresultvalues(self):
+        trv = self.loader.get_all_timeseriesresultvalues()
+        print "timeseries result value size: {0}".format(len(trv))
+        for x in trv:
             print x.__dict__
-            r = getattr(x,'Result')
+            r = getattr(x,'TimeSeriesResult')
             if r is not None:
                 print r.__dict__
 
@@ -168,6 +164,11 @@ class TestMeasurementDao(object):
         for x in pl:
             print x.__dict__
 
+    def test_units(self):
+        u = self.loader.get_all_units()
+        for x in u:
+            print x.__dict__
+
     def test_datacolumns(self):
         datacolumns = self.loader.get_all_datacolumns()
         for dc in datacolumns:
@@ -175,37 +176,43 @@ class TestMeasurementDao(object):
 
     def test_datavalues(self):
         dv = self.loader.get_all_datavalues()
-        for x in dv:
-            print x.__dict__
+        print "timeseries dat value size: {0}".format(len(dv))
+        # for x in dv:
+        #     print x.__dict__
+        #     break
 
     def test_spatialreferences(self):
         sr = self.loader.get_all_spatialreferences()
         for s in sr:
             print s.__dict__
 
-    def test_externalidentifiers(self):
-        eid = self.loader.get_all_externalidentifiers()
-        for e in eid:
-            print e.__dict__
-            org_obj = getattr(e,'IdentifierSystemOrganization')
-            if org_obj is not None:
-                print org_obj.__dict__
-
-    def test_child_samplingfeatures(self):
-        child_sf = self.loader.get_all_child_samplingfeatures()
-        print "samplingfeature size: {0}".format(len(child_sf))
-        for x in child_sf:
-            print x.__dict__
-
 def main():
-    loader = MeasurementXlDao(excelFile='YODA_Specimen_TEMPLATE_WORKING.xlsm')
-    test = TestMeasurementDao(loader)
-    #test.test_affiliations()
-    #test.test_samplingfeatures()
-    test.test_sites()
-    test.test_variables()
-    #test.test_methods()
-    #test.test_datavalues()
+    #loader = TimeseriesXlDao(excelFile='YODA_TimeSeries_Example1_Template_0.3.1-alpha.xlsm')
+    loader = TimeseriesXlDao(excelFile='YODA_v0.3.2_TS_multiple_LR_GC_C.xlsm')
+    test = TestTimeSeriesDao(loader)
+    # test.test_get_yoda_header()
+    # test.test_get_all_people()
+    # test.test_get_all_organizations()
+    # test.test_get_all_affiliations()
+    # test.test_get_dataset_with_citation()
+    # test.test_authorlists()
+    # test.test_samplingfeatures()
+    # test.test_sites()
+    # test.test_spatialoffsets()
+    # test.test_relatedfeatures()
+    # test.test_methods()
+    # test.test_variables()
+    # test.test_processinglevels()
+    # test.test_units()
+    # test.test_spatialreferences()
+    # test.test_datacolumns()
+    # test.test_actions()
+    # test.test_actionbys()
+    # test.test_featureactions()
+    # test.test_results()
+    # test.test_timeseriesresults()
+    # test.test_timeseriesresultvalues()
+    test.test_datavalues()
     loader.close()
 
 if __name__ == '__main__':

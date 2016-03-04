@@ -168,3 +168,21 @@ class BaseXldao(object):
         Returns Person External Identifiers in the data source.
         """
         raise NotImplementedError("get_all_personexternalidentifiers Method not implemented by this service.")
+
+    def get_all_units(self):
+        """
+        Returns units in the data source.
+        """
+        raise NotImplementedError("get_all_units Method not implemented by this service.")
+
+    def get_all_timeseriesresults(self):
+        """
+        Returns timeseries results in the data source.
+        """
+        raise NotImplementedError("get_all_timeseriesresults Method not implemented by this service.")
+
+    def get_all_timeseriesresultvalues(self):
+        """
+        Returns timeseries result values in the data source.
+        """
+        raise NotImplementedError("get_all_timeseriesresultvalues Method not implemented by this service.")

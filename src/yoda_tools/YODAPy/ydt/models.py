@@ -171,6 +171,12 @@ class BaseProcessingLevel(object):
     Definition = None
     Explanation = None
 
+class BaseUnit(object):
+    UnitsTypeCV = None
+    UnitsAbbreviation = None
+    UnitsName = None
+    UnitsLink = None
+
 class BaseFeatureAction(object):
     SamplingFeature = BaseSamplingFeature()
     Action = BaseAction()
@@ -193,7 +199,6 @@ class BaseResult(object):
     TaxonomicClassifier = None
 
 class BaseMeasurementResult(object):
-
     XLocation = None
     XLocationUnitsID = None
     YLocation = None
@@ -216,9 +221,38 @@ class BaseMeasurementResultValue(object):
 
     MeausrementResult = BaseMeasurementResult()
 
+class BaseTimeSeriesResult(object):
+    XLocation = None
+    YLocation = None
+    ZLocation = None
+    IntendedTimeSpacing = None
+    AggregationStatisticCV = None
+
+    Result = BaseResult()
+    XLocationUnit = BaseUnit()
+    YLocationUnit = BaseUnit()
+    ZLocationUnit = BaseUnit()
+    SpatialReference = BaseSpatialReference()
+    IntendedTimeSpacingUnit = BaseUnit()
+
+class BaseTimeSeriesResultValue(object):
+    ColumnLabel = None
+    DataValue = None
+    ValueDateTime = None
+    ValueDateTimeUTCOffset = None
+    CensorCodeCV = None
+    QualityCodeCV = None
+    TimeAggregationInterval = None
+    TimeSeriesResult = BaseTimeSeriesResult()
+    TimeAggregationIntervalUnit = BaseUnit()
+
 class BaseDataColumn(object):
     ColumnNumber = None
     ColumnLabel = None
+    ResultUUID = None
+    SamplingFeatureCode = None
+    DataCollector = None
+    MethodCode = None
     ColumnType = None
     AppliesToColumn = None
     ParentSamplingFeatureCode = None
