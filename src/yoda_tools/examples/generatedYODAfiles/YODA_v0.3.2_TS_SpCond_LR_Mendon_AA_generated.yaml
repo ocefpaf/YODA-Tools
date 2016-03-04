@@ -4,65 +4,65 @@ YODA:
 DataSets:
  - &DatasetID0001 {DataSetTypeCV: "Single time series", DataSetAbstract: "Continuous monitoring data collected by Utah State University as part of the GAMUT network of the NSF iUTAH EPSCoR project. This dataset consists of specific conductance measured by a YSI EXO sonde in the Logan River near Mendon Road.", DataSetUUID: "E0742DFF-5E31-4F9E-96D3-D2284614512E", DataSetCode: "LR_Mendon_SpCond", DataSetTitle: "Specific Conductance at the Logan River Mendon Road"}
 Organizations:
- - &OrganizationID001 {OrganizationLink: "http://www.usu.edu", OrganizationName: "Utah State University", OrganizationCode: "USU", OrganizationTypeCV: "University", OrganizationDescription: None}
- - &OrganizationID002 {OrganizationLink: "http://uwrl.usu.edu", OrganizationName: "Utah Water Research Laboratory", OrganizationCode: "UWRL", OrganizationTypeCV: "Research organization", OrganizationDescription: None}
- - &OrganizationID003 {OrganizationLink: "http://www.utah.edu", OrganizationName: "University of Utah", OrganizationCode: "UofU", OrganizationTypeCV: "University", OrganizationDescription: None}
- - &OrganizationID004 {OrganizationLink: "http://www.byu.edu", OrganizationName: "Brigham Young University", OrganizationCode: "BYU", OrganizationTypeCV: "University", OrganizationDescription: None}
- - &OrganizationID005 {OrganizationLink: "http://www.ysi.com", OrganizationName: "Yellow Springs, Inc.", OrganizationCode: "YSI", OrganizationTypeCV: "Manufacturer", OrganizationDescription: None}
+ - &OrganizationID001 {OrganizationLink: "http://www.usu.edu", OrganizationName: "Utah State University", OrganizationCode: "USU", OrganizationTypeCV: "University", OrganizationDescription: NULL}
+ - &OrganizationID002 {OrganizationLink: "http://uwrl.usu.edu", OrganizationName: "Utah Water Research Laboratory", OrganizationCode: "UWRL", OrganizationTypeCV: "Research organization", OrganizationDescription: NULL}
+ - &OrganizationID003 {OrganizationLink: "http://www.utah.edu", OrganizationName: "University of Utah", OrganizationCode: "UofU", OrganizationTypeCV: "University", OrganizationDescription: NULL}
+ - &OrganizationID004 {OrganizationLink: "http://www.byu.edu", OrganizationName: "Brigham Young University", OrganizationCode: "BYU", OrganizationTypeCV: "University", OrganizationDescription: NULL}
+ - &OrganizationID005 {OrganizationLink: "http://www.ysi.com", OrganizationName: "Yellow Springs, Inc.", OrganizationCode: "YSI", OrganizationTypeCV: "Manufacturer", OrganizationDescription: NULL}
 People:
- - &PersonID001 {PersonFirstName: "Chris", PersonLastName: "Cox", PersonMiddleName: None}
- - &PersonID002 {PersonFirstName: "Dave", PersonLastName: "Bowling", PersonMiddleName: None}
- - &PersonID003 {PersonFirstName: "Scott", PersonLastName: "Jones", PersonMiddleName: None}
- - &PersonID004 {PersonFirstName: "Jim", PersonLastName: "Ehleringer", PersonMiddleName: None}
- - &PersonID005 {PersonFirstName: "Jobie", PersonLastName: "Carlile", PersonMiddleName: None}
- - &PersonID006 {PersonFirstName: "Dave", PersonLastName: "Eiriksson", PersonMiddleName: None}
- - &PersonID007 {PersonFirstName: "Joe", PersonLastName: "Crawford", PersonMiddleName: None}
- - &PersonID008 {PersonFirstName: "Michelle ", PersonLastName: "Baker", PersonMiddleName: None}
+ - &PersonID001 {PersonFirstName: "Chris", PersonLastName: "Cox", PersonMiddleName: NULL}
+ - &PersonID002 {PersonFirstName: "Dave", PersonLastName: "Bowling", PersonMiddleName: NULL}
+ - &PersonID003 {PersonFirstName: "Scott", PersonLastName: "Jones", PersonMiddleName: NULL}
+ - &PersonID004 {PersonFirstName: "Jim", PersonLastName: "Ehleringer", PersonMiddleName: NULL}
+ - &PersonID005 {PersonFirstName: "Jobie", PersonLastName: "Carlile", PersonMiddleName: NULL}
+ - &PersonID006 {PersonFirstName: "Dave", PersonLastName: "Eiriksson", PersonMiddleName: NULL}
+ - &PersonID007 {PersonFirstName: "Joe", PersonLastName: "Crawford", PersonMiddleName: NULL}
+ - &PersonID008 {PersonFirstName: "Michelle ", PersonLastName: "Baker", PersonMiddleName: NULL}
  - &PersonID009 {PersonFirstName: "Jeff ", PersonLastName: "Horsburgh", PersonMiddleName: "S."}
  - &PersonID010 {PersonFirstName: "Amber", PersonLastName: "Jones", PersonMiddleName: "S."}
- - &PersonID011 {PersonFirstName: "Zach", PersonLastName: "Aanderud", PersonMiddleName: None}
+ - &PersonID011 {PersonFirstName: "Zach", PersonLastName: "Aanderud", PersonMiddleName: NULL}
 Affiliations:
- - &AffiliationID001 {IsPrimaryOrganizationContact: None, AffiliationEndDate: None, PrimaryAddress: None, PrimaryEmail: "chris.cox@usu.edu", OrganizationObj: *OrganizationID001, PrimaryPhone: None, PersonObj: *PersonID001, AffiliationStartDate: "2015-01-01", PersonLink: None}
- - &AffiliationID002 {IsPrimaryOrganizationContact: None, AffiliationEndDate: None, PrimaryAddress: None, PrimaryEmail: "david.bowling@utah.edu", OrganizationObj: *OrganizationID003, PrimaryPhone: None, PersonObj: *PersonID002, AffiliationStartDate: "2015-01-01", PersonLink: None}
- - &AffiliationID003 {IsPrimaryOrganizationContact: None, AffiliationEndDate: None, PrimaryAddress: None, PrimaryEmail: "scott.jones@usu.edu", OrganizationObj: *OrganizationID001, PrimaryPhone: None, PersonObj: *PersonID003, AffiliationStartDate: "2015-01-01", PersonLink: None}
- - &AffiliationID004 {IsPrimaryOrganizationContact: None, AffiliationEndDate: None, PrimaryAddress: None, PrimaryEmail: "jim.ehleringer@utah.edu", OrganizationObj: *OrganizationID003, PrimaryPhone: None, PersonObj: *PersonID004, AffiliationStartDate: "2015-01-01", PersonLink: None}
- - &AffiliationID005 {IsPrimaryOrganizationContact: None, AffiliationEndDate: None, PrimaryAddress: None, PrimaryEmail: "jobie.carlile@usu.edu", OrganizationObj: *OrganizationID001, PrimaryPhone: None, PersonObj: *PersonID005, AffiliationStartDate: "2015-01-01", PersonLink: None}
- - &AffiliationID006 {IsPrimaryOrganizationContact: None, AffiliationEndDate: None, PrimaryAddress: None, PrimaryEmail: "dave.eiriksson@utah.edu", OrganizationObj: *OrganizationID003, PrimaryPhone: None, PersonObj: *PersonID006, AffiliationStartDate: "2015-01-01", PersonLink: None}
- - &AffiliationID007 {IsPrimaryOrganizationContact: None, AffiliationEndDate: None, PrimaryAddress: None, PrimaryEmail: "joe_crawford@byu.edu", OrganizationObj: *OrganizationID004, PrimaryPhone: None, PersonObj: *PersonID007, AffiliationStartDate: "2015-01-01", PersonLink: None}
- - &AffiliationID008 {IsPrimaryOrganizationContact: None, AffiliationEndDate: None, PrimaryAddress: None, PrimaryEmail: "michelle.baker@usu.edu", OrganizationObj: *OrganizationID001, PrimaryPhone: None, PersonObj: *PersonID008, AffiliationStartDate: "2015-01-01", PersonLink: None}
- - &AffiliationID009 {IsPrimaryOrganizationContact: None, AffiliationEndDate: None, PrimaryAddress: None, PrimaryEmail: "jeff.horsburgh@usu.edu", OrganizationObj: *OrganizationID001, PrimaryPhone: None, PersonObj: *PersonID009, AffiliationStartDate: "2015-01-01", PersonLink: None}
- - &AffiliationID010 {IsPrimaryOrganizationContact: None, AffiliationEndDate: None, PrimaryAddress: None, PrimaryEmail: "amber.jones@usu.edu", OrganizationObj: *OrganizationID001, PrimaryPhone: None, PersonObj: *PersonID010, AffiliationStartDate: "2015-01-01", PersonLink: None}
- - &AffiliationID011 {IsPrimaryOrganizationContact: None, AffiliationEndDate: None, PrimaryAddress: None, PrimaryEmail: "zach_aanderud@byu.edu", OrganizationObj: *OrganizationID004, PrimaryPhone: None, PersonObj: *PersonID011, AffiliationStartDate: "2015-01-01", PersonLink: None}
+ - &AffiliationID001 {IsPrimaryOrganizationContact: NULL, AffiliationEndDate: NULL, PrimaryAddress: NULL, PrimaryEmail: "chris.cox@usu.edu", OrganizationObj: *OrganizationID001, PrimaryPhone: NULL, PersonObj: *PersonID001, AffiliationStartDate: "2015-01-01", PersonLink: NULL}
+ - &AffiliationID002 {IsPrimaryOrganizationContact: NULL, AffiliationEndDate: NULL, PrimaryAddress: NULL, PrimaryEmail: "david.bowling@utah.edu", OrganizationObj: *OrganizationID003, PrimaryPhone: NULL, PersonObj: *PersonID002, AffiliationStartDate: "2015-01-01", PersonLink: NULL}
+ - &AffiliationID003 {IsPrimaryOrganizationContact: NULL, AffiliationEndDate: NULL, PrimaryAddress: NULL, PrimaryEmail: "scott.jones@usu.edu", OrganizationObj: *OrganizationID001, PrimaryPhone: NULL, PersonObj: *PersonID003, AffiliationStartDate: "2015-01-01", PersonLink: NULL}
+ - &AffiliationID004 {IsPrimaryOrganizationContact: NULL, AffiliationEndDate: NULL, PrimaryAddress: NULL, PrimaryEmail: "jim.ehleringer@utah.edu", OrganizationObj: *OrganizationID003, PrimaryPhone: NULL, PersonObj: *PersonID004, AffiliationStartDate: "2015-01-01", PersonLink: NULL}
+ - &AffiliationID005 {IsPrimaryOrganizationContact: NULL, AffiliationEndDate: NULL, PrimaryAddress: NULL, PrimaryEmail: "jobie.carlile@usu.edu", OrganizationObj: *OrganizationID001, PrimaryPhone: NULL, PersonObj: *PersonID005, AffiliationStartDate: "2015-01-01", PersonLink: NULL}
+ - &AffiliationID006 {IsPrimaryOrganizationContact: NULL, AffiliationEndDate: NULL, PrimaryAddress: NULL, PrimaryEmail: "dave.eiriksson@utah.edu", OrganizationObj: *OrganizationID003, PrimaryPhone: NULL, PersonObj: *PersonID006, AffiliationStartDate: "2015-01-01", PersonLink: NULL}
+ - &AffiliationID007 {IsPrimaryOrganizationContact: NULL, AffiliationEndDate: NULL, PrimaryAddress: NULL, PrimaryEmail: "joe_crawford@byu.edu", OrganizationObj: *OrganizationID004, PrimaryPhone: NULL, PersonObj: *PersonID007, AffiliationStartDate: "2015-01-01", PersonLink: NULL}
+ - &AffiliationID008 {IsPrimaryOrganizationContact: NULL, AffiliationEndDate: NULL, PrimaryAddress: NULL, PrimaryEmail: "michelle.baker@usu.edu", OrganizationObj: *OrganizationID001, PrimaryPhone: NULL, PersonObj: *PersonID008, AffiliationStartDate: "2015-01-01", PersonLink: NULL}
+ - &AffiliationID009 {IsPrimaryOrganizationContact: NULL, AffiliationEndDate: NULL, PrimaryAddress: NULL, PrimaryEmail: "jeff.horsburgh@usu.edu", OrganizationObj: *OrganizationID001, PrimaryPhone: NULL, PersonObj: *PersonID009, AffiliationStartDate: "2015-01-01", PersonLink: NULL}
+ - &AffiliationID010 {IsPrimaryOrganizationContact: NULL, AffiliationEndDate: NULL, PrimaryAddress: NULL, PrimaryEmail: "amber.jones@usu.edu", OrganizationObj: *OrganizationID001, PrimaryPhone: NULL, PersonObj: *PersonID010, AffiliationStartDate: "2015-01-01", PersonLink: NULL}
+ - &AffiliationID011 {IsPrimaryOrganizationContact: NULL, AffiliationEndDate: NULL, PrimaryAddress: NULL, PrimaryEmail: "zach_aanderud@byu.edu", OrganizationObj: *OrganizationID004, PrimaryPhone: NULL, PersonObj: *PersonID011, AffiliationStartDate: "2015-01-01", PersonLink: NULL}
 SpatialReferences:
- - &SpatialReferenceID001 {SRSName: "Unknown", SRSDescription: "The spatial reference is unknown.", SRSLink: None, SRSCode: "Unknown"}
+ - &SpatialReferenceID001 {SRSName: "Unknown", SRSDescription: "The spatial reference is unknown.", SRSLink: NULL, SRSCode: "Unknown"}
  - &SpatialReferenceID002 {SRSName: "NAD27", SRSDescription: "Note: this CRS includes longitudes which are POSITIVE EAST. Replaced by NAD27(76) (code 4608) in Ontario, CGQ77 (code 4609) in Quebec, Mexican Datum of 1993 (code 4483) in Mexico, NAD83 (code 4279) in Canada (excl. Ontario & Quebec) & USA.", SRSLink: "http://www.epsg-registry.org/export.htm?wkt=urn:ogc:def:crs:EPSG::4267", SRSCode: "EPSG:4267"}
  - &SpatialReferenceID003 {SRSName: "NAD83", SRSDescription: "This CRS includes longitudes which are POSITIVE EAST. The adjustment included connections to Greenland and Mexico but the system has not been adopted there. Except in Alaska, for applications with an accuracy of better than 1m replaced by NAD83(HARN).", SRSLink: "http://www.epsg-registry.org/export.htm?wkt=urn:ogc:def:crs:EPSG::4269", SRSCode: "EPSG:4269"}
  - &SpatialReferenceID004 {SRSName: "WGS84", SRSDescription: "Horizontal component of 3D system. Used by the GPS satellite navigation system and for NATO military geodetic surveying.", SRSLink: "http://www.epsg-registry.org/export.htm?wkt=urn:ogc:def:crs:EPSG::4326", SRSCode: "EPSG:4326"}
 SamplingFeatures:
- - &SamplingFeatureID001 {SamplingFeatureUUID: "14A132E7-4429-4FDE-835B-23B08E4745EE", SamplingFeatureDescription: "Site at the Logan River in Cache County Utah at 600 south, which is Mendon Road. ", SamplingFeatureGeotypeCV: "Point", SamplingFeatureName: "Logan River at Mendon Road (600 South)", ElevationDatumCV: "EGM96", SamplingFeatureTypeCV: "Site", Elevation_m: 1353.469604, SamplingFeatureCode: "Site_LR_Mendon", FeatureGeometry: None}
+ - &SamplingFeatureID001 {SamplingFeatureUUID: "14A132E7-4429-4FDE-835B-23B08E4745EE", SamplingFeatureDescription: "Site at the Logan River in Cache County Utah at 600 south, which is Mendon Road. ", SamplingFeatureGeotypeCV: "Point", SamplingFeatureName: "Logan River at Mendon Road (600 South)", ElevationDatumCV: "EGM96", SamplingFeatureTypeCV: "Site", Elevation_m: 1353.469604, SamplingFeatureCode: "Site_LR_Mendon", FeatureGeometry: NULL}
 Sites:
  - {SpatialReferenceObj: *SpatialReferenceID004, SamplingFeatureObj: *SamplingFeatureID001, Longitude: -111.886928, Latitude: 41.720533, SiteTypeCV: "Stream"}
 Units:
- - &UnitID001 {UnitsAbbreviation: "uS/cm", UnitsLink: None, UnitsName: "microsiemens per centimeter", UnitsTypeCV: "Electrical conductivity"}
- - &UnitID002 {UnitsAbbreviation: "m", UnitsLink: None, UnitsName: "minute", UnitsTypeCV: "Time"}
+ - &UnitID001 {UnitsAbbreviation: "uS/cm", UnitsLink: NULL, UnitsName: "microsiemens per centimeter", UnitsTypeCV: "Electrical conductivity"}
+ - &UnitID002 {UnitsAbbreviation: "m", UnitsLink: NULL, UnitsName: "minute", UnitsTypeCV: "Time"}
 Methods:
  - &MethodID001 {MethodDescription: " Specific conductance measured using a YSI EXO multi-parameter water quality sonde. ", MethodCode: "YSI_EXO_SpCond", OrganizationObj: *OrganizationID005, MethodTypeCV: "Instrument deployment", MethodName: "Specific conductance from YSI EXO sonde", MethodLink: "http://www.exowater.com"}
 Variables:
- - &VariableID001 {SpeciationCV: None, VariableNameCV: "Specific Conductance", VariableTypeCV: "Water quality", NoDataValue: -9999.0, VariableDefinition: None, VariableCode: "SpCond"}
+ - &VariableID001 {SpeciationCV: NULL, VariableNameCV: "Specific Conductance", VariableTypeCV: "Water quality", NoDataValue: -9999.0, VariableDefinition: NULL, VariableCode: "SpCond"}
 ProcessingLevels:
  - &ProcessingLevelID001 {Definition: "Raw Data", Explanation: "Raw and unprocessed data and data products that have not undergone quality control.  Depending on the variable, data type, and data transmission system, raw data may be available within seconds or minutes after the measurements have been made. Examples include real time precipitation, streamflow and water quality measurements.", ProcessingLevelCode: "0"}
 Actions:
- - &ActionID001 {EndDateTime: None, ActionDescription: None, ActionFileLink: None, MethodObj: *MethodID001, BeginDateTime: "2015-01-01 00:15:00", BeginDateTimeUTCOffset: -7, ActionTypeCV: "Observation", EndDateTimeUTCOffset: None}
+ - &ActionID001 {EndDateTime: NULL, ActionDescription: NULL, ActionFileLink: NULL, MethodObj: *MethodID001, BeginDateTime: "2015-01-01 00:15:00", BeginDateTimeUTCOffset: -7, ActionTypeCV: "Observation", EndDateTimeUTCOffset: NULL}
 FeatureActions:
  - &FeatureActionID001 {SamplingFeatureObj: *SamplingFeatureID001, ActionObj: *ActionID001}
 ActionBy:
- - {AffiliationObj: *AffiliationID001, IsActionLead: True, RoleDescription: None, ActionObj: *ActionID001}
+ - {AffiliationObj: *AffiliationID001, IsActionLead: True, RoleDescription: NULL, ActionObj: *ActionID001}
 Results:
- - &ResultID001 {ResultUUID: "11A58866-9BAB-4AC1-B937-90A8B0AE620D", ResultTypeCV: "Time series coverage", StatusCV: None, ValidDateTime: None, ValueCount: 34649, TaxonomicClassifierObj: None, VariableObj: *VariableID001, ResultDateTimeUTCOffset: None, FeatureActionObj: *FeatureActionID001, ValidDateTimeUTCOffset: None, ProcessingLevelObj: *ProcessingLevelID001, UnitsObj: *UnitID001, SampledMediumCV: "Liquid aqueous", ResultDateTime: None}
+ - &ResultID001 {ResultUUID: "11A58866-9BAB-4AC1-B937-90A8B0AE620D", ResultTypeCV: "Time series coverage", StatusCV: NULL, ValidDateTime: NULL, ValueCount: 34649, TaxonomicClassifierObj: NULL, VariableObj: *VariableID001, ResultDateTimeUTCOffset: NULL, FeatureActionObj: *FeatureActionID001, ValidDateTimeUTCOffset: NULL, ProcessingLevelObj: *ProcessingLevelID001, UnitsObj: *UnitID001, SampledMediumCV: "Liquid aqueous", ResultDateTime: NULL}
 DataSetsResults:
  - {DataSetObj: *DatasetID0001, ResultObj: *ResultID001}
 TimeSeriesResults:
- - &TimeSeriesResultID001 {ResultObj: *ResultID001, SpatialReferenceObj: None, XLocation: None, XLocationUnitsObj: None, ZLocation: None, ZLocationUnitsObj: None, YLocation: None, IntendedTimeSpacing: None, IntendedTimeSpacingUnitsObj: None, YLocationUnitsObj: None, AggregationStatisticCV: "Continuous"}
+ - &TimeSeriesResultID001 {ResultObj: *ResultID001, SpatialReferenceObj: NULL, XLocation: NULL, XLocationUnitsObj: NULL, ZLocation: NULL, ZLocationUnitsObj: NULL, YLocation: NULL, IntendedTimeSpacing: NULL, IntendedTimeSpacingUnitsObj: NULL, YLocationUnitsObj: NULL, AggregationStatisticCV: "Continuous"}
 TimeSeriesResultValues:
  ColumnDefinitions:
    - {ColumnNumber: 0001, Label: ValueDateTime, ODM2Field: ValueDateTime}
@@ -27987,11 +27987,11 @@ TimeSeriesResultValues:
    - ['2015-10-21 18:15:00', -7, 443.5]
    - ['2015-10-21 18:30:00', -7, 442.5]
    - ['2015-10-21 18:45:00', -7, 441.3]
-   - ['2015-10-21 19:00:00', -7, None]
-   - ['2015-10-21 19:15:00', -7, None]
-   - ['2015-10-21 19:30:00', -7, None]
-   - ['2015-10-21 19:45:00', -7, None]
-   - ['2015-10-21 20:00:00', -7, None]
+   - ['2015-10-21 19:00:00', -7, NULL]
+   - ['2015-10-21 19:15:00', -7, NULL]
+   - ['2015-10-21 19:30:00', -7, NULL]
+   - ['2015-10-21 19:45:00', -7, NULL]
+   - ['2015-10-21 20:00:00', -7, NULL]
    - ['2015-10-21 20:15:00', -7, 445.4]
    - ['2015-10-21 20:30:00', -7, 447.4]
    - ['2015-10-21 20:45:00', -7, 448.8]

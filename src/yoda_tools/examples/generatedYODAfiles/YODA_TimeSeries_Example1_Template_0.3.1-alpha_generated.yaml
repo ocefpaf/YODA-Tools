@@ -4,52 +4,52 @@ YODA:
 DataSets:
  - &DatasetID0001 {DataSetTypeCV: "Multi-time series", DataSetAbstract: "Air temperature at the TW Daniels Experimental Forest Climate Station. The data were measured using a Campbell Scientific HC2S3 temperature and relative humidity sensor. Measurements represent the average over the 15 minute recording period.", DataSetUUID: "B50BF8EA-E7AD-4B2A-8F12-6EC980DE8070", DataSetCode: "TWDEF_AirTemp", DataSetTitle: "Air temperature at the TW Daniels Experimental Forest Climate Station"}
 Organizations:
- - &OrganizationID001 {OrganizationLink: "http://www.usu.edu", OrganizationName: "Utah State University", OrganizationCode: "USU", OrganizationTypeCV: "University", OrganizationDescription: None}
- - &OrganizationID002 {OrganizationLink: "http://uwrl.usu.edu", OrganizationName: "Utah Water Research Laboratory", OrganizationCode: "UWRL", OrganizationTypeCV: "Research organization", OrganizationDescription: None}
+ - &OrganizationID001 {OrganizationLink: "http://www.usu.edu", OrganizationName: "Utah State University", OrganizationCode: "USU", OrganizationTypeCV: "University", OrganizationDescription: NULL}
+ - &OrganizationID002 {OrganizationLink: "http://uwrl.usu.edu", OrganizationName: "Utah Water Research Laboratory", OrganizationCode: "UWRL", OrganizationTypeCV: "Research organization", OrganizationDescription: NULL}
 People:
  - &PersonID001 {PersonFirstName: "Jeffery", PersonLastName: "Horsburgh", PersonMiddleName: "S."}
- - &PersonID002 {PersonFirstName: "Amber", PersonLastName: "Spackman Jones", PersonMiddleName: None}
+ - &PersonID002 {PersonFirstName: "Amber", PersonLastName: "Spackman Jones", PersonMiddleName: NULL}
 Affiliations:
- - &AffiliationID001 {IsPrimaryOrganizationContact: None, AffiliationEndDate: None, PrimaryAddress: "Civil and Environmental Engineering, Utah Water Research Laboratory, 8200 Old Main Hill, Logan, UT 84322-8200", PrimaryEmail: "jeff.horsburgh@usu.edu", OrganizationObj: *OrganizationID001, PrimaryPhone: None, PersonObj: *PersonID001, AffiliationStartDate: "2014-01-01", PersonLink: None}
- - &AffiliationID002 {IsPrimaryOrganizationContact: None, AffiliationEndDate: None, PrimaryAddress: "Utah Water Research Laboratory, 8200 Old Main Hill, Logan, UT 84322-8200", PrimaryEmail: "amber.jones@usu.edu", OrganizationObj: *OrganizationID002, PrimaryPhone: None, PersonObj: *PersonID002, AffiliationStartDate: "2015-01-01", PersonLink: None}
+ - &AffiliationID001 {IsPrimaryOrganizationContact: NULL, AffiliationEndDate: NULL, PrimaryAddress: "Civil and Environmental Engineering, Utah Water Research Laboratory, 8200 Old Main Hill, Logan, UT 84322-8200", PrimaryEmail: "jeff.horsburgh@usu.edu", OrganizationObj: *OrganizationID001, PrimaryPhone: NULL, PersonObj: *PersonID001, AffiliationStartDate: "2014-01-01", PersonLink: NULL}
+ - &AffiliationID002 {IsPrimaryOrganizationContact: NULL, AffiliationEndDate: NULL, PrimaryAddress: "Utah Water Research Laboratory, 8200 Old Main Hill, Logan, UT 84322-8200", PrimaryEmail: "amber.jones@usu.edu", OrganizationObj: *OrganizationID002, PrimaryPhone: NULL, PersonObj: *PersonID002, AffiliationStartDate: "2015-01-01", PersonLink: NULL}
 SpatialReferences:
- - &SpatialReferenceID001 {SRSName: "Unknown", SRSDescription: "The spatial reference is unknown.", SRSLink: None, SRSCode: "Unknown"}
+ - &SpatialReferenceID001 {SRSName: "Unknown", SRSDescription: "The spatial reference is unknown.", SRSLink: NULL, SRSCode: "Unknown"}
  - &SpatialReferenceID002 {SRSName: "NAD27", SRSDescription: "Note: this CRS includes longitudes which are POSITIVE EAST. Replaced by NAD27(76) (code 4608) in Ontario, CGQ77 (code 4609) in Quebec, Mexican Datum of 1993 (code 4483) in Mexico, NAD83 (code 4279) in Canada (excl. Ontario & Quebec) & USA.", SRSLink: "http://www.epsg-registry.org/export.htm?wkt=urn:ogc:def:crs:EPSG::4267", SRSCode: "EPSG:4267"}
  - &SpatialReferenceID003 {SRSName: "NAD83", SRSDescription: "This CRS includes longitudes which are POSITIVE EAST. The adjustment included connections to Greenland and Mexico but the system has not been adopted there. Except in Alaska, for applications with an accuracy of better than 1m replaced by NAD83(HARN).", SRSLink: "http://www.epsg-registry.org/export.htm?wkt=urn:ogc:def:crs:EPSG::4269", SRSCode: "EPSG:4269"}
  - &SpatialReferenceID004 {SRSName: "WGS84", SRSDescription: "Horizontal component of 3D system. Used by the GPS satellite navigation system and for NATO military geodetic surveying.", SRSLink: "http://www.epsg-registry.org/export.htm?wkt=urn:ogc:def:crs:EPSG::4326", SRSCode: "EPSG:4326"}
 SamplingFeatures:
- - &SamplingFeatureID001 {SamplingFeatureUUID: "572DE772-2AF1-4C44-8C6A-074E82273C10", SamplingFeatureDescription: "This is a continuous atmospheric monitoring site that is part of the Gradients Along Mountain to Urban Transitions (GAMUT) monitoring network.", SamplingFeatureGeotypeCV: "Point", SamplingFeatureName: "Climate Station at TW Daniels Experimental Forest", ElevationDatumCV: "NGVD29", SamplingFeatureTypeCV: "Site", Elevation_m: 2629.2, SamplingFeatureCode: "LR_TWDEF_C", FeatureGeometry: None}
+ - &SamplingFeatureID001 {SamplingFeatureUUID: "572DE772-2AF1-4C44-8C6A-074E82273C10", SamplingFeatureDescription: "This is a continuous atmospheric monitoring site that is part of the Gradients Along Mountain to Urban Transitions (GAMUT) monitoring network.", SamplingFeatureGeotypeCV: "Point", SamplingFeatureName: "Climate Station at TW Daniels Experimental Forest", ElevationDatumCV: "NGVD29", SamplingFeatureTypeCV: "Site", Elevation_m: 2629.2, SamplingFeatureCode: "LR_TWDEF_C", FeatureGeometry: NULL}
 Sites:
  - {SpatialReferenceObj: *SpatialReferenceID004, SamplingFeatureObj: *SamplingFeatureID001, Longitude: -111.507494, Latitude: 41.864805, SiteTypeCV: "Atmosphere"}
 Units:
- - &UnitID001 {UnitsAbbreviation: "degC", UnitsLink: None, UnitsName: "degree celsius", UnitsTypeCV: "Temperature"}
- - &UnitID002 {UnitsAbbreviation: "min", UnitsLink: None, UnitsName: "minute", UnitsTypeCV: "Time"}
+ - &UnitID001 {UnitsAbbreviation: "degC", UnitsLink: NULL, UnitsName: "degree celsius", UnitsTypeCV: "Temperature"}
+ - &UnitID002 {UnitsAbbreviation: "min", UnitsLink: NULL, UnitsName: "minute", UnitsTypeCV: "Time"}
 Methods:
  - &MethodID001 {MethodDescription: "Air temperature measured using a Campbell Scientific HC2S3 temperature and relative humidity sensor. Average over 15 minutes.", MethodCode: "Air_Temp_HC2S3", OrganizationObj: *OrganizationID002, MethodTypeCV: "Instrument deployment", MethodName: "HC2S3 Air Temperature", MethodLink: "http://data.iutahepscor.org"}
 Variables:
- - &VariableID001 {SpeciationCV: None, VariableNameCV: "Temperature", VariableTypeCV: "Climate", NoDataValue: -9999.0, VariableDefinition: None, VariableCode: "AirtTemp_Avg"}
- - &VariableID002 {SpeciationCV: None, VariableNameCV: "Temperature", VariableTypeCV: "Climate", NoDataValue: -9999.0, VariableDefinition: None, VariableCode: "AirtTemp_Min"}
- - &VariableID003 {SpeciationCV: None, VariableNameCV: "Temperature", VariableTypeCV: "Climate", NoDataValue: -9999.0, VariableDefinition: None, VariableCode: "AirtTemp_Max"}
+ - &VariableID001 {SpeciationCV: NULL, VariableNameCV: "Temperature", VariableTypeCV: "Climate", NoDataValue: -9999.0, VariableDefinition: NULL, VariableCode: "AirtTemp_Avg"}
+ - &VariableID002 {SpeciationCV: NULL, VariableNameCV: "Temperature", VariableTypeCV: "Climate", NoDataValue: -9999.0, VariableDefinition: NULL, VariableCode: "AirtTemp_Min"}
+ - &VariableID003 {SpeciationCV: NULL, VariableNameCV: "Temperature", VariableTypeCV: "Climate", NoDataValue: -9999.0, VariableDefinition: NULL, VariableCode: "AirtTemp_Max"}
 ProcessingLevels:
  - &ProcessingLevelID001 {Definition: "Raw Data", Explanation: "Raw and unprocessed data and data products that have not undergone quality control.  Depending on the variable, data type, and data transmission system, raw data may be available within seconds or minutes after the measurements have been made. Examples include real time precipitation, streamflow and water quality measurements.", ProcessingLevelCode: "0"}
 Actions:
- - &ActionID001 {EndDateTime: None, ActionDescription: None, ActionFileLink: None, MethodObj: *MethodID001, BeginDateTime: "2010-06-03 11:15:00", BeginDateTimeUTCOffset: -5, ActionTypeCV: "Observation", EndDateTimeUTCOffset: None}
+ - &ActionID001 {EndDateTime: NULL, ActionDescription: NULL, ActionFileLink: NULL, MethodObj: *MethodID001, BeginDateTime: "2010-06-03 11:15:00", BeginDateTimeUTCOffset: -5, ActionTypeCV: "Observation", EndDateTimeUTCOffset: NULL}
 FeatureActions:
  - &FeatureActionID001 {SamplingFeatureObj: *SamplingFeatureID001, ActionObj: *ActionID001}
 ActionBy:
- - {AffiliationObj: *AffiliationID002, IsActionLead: True, RoleDescription: None, ActionObj: *ActionID001}
+ - {AffiliationObj: *AffiliationID002, IsActionLead: True, RoleDescription: NULL, ActionObj: *ActionID001}
 Results:
- - &ResultID001 {ResultUUID: "5861CFFC-4A0E-4DF6-ACCD-D4F8171DD99C", ResultTypeCV: "Time series coverage", StatusCV: None, ValidDateTime: None, ValueCount: 3359, TaxonomicClassifierObj: None, VariableObj: *VariableID001, ResultDateTimeUTCOffset: None, FeatureActionObj: *FeatureActionID001, ValidDateTimeUTCOffset: None, ProcessingLevelObj: *ProcessingLevelID001, UnitsObj: *UnitID001, SampledMediumCV: "Gas", ResultDateTime: None}
- - &ResultID002 {ResultUUID: "71F7D31E-26A7-4D11-B6F6-C2CAD5D96B92", ResultTypeCV: "Time series coverage", StatusCV: None, ValidDateTime: None, ValueCount: 3359, TaxonomicClassifierObj: None, VariableObj: *VariableID002, ResultDateTimeUTCOffset: None, FeatureActionObj: *FeatureActionID001, ValidDateTimeUTCOffset: None, ProcessingLevelObj: *ProcessingLevelID001, UnitsObj: *UnitID001, SampledMediumCV: "Gas", ResultDateTime: None}
- - &ResultID003 {ResultUUID: "435DA617-52E3-446B-8955-8F5F2D577CF6", ResultTypeCV: "Time series coverage", StatusCV: None, ValidDateTime: None, ValueCount: 3359, TaxonomicClassifierObj: None, VariableObj: *VariableID003, ResultDateTimeUTCOffset: None, FeatureActionObj: *FeatureActionID001, ValidDateTimeUTCOffset: None, ProcessingLevelObj: *ProcessingLevelID001, UnitsObj: *UnitID001, SampledMediumCV: "Gas", ResultDateTime: None}
+ - &ResultID001 {ResultUUID: "5861CFFC-4A0E-4DF6-ACCD-D4F8171DD99C", ResultTypeCV: "Time series coverage", StatusCV: NULL, ValidDateTime: NULL, ValueCount: 3359, TaxonomicClassifierObj: NULL, VariableObj: *VariableID001, ResultDateTimeUTCOffset: NULL, FeatureActionObj: *FeatureActionID001, ValidDateTimeUTCOffset: NULL, ProcessingLevelObj: *ProcessingLevelID001, UnitsObj: *UnitID001, SampledMediumCV: "Gas", ResultDateTime: NULL}
+ - &ResultID002 {ResultUUID: "71F7D31E-26A7-4D11-B6F6-C2CAD5D96B92", ResultTypeCV: "Time series coverage", StatusCV: NULL, ValidDateTime: NULL, ValueCount: 3359, TaxonomicClassifierObj: NULL, VariableObj: *VariableID002, ResultDateTimeUTCOffset: NULL, FeatureActionObj: *FeatureActionID001, ValidDateTimeUTCOffset: NULL, ProcessingLevelObj: *ProcessingLevelID001, UnitsObj: *UnitID001, SampledMediumCV: "Gas", ResultDateTime: NULL}
+ - &ResultID003 {ResultUUID: "435DA617-52E3-446B-8955-8F5F2D577CF6", ResultTypeCV: "Time series coverage", StatusCV: NULL, ValidDateTime: NULL, ValueCount: 3359, TaxonomicClassifierObj: NULL, VariableObj: *VariableID003, ResultDateTimeUTCOffset: NULL, FeatureActionObj: *FeatureActionID001, ValidDateTimeUTCOffset: NULL, ProcessingLevelObj: *ProcessingLevelID001, UnitsObj: *UnitID001, SampledMediumCV: "Gas", ResultDateTime: NULL}
 DataSetsResults:
  - {DataSetObj: *DatasetID0001, ResultObj: *ResultID002}
  - {DataSetObj: *DatasetID0001, ResultObj: *ResultID001}
  - {DataSetObj: *DatasetID0001, ResultObj: *ResultID003}
 TimeSeriesResults:
- - &TimeSeriesResultID001 {ResultObj: *ResultID001, SpatialReferenceObj: None, XLocation: None, XLocationUnitsObj: None, ZLocation: None, ZLocationUnitsObj: None, YLocation: None, IntendedTimeSpacing: None, IntendedTimeSpacingUnitsObj: None, YLocationUnitsObj: None, AggregationStatisticCV: "Average"}
- - &TimeSeriesResultID002 {ResultObj: *ResultID002, SpatialReferenceObj: None, XLocation: None, XLocationUnitsObj: None, ZLocation: None, ZLocationUnitsObj: None, YLocation: None, IntendedTimeSpacing: None, IntendedTimeSpacingUnitsObj: None, YLocationUnitsObj: None, AggregationStatisticCV: "Minimum"}
- - &TimeSeriesResultID003 {ResultObj: *ResultID003, SpatialReferenceObj: None, XLocation: None, XLocationUnitsObj: None, ZLocation: None, ZLocationUnitsObj: None, YLocation: None, IntendedTimeSpacing: None, IntendedTimeSpacingUnitsObj: None, YLocationUnitsObj: None, AggregationStatisticCV: "Maximum"}
+ - &TimeSeriesResultID001 {ResultObj: *ResultID001, SpatialReferenceObj: NULL, XLocation: NULL, XLocationUnitsObj: NULL, ZLocation: NULL, ZLocationUnitsObj: NULL, YLocation: NULL, IntendedTimeSpacing: NULL, IntendedTimeSpacingUnitsObj: NULL, YLocationUnitsObj: NULL, AggregationStatisticCV: "Average"}
+ - &TimeSeriesResultID002 {ResultObj: *ResultID002, SpatialReferenceObj: NULL, XLocation: NULL, XLocationUnitsObj: NULL, ZLocation: NULL, ZLocationUnitsObj: NULL, YLocation: NULL, IntendedTimeSpacing: NULL, IntendedTimeSpacingUnitsObj: NULL, YLocationUnitsObj: NULL, AggregationStatisticCV: "Minimum"}
+ - &TimeSeriesResultID003 {ResultObj: *ResultID003, SpatialReferenceObj: NULL, XLocation: NULL, XLocationUnitsObj: NULL, ZLocation: NULL, ZLocationUnitsObj: NULL, YLocation: NULL, IntendedTimeSpacing: NULL, IntendedTimeSpacingUnitsObj: NULL, YLocationUnitsObj: NULL, AggregationStatisticCV: "Maximum"}
 TimeSeriesResultValues:
  ColumnDefinitions:
    - {ColumnNumber: 0001, Label: ValueDateTime, ODM2Field: ValueDateTime}

@@ -45,7 +45,7 @@ class TimeseriesYoda(object):
         yoda_header += "DateCreated: \"{0}\", ".format(datetime.datetime.strftime(header.VocabUpdate,'%Y-%m-%d'))
         yoda_header += "DateUpdated: \"{0}\"".format(datetime.datetime.strftime(header.VocabUpdate,'%Y-%m-%d'))
         yoda_header += "}\n"
-        return yoda_header
+        return yoda_header.replace('None','NULL')
 
     def get_dataset(self):
         ds = self.tdao.get_dataset()
@@ -54,13 +54,13 @@ class TimeseriesYoda(object):
         ds_yaml = self.get_odm2model_yaml(ds,attrs,ds_yaml)
         k  = ds_yaml.rfind(',')
         ds_yaml = ds_yaml[:k] + "}\n"
-        return ds_yaml
+        return ds_yaml.replace('None','NULL')
 
     def get_datasetresults(self):
         dsr_yaml = "DataSetsResults:\n"
         for key in self._references_result.keys():
             dsr_yaml += " - {DataSetObj: *DatasetID0001, ResultObj: %s}\n" % self._references_result[key]
-        return dsr_yaml
+        return dsr_yaml.replace('None','NULL')
 
     def get_organizations(self):
         orgs = self.tdao.get_all_organizations()
@@ -76,7 +76,7 @@ class TimeseriesYoda(object):
             k  = org_yaml.rfind(',')
             org_yaml = org_yaml[:k] + "}\n"
             index += 1
-        return org_yaml
+        return org_yaml.replace('None','NULL')
 
     def get_people(self):
         people = self.tdao.get_all_people()
@@ -91,7 +91,7 @@ class TimeseriesYoda(object):
             k  = p_yaml.rfind(',')
             p_yaml = p_yaml[:k] + "}\n"
             index += 1
-        return p_yaml
+        return p_yaml.replace('None','NULL')
 
     def get_affiliations(self):
         affs = self.tdao.get_all_affiliations()
@@ -122,7 +122,7 @@ class TimeseriesYoda(object):
             k  = aff_yaml.rfind(',')
             aff_yaml = aff_yaml[:k] + "}\n"
             index += 1
-        return aff_yaml
+        return aff_yaml.replace('None','NULL')
 
     def get_spatialreferences(self):
         srs = self.tdao.get_all_spatialreferences()
@@ -138,7 +138,7 @@ class TimeseriesYoda(object):
             k  = sr_yaml.rfind(',')
             sr_yaml = sr_yaml[:k] + "}\n"
             index += 1
-        return sr_yaml
+        return sr_yaml.replace('None','NULL')
 
     def get_samplingfeatures(self):
         psfs = self.tdao.get_all_samplingfeatures()
@@ -155,7 +155,7 @@ class TimeseriesYoda(object):
             k  = sf_yaml.rfind(',')
             sf_yaml = sf_yaml[:k] + "}\n"
             index += 1
-        return sf_yaml
+        return sf_yaml.replace('None','NULL')
 
     def get_sites(self):
         sites = self.tdao.get_all_sites()
@@ -170,7 +170,7 @@ class TimeseriesYoda(object):
             site_yaml = self.get_odm2model_yaml(site,attrs,site_yaml)
             k  = site_yaml.rfind(',')
             site_yaml = site_yaml[:k] + "}\n"
-        return site_yaml
+        return site_yaml.replace('None','NULL')
 
     def get_relatedfeatures(self):
         rfs = self.tdao.get_all_relatedfeatures()
@@ -189,7 +189,7 @@ class TimeseriesYoda(object):
             rf_yaml = self.get_odm2model_yaml(rf,attrs,rf_yaml)
             k  = rf_yaml.rfind(',')
             rf_yaml = rf_yaml[:k] + "}\n"
-        return rf_yaml
+        return rf_yaml.replace('None','NULL')
 
     def get_units(self):
         units = self.tdao.get_all_units()
@@ -205,7 +205,7 @@ class TimeseriesYoda(object):
             k  = u_yaml.rfind(',')
             u_yaml = u_yaml[:k] + "}\n"
             index += 1
-        return u_yaml
+        return u_yaml.replace('None','NULL')
 
     def get_methods(self):
         methods = self.tdao.get_all_methods()
@@ -226,7 +226,7 @@ class TimeseriesYoda(object):
             k  = m_yaml.rfind(',')
             m_yaml = m_yaml[:k] + "}\n"
             index += 1
-        return m_yaml
+        return m_yaml.replace('None','NULL')
 
     def get_variables(self):
         varis = self.tdao.get_all_variables()
@@ -242,7 +242,7 @@ class TimeseriesYoda(object):
             k  = v_yaml.rfind(',')
             v_yaml = v_yaml[:k] + "}\n"
             index += 1
-        return v_yaml
+        return v_yaml.replace('None','NULL')
 
     def get_processinglevels(self):
         pls = self.tdao.get_all_processinglevels()
@@ -258,7 +258,7 @@ class TimeseriesYoda(object):
             k  = pl_yaml.rfind(',')
             pl_yaml = pl_yaml[:k] + "}\n"
             index += 1
-        return pl_yaml
+        return pl_yaml.replace('None','NULL')
 
     def get_actions(self):
         actions = self.tdao.get_all_actions()
@@ -277,7 +277,7 @@ class TimeseriesYoda(object):
             k  = a_yaml.rfind(',')
             a_yaml = a_yaml[:k] + "}\n"
             index += 1
-        return a_yaml
+        return a_yaml.replace('None','NULL')
 
     def get_featureactions(self):
         factions = self.tdao.get_all_featureactions()
@@ -302,7 +302,7 @@ class TimeseriesYoda(object):
             k  = fa_yaml.rfind(',')
             fa_yaml = fa_yaml[:k] + "}\n"
             index += 1
-        return fa_yaml
+        return fa_yaml.replace('None','NULL')
 
     def get_actionbys(self):
         actionbys = self.tdao.get_all_actionbys()
@@ -326,7 +326,7 @@ class TimeseriesYoda(object):
             ab_yaml = self.get_odm2model_yaml(ab,attrs,ab_yaml)
             k  = ab_yaml.rfind(',')
             ab_yaml = ab_yaml[:k] + "}\n"
-        return ab_yaml
+        return ab_yaml.replace('None','NULL')
 
     def get_results(self):
         results = self.tdao.get_all_results()
@@ -359,7 +359,7 @@ class TimeseriesYoda(object):
             k  = r_yaml.rfind(',')
             r_yaml = r_yaml[:k] + "}\n"
             index += 1
-        return r_yaml
+        return r_yaml.replace('None','NULL')
 
     def get_timeseriesresults(self):
         tresults = self.tdao.get_all_timeseriesresults()
@@ -390,7 +390,7 @@ class TimeseriesYoda(object):
             k  = tr_yaml.rfind(',')
             tr_yaml = tr_yaml[:k] + "}\n"
             index += 1
-        return tr_yaml
+        return tr_yaml.replace('None','NULL')
 
     def get_timeseriesresultvalues(self):
         trvs = self.tdao.get_all_timeseriesresultvalues()
@@ -445,7 +445,7 @@ class TimeseriesYoda(object):
                     v = int(v)
                 dv_array.append(v)
             trv_yaml +='   - {0}\n'.format(dv_array)
-        return trv_yaml
+        return trv_yaml.replace('None','NULL')
 
     def create_yoda(self,out_file):
         with open(out_file, 'w') as yaml_schema_file:
