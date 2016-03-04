@@ -27,7 +27,7 @@ except ImportError as e:
 
 # Create a connection to the ODM2 database
 # ----------------------------------------
-session_factory = dbconnection.createConnection('mysql', 'localhost', 'odm2', 'ODM', 'odm')
+session_factory = dbconnection.createConnection('postgresql', 'localhost', 'odm2', 'odm2', 'odm2')
 
 
 # Create a connection for each of the schemas. Currently the schemas each have a different
@@ -49,7 +49,8 @@ _engine = session_factory.engine
 
 
 ## Working files
-file='iUTAH_MultiTimeSeriesExample_CompactHeader.yaml'
+#file='iUTAH_MultiTimeSeriesExample_CompactHeader.yaml'
+file='YODA_TimeSeries_Example1_Template_0.3.0-alpha.yaml'
 
 _session.autoflush = False
 

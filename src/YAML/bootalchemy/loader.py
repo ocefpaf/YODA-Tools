@@ -572,7 +572,6 @@ class Loader(object):
         group = None
         skip_keys = ['flush', 'commit', 'clear']
         try:
-            print "Modules: ", self.modules
             for group in data:
                 # print "Group: ", group
                 for name, items in group.iteritems():

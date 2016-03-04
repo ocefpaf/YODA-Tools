@@ -1,7 +1,7 @@
 """
 Example using bootalchemy (if the model is within the same module)
 """
-from _yaml import ScannerError
+#from _yaml import ScannerError
 from .bootalchemy.loader import Loader, YamlLoader
 from odm2api.ODM2 import serviceBase
 import odm2api.ODM2.models as models
@@ -85,8 +85,8 @@ class YamlFunctions(object):
 
         # load the Time Series Result information
         self._session.flush()
-        yl.loadTimeSeriesResults(self._session, self._engine, timeSeries)
-        self._session.flush()
+        #yl.loadTimeSeriesResults(self._session, self._engine, timeSeries)
+        #self._session.flush()
 
     def loadFromFiles(self, files):
         """
