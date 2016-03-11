@@ -4,12 +4,12 @@ Prototyping a tool to validate and manage loading of YODA files
 
 Command line:
 ```
-yoda [command] [options]
+yodatool.py [command] [options]
 ```
 
 Testing for validating a yoda file:
 ```
-usage: yoda.py validate [-h] [--type TYPE] [--level LEVEL] [-c] yoda_file
+usage: yodatool.py validate [-h] [--type TYPE] [--level LEVEL] [-c] yoda_file
 
 positional arguments:
   yoda_file      yoda file name
@@ -20,11 +20,11 @@ optional arguments:
   --level LEVEL  validation level: 1 for coarse, 2 for medium, 3 for fine
   -c, --cvtype   validate CV types
 Example:
-  $ python yoda.py validate --type timeseries --level 1 ./examples/YODA_TimeSeries_Example1_Template_0.3.1-alpha.yaml 
+  $ python yodatool.py validate --type timeseries --level 1 yodatool/examples/YODA_TimeSeries_Example1_Template_0.3.1-alpha.yaml 
 ```
 Testing for generating yoda file from xl file
 ```
-usage: yoda.py generate [-h] [--type TYPE] xl_file out_file
+usage: yodatool.py generate [-h] [--type TYPE] xl_file out_file
 
 positional arguments:
   xl_file      xl file name (input)
@@ -34,7 +34,7 @@ optional arguments:
   -h, --help   show this help message and exit
   --type TYPE  data type: measurement, timeseries
 Example:
-  $ python yoda.py generate --type measurement ./examples/YODA_Specimen_TEMPLATE_WORKING.xlsm generated_measurement.yaml
+  $ python yodatool.py generate --type measurement yodatool/examples/YODA_Specimen_TEMPLATE_WORKING.xlsm generated_measurement.yaml
 ```
 
 Intitial thoguhts:
