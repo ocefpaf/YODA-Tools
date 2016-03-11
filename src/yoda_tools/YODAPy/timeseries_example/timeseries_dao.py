@@ -682,7 +682,7 @@ class TimeseriesXlDao(BaseXldao):
         sheet = xw.Sheet(Sheet_Names["11"])
         if sheet is None:
             return None
-        start_row = 1
+        start_row = 2
         start_col = 1
         last_col = len(datavalue_header)
         last_row = xw.Range(sheet,'A1').table.last_cell.row
@@ -692,7 +692,7 @@ class TimeseriesXlDao(BaseXldao):
             num_partition = int(math.ceil(float(last_row)/float(max_row)))
         datavalueResults = []
         if num_partition > 0:
-            partition_row = 20000
+            partition_row = 20001
             while num_partition > 0:
                 DataValues = xw.Range(sheet,(start_row,start_col),(partition_row,last_col)).value
                 for dv in DataValues:
@@ -705,7 +705,7 @@ class TimeseriesXlDao(BaseXldao):
                 num_partition -= 1
         else:
             DataValues = xw.Range(sheet,(start_row,start_col),(last_row,last_col)).value
-            for dv in DataValues[1:]:
+            for dv in DataValues:
                 dvobj = model.DataValue(datavalue_header,dv)
                 datavalueResults.append(dvobj)
         return datavalueResults

@@ -294,8 +294,11 @@ class TimeseriesYoda(object):
             setattr(fa,"SamplingFeatureObj",self._references_sf[sfcode])
             aObj = getattr(fa,"Action")
             for key in self._references_action.keys():
+                mObj = key.__dict__['Method']
+                amObj = aObj.__dict__['Method']
                 if key.__dict__["ActionTypeCV"] == aObj.__dict__["ActionTypeCV"] \
-                   and key.__dict__["BeginDateTime"] == aObj.__dict__["BeginDateTime"]:
+                   and key.__dict__["BeginDateTime"] == aObj.__dict__["BeginDateTime"] \
+                   and mObj.__dict__['MethodCode'] == amObj.__dict__['MethodCode']:
                     setattr(fa,"ActionObj",self._references_action[key])
                     break
             fa_yaml = self.get_odm2model_yaml(fa,attrs,fa_yaml)
@@ -312,8 +315,11 @@ class TimeseriesYoda(object):
             ab_yaml += ' - {'
             aObj = getattr(ab,"Action")
             for key in self._references_action.keys():
+                mObj = key.__dict__['Method']
+                amObj = aObj.__dict__['Method']
                 if key.__dict__["ActionTypeCV"] == aObj.__dict__["ActionTypeCV"] \
-                   and key.__dict__["BeginDateTime"] == aObj.__dict__["BeginDateTime"]:
+                   and key.__dict__["BeginDateTime"] == aObj.__dict__["BeginDateTime"] \
+                   and mObj.__dict__['MethodCode'] == amObj.__dict__['MethodCode']:
                     setattr(ab,"ActionObj",self._references_action[key])
                     break
             affObj = getattr(ab,"Affiliation")
