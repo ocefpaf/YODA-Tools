@@ -4,7 +4,7 @@ import sys
 import unittest
 
 curr_folder = os.path.abspath(os.path.dirname(__file__))
-sys.path.insert(0, '%s/../../../' % curr_folder)
+sys.path.insert(0, '%s/../../' % curr_folder)
 print curr_folder
 
 from yodatool import validate_timeseries
