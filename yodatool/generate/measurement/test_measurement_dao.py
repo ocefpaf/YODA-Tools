@@ -99,7 +99,7 @@ class TestMeasurementDao(object):
                 print org.__dict__
 
     def test_actions(self):
-        a = self.loader.get_all_actions
+        a = self.loader.get_all_actions()
         print "action size: {0}".format(len(a))
         for x in a:
             print x.__dict__
@@ -154,7 +154,7 @@ class TestMeasurementDao(object):
         print "measurementresultvalue size: {0}".format(len(rmv))
         for x in rmv:
             print x.__dict__
-            r = getattr(x,'Result')
+            r = getattr(x,'MeasurementResult')
             if r is not None:
                 print r.__dict__
 

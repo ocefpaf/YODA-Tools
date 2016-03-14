@@ -230,7 +230,7 @@ class MeasurementResultValue(ydt_base.BaseMeasurementResultValue):
             self.DataValue = mrv[0]
             self.ValueDateTime = mrv[1]
             self.ValueDateTimeUTCOffset = mrv[2]
-            self.MeausrementResult = mrv[3]
+            self.MeasurementResult = mrv[3]
 
 class DataColumn(ydt_base.BaseDataColumn):
     def __init__(self, dc=None):

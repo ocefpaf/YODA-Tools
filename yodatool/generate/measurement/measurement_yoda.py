@@ -390,7 +390,7 @@ class MeasurementYoda(object):
         mrv_yaml = "MeasurementResultValues:\n"
         for mrv in mrvs:
             mrv_yaml += " - {"
-            mrObj = getattr(mrv,"MeausrementResult")
+            mrObj = getattr(mrv,"MeasurementResult")
             rObj = getattr(mrObj,"Result")
             faObj = getattr(rObj,"FeatureAction")
             sfObj = getattr(faObj,'SamplingFeature')
