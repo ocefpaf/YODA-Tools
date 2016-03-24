@@ -34,7 +34,7 @@ Affiliations:
  - &AffiliationID010 {PersonObj: *PersonID010, OrganizationObj: *OrganizationID001, IsPrimaryOrganizationContact: NULL, AffiliationStartDate: "2015-01-01", AffiliationEndDate: NULL, PrimaryPhone: NULL, PrimaryEmail: "amber.jones@usu.edu", PrimaryAddress: NULL, PersonLink: NULL}
  - &AffiliationID011 {PersonObj: *PersonID011, OrganizationObj: *OrganizationID004, IsPrimaryOrganizationContact: NULL, AffiliationStartDate: "2015-01-01", AffiliationEndDate: NULL, PrimaryPhone: NULL, PrimaryEmail: "zach_aanderud@byu.edu", PrimaryAddress: NULL, PersonLink: NULL}
 Citations:
- - &CitationID0001 {Title: "iUTAH GAMUT Network Raw Data at Logan River near Mendon Road Advanced Aquatic Site (LR_Mendon_AA)", Publisher: "iUTAH Modeling and Data Federation", PublicationYear: 2015, CitationLink: "http://repository.iutahepscor.org/dataset/iutah-gamut-network-raw-data-at-logan-river-near-mendon-road-advanced-aquatic-site-lr-mendon-aa", DataSetAbstract: NULL}
+ - &CitationID0001 {Title: "iUTAH GAMUT Network Raw Data at Logan River near Mendon Road Advanced Aquatic Site (LR_Mendon_AA)", Publisher: "iUTAH Modeling and Data Federation", PublicationYear: 2015, CitationLink: "http://repository.iutahepscor.org/dataset/iutah-gamut-network-raw-data-at-logan-river-near-mendon-road-advanced-aquatic-site-lr-mendon-aa"}
 AuthorLists:
  - &AuthorListID001 {CitationObj: *CitationID0001, PersonObj: *PersonID001, AuthorOrder: 1}
  - &AuthorListID002 {CitationObj: *CitationID0001, PersonObj: *PersonID002, AuthorOrder: 2}

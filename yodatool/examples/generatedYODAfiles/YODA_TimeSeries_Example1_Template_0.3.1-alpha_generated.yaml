@@ -13,7 +13,7 @@ Affiliations:
  - &AffiliationID001 {PersonObj: *PersonID001, OrganizationObj: *OrganizationID001, IsPrimaryOrganizationContact: NULL, AffiliationStartDate: "2014-01-01", AffiliationEndDate: NULL, PrimaryPhone: NULL, PrimaryEmail: "jeff.horsburgh@usu.edu", PrimaryAddress: "Civil and Environmental Engineering, Utah Water Research Laboratory, 8200 Old Main Hill, Logan, UT 84322-8200", PersonLink: NULL}
  - &AffiliationID002 {PersonObj: *PersonID002, OrganizationObj: *OrganizationID002, IsPrimaryOrganizationContact: NULL, AffiliationStartDate: "2015-01-01", AffiliationEndDate: NULL, PrimaryPhone: NULL, PrimaryEmail: "amber.jones@usu.edu", PrimaryAddress: "Utah Water Research Laboratory, 8200 Old Main Hill, Logan, UT 84322-8200", PersonLink: NULL}
 Citations:
- - &CitationID0001 {Title: "Air temperature at the TW Daniels Experimental Forest Climate Station", Publisher: "iUTAH Modeling and Data Federation", PublicationYear: 2015, CitationLink: "http://repository.iutahepscor.org/Dataset/iutah-gamut-network-raw-data-at-tw-daniels-forest-climate-site-lr-twdef-c", DataSetAbstract: NULL}
+ - &CitationID0001 {Title: "Air temperature at the TW Daniels Experimental Forest Climate Station", Publisher: "iUTAH Modeling and Data Federation", PublicationYear: 2015, CitationLink: "http://repository.iutahepscor.org/Dataset/iutah-gamut-network-raw-data-at-tw-daniels-forest-climate-site-lr-twdef-c"}
 AuthorLists:
  - &AuthorListID001 {CitationObj: *CitationID0001, PersonObj: *PersonID001, AuthorOrder: 1}
  - &AuthorListID002 {CitationObj: *CitationID0001, PersonObj: *PersonID002, AuthorOrder: 2}
@@ -47,8 +47,8 @@ Results:
  - &ResultID002 {ResultUUID: "71F7D31E-26A7-4D11-B6F6-C2CAD5D96B92", FeatureActionObj: *FeatureActionID001, ResultTypeCV: "Time series coverage", VariableObj: *VariableID002, UnitsObj: *UnitID001, TaxonomicClassifierObj: NULL, ProcessingLevelObj: *ProcessingLevelID001, ResultDateTime: NULL, ResultDateTimeUTCOffset: NULL, ValidDateTime: NULL, ValidDateTimeUTCOffset: NULL, StatusCV: NULL, SampledMediumCV: "Gas", ValueCount: 3359}
  - &ResultID003 {ResultUUID: "435DA617-52E3-446B-8955-8F5F2D577CF6", FeatureActionObj: *FeatureActionID001, ResultTypeCV: "Time series coverage", VariableObj: *VariableID003, UnitsObj: *UnitID001, TaxonomicClassifierObj: NULL, ProcessingLevelObj: *ProcessingLevelID001, ResultDateTime: NULL, ResultDateTimeUTCOffset: NULL, ValidDateTime: NULL, ValidDateTimeUTCOffset: NULL, StatusCV: NULL, SampledMediumCV: "Gas", ValueCount: 3359}
 DataSetsResults:
- - {DataSetObj: *DatasetID0001, ResultObj: *ResultID002}
  - {DataSetObj: *DatasetID0001, ResultObj: *ResultID001}
+ - {DataSetObj: *DatasetID0001, ResultObj: *ResultID002}
  - {DataSetObj: *DatasetID0001, ResultObj: *ResultID003}
 TimeSeriesResults:
  - &TimeSeriesResultID001 {ResultObj: *ResultID001, XLocation: NULL, XLocationUnitsObj: NULL, YLocation: NULL, YLocationUnitsObj: NULL, ZLocation: NULL, ZLocationUnitsObj: NULL, SpatialReferenceObj: NULL, IntendedTimeSpacing: NULL, IntendedTimeSpacingUnitsObj: NULL, AggregationStatisticCV: "Average"}
