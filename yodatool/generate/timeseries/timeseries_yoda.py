@@ -9,7 +9,9 @@ class TimeseriesYoda(object):
 
     def __init__(self, xl_file):
         self.tdao = TimeseriesXlDao(xl_file)
+        self.template_version = None
         self._references = {}
+        self._references_aff = {}
         self._references_sf = {}
         self._references_action = {}
         self._references_faction = {}
@@ -41,7 +43,8 @@ class TimeseriesYoda(object):
         yoda_header += " - {"
         yoda_header += "Version: \"{0}\", ".format(header.YODAVersion)
         yoda_header += "Profile: \"{0}\", ".format(header.TemplateProfile)
-        yoda_header += "CreationTool: YODAPy \"{0}\", ".format(header.TemplateVersion)
+        yoda_header += "CreationTool: \"YODAPy {0}\", ".format(header.TemplateVersion)
+        self.template_version = header.TemplateVersion
         yoda_header += "DateCreated: \"{0}\", ".format(datetime.datetime.strftime(header.VocabUpdate,'%Y-%m-%d'))
         yoda_header += "DateUpdated: \"{0}\"".format(datetime.datetime.strftime(header.VocabUpdate,'%Y-%m-%d'))
         yoda_header += "}\n"
@@ -49,7 +52,8 @@ class TimeseriesYoda(object):
 
     def get_dataset(self):
         ds = self.tdao.get_dataset()
-        attrs = self.get_object_attrs('DataSets',"DataSetID")
+        # attrs = self.get_object_attrs('DataSets',"DataSetID")
+        attrs = ['DataSetUUID','DataSetTypeCV','DataSetCode','DataSetTitle','DataSetAbstract']
         ds_yaml = "DataSets:\n - &DatasetID0001 {"
         ds_yaml = self.get_odm2model_yaml(ds,attrs,ds_yaml)
         k  = ds_yaml.rfind(',')
@@ -62,9 +66,20 @@ class TimeseriesYoda(object):
             dsr_yaml += " - {DataSetObj: *DatasetID0001, ResultObj: %s}\n" % self._references_result[key]
         return dsr_yaml.replace('None','NULL')
 
+    def get_citation(self):
+        ci = self.tdao.get_citation()
+        # attrs = self.get_object_attrs('Citations',"CitationID")
+        attrs = ['Title','Publisher','PublicationYear','CitationLink','DataSetAbstract']
+        ci_yaml = "Citations:\n - &CitationID0001 {"
+        ci_yaml = self.get_odm2model_yaml(ci,attrs,ci_yaml)
+        k  = ci_yaml.rfind(',')
+        ci_yaml = ci_yaml[:k] + "}\n"
+        return ci_yaml.replace('None','NULL')
+
     def get_organizations(self):
         orgs = self.tdao.get_all_organizations()
-        attrs = self.get_object_attrs('Organizations',("ID","Obj"))
+        # attrs = self.get_object_attrs('Organizations',("ID","Obj"))
+        attrs = ['OrganizationTypeCV','OrganizationCode','OrganizationName','OrganizationDescription','OrganizationLink']
         org_yaml = "Organizations:\n"
         index = 1
         for org in orgs:
@@ -80,7 +95,8 @@ class TimeseriesYoda(object):
 
     def get_people(self):
         people = self.tdao.get_all_people()
-        attrs = self.get_object_attrs('People',"ID")
+        # attrs = self.get_object_attrs('People',"ID")
+        attrs = ['PersonFirstName','PersonMiddleName','PersonLastName']
         p_yaml = "People:\n"
         index = 1
         for p in people:
@@ -93,9 +109,46 @@ class TimeseriesYoda(object):
             index += 1
         return p_yaml.replace('None','NULL')
 
+    def get_authorlists(self):
+        als = self.tdao.get_all_authorlists()
+        # attrs = self.get_object_attrs('AuthorLists',"ID")
+        attrs = ['CitationObj','PersonObj','AuthorOrder']
+        al_yaml = "AuthorLists:\n"
+        index = 1
+        for al in als:
+            al_yaml += ' - &AuthorListID{:0>3d} '.format(index)
+            al_yaml += "{"
+            # cObj = getattr(al,"Citation")
+            pObj = getattr(al,"Person")
+            setattr(al,"CitationObj","*CitationID0001")
+            for key in self._references.keys():
+                if not isinstance(key,basestring):
+                    if key.__dict__ == pObj.__dict__:
+                        setattr(al,"PersonObj",self._references[key])
+                        break
+            al_yaml = self.get_odm2model_yaml(al,attrs,al_yaml)
+            k  = al_yaml.rfind(',')
+            al_yaml = al_yaml[:k] + "}\n"
+            index += 1
+        return al_yaml.replace('None','NULL')
+
+    def get_datasetcitation(self):
+        dsc = self.tdao.get_datasetcitation()
+        # attrs = self.get_object_attrs('DataSetCitations',"ID")
+        # attrs = ['DataSetObj','CitationObj','RelationshipTypeCV']
+        attrs = ['RelationshipTypeCV']
+        dsc_yaml = "DataSetCitations:\n"
+        dsc_yaml += " - {DataSetObj: *DatasetID0001, CitationObj: *CitationID0001, "
+        dsc_yaml = self.get_odm2model_yaml(dsc,attrs,dsc_yaml)
+        k  = dsc_yaml.rfind(',')
+        dsc_yaml = dsc_yaml[:k] + "}\n"
+        return dsc_yaml.replace('None','NULL')
+
     def get_affiliations(self):
         affs = self.tdao.get_all_affiliations()
-        attrs = self.get_object_attrs('Affiliations',"ID")
+        # attrs = self.get_object_attrs('Affiliations',"ID")
+        attrs = ['PersonObj','OrganizationObj','IsPrimaryOrganizationContact','AffiliationStartDate','AffiliationEndDate',
+                 'PrimaryPhone','PrimaryEmail','PrimaryAddress','PersonLink']
         aff_yaml = "Affiliations:\n"
         index = 1
         for aff in affs:
@@ -107,7 +160,8 @@ class TimeseriesYoda(object):
                 if not isinstance(key,basestring):
                     if key.__dict__ == perObj.__dict__:
                         setattr(aff,"PersonObj",self._references[key])
-                        self._references.update({key: '*AffiliationID{:0>3d}'.format(index)})
+                        # self._references.update({key: '*AffiliationID{:0>3d}'.format(index)})
+                        self._references_aff[key] = '*AffiliationID{:0>3d}'.format(index)
                         break
             setattr(aff,"OrganizationObj",self._references[orgObj.OrganizationName])
             asd = getattr(aff,'AffiliationStartDate',None)
@@ -126,7 +180,8 @@ class TimeseriesYoda(object):
 
     def get_spatialreferences(self):
         srs = self.tdao.get_all_spatialreferences()
-        attrs = self.get_object_attrs('SpatialReferences',"ID")
+        # attrs = self.get_object_attrs('SpatialReferences',"ID")
+        attrs = ['SRSCode','SRSName','SRSDescription','SRSLink']
         sr_yaml = "SpatialReferences:\n"
         index = 1
         for sr in srs:
@@ -142,8 +197,11 @@ class TimeseriesYoda(object):
 
     def get_samplingfeatures(self):
         psfs = self.tdao.get_all_samplingfeatures()
-        attrs = self.get_object_attrs('SamplingFeatures',"ID")
-        attrs.insert(0,"SamplingFeatureUUID")
+        # attrs = self.get_object_attrs('SamplingFeatures',"ID")
+        # attrs.insert(0,"SamplingFeatureUUID")
+        attrs = ['SamplingFeatureUUID','SamplingFeatureTypeCV','SamplingFeatureCode','SamplingFeatureName',
+                 'SamplingFeatureDescription','SamplingFeatureGeotypeCV','FeatureGeometry','Elevation_m',
+                 'ElevationDatumCV']
         sf_yaml = "SamplingFeatures:\n"
         index = 1
         for psf in psfs:
@@ -159,7 +217,8 @@ class TimeseriesYoda(object):
 
     def get_sites(self):
         sites = self.tdao.get_all_sites()
-        attrs = self.get_object_attrs('Sites',"ID")
+        # attrs = self.get_object_attrs('Sites',"ID")
+        attrs = ['SamplingFeatureObj','SiteTypeCV','Latitude','Longitude','SpatialReferenceObj']
         site_yaml = "Sites:\n"
         for site in sites:
             site_yaml += ' - {'
@@ -176,7 +235,8 @@ class TimeseriesYoda(object):
         rfs = self.tdao.get_all_relatedfeatures()
         if rfs is None:
             return None
-        attrs = self.get_object_attrs('RelatedFeatures',"ID")
+        # attrs = self.get_object_attrs('RelatedFeatures',"ID")
+        attrs = ['SamplingFeatureObj','RelationshipTypeCV','RelatedFeatureObj','SpatialOffsetObj']
         rf_yaml = "RelatedFeatures:\n"
         for rf in rfs:
             rf_yaml += ' - {'
@@ -193,7 +253,8 @@ class TimeseriesYoda(object):
 
     def get_units(self):
         units = self.tdao.get_all_units()
-        attrs = self.get_object_attrs('Units',"ID")
+        # attrs = self.get_object_attrs('Units',"ID")
+        attrs = ['UnitsTypeCV','UnitsAbbreviation','UnitsName','UnitsLink']
         u_yaml = "Units:\n"
         index = 1
         for u in units:
@@ -209,7 +270,9 @@ class TimeseriesYoda(object):
 
     def get_methods(self):
         methods = self.tdao.get_all_methods()
-        attrs = self.get_object_attrs('Methods',"ID")
+        # attrs = self.get_object_attrs('Methods',"ID")
+        attrs = ['MethodTypeCV','MethodCode','MethodName','MethodDescription','MethodLink',
+                 'OrganizationObj']
         m_yaml = "Methods:\n"
         index = 1
         for m in methods:
@@ -230,7 +293,9 @@ class TimeseriesYoda(object):
 
     def get_variables(self):
         varis = self.tdao.get_all_variables()
-        attrs = self.get_object_attrs('Variables',"ID")
+        # attrs = self.get_object_attrs('Variables',"ID")
+        attrs = ['VariableTypeCV','VariableCode','VariableNameCV','VariableDefinition','SpeciationCV',
+                 'NoDataValue']
         v_yaml = "Variables:\n"
         index = 1
         for v in varis:
@@ -246,7 +311,8 @@ class TimeseriesYoda(object):
 
     def get_processinglevels(self):
         pls = self.tdao.get_all_processinglevels()
-        attrs = self.get_object_attrs('ProcessingLevels',"ID")
+        # attrs = self.get_object_attrs('ProcessingLevels',"ID")
+        attrs = ['ProcessingLevelCode','Definition','Explanation']
         pl_yaml = "ProcessingLevels:\n"
         index = 1
         for pl in pls:
@@ -262,7 +328,10 @@ class TimeseriesYoda(object):
 
     def get_actions(self):
         actions = self.tdao.get_all_actions()
-        attrs = self.get_object_attrs('Actions',"ID")
+        action_description = "Generic observation action generated by Excel Template for TimeSeries " + self.template_version
+        # attrs = self.get_object_attrs('Actions',"ID")
+        attrs = ['ActionTypeCV','MethodObj','BeginDateTime','BeginDateTimeUTCOffset',
+                 'EndDateTime','EndDateTimeUTCOffset','ActionDescription','ActionFileLink']
         a_yaml = "Actions:\n"
         index = 1
         for action in actions:
@@ -273,6 +342,7 @@ class TimeseriesYoda(object):
             mObj = getattr(action,"Method")
             mcode = mObj.MethodCode
             setattr(action,"MethodObj",self._references[mcode])
+            setattr(action,"ActionDescription",action_description)
             a_yaml = self.get_odm2model_yaml(action,attrs,a_yaml)
             k  = a_yaml.rfind(',')
             a_yaml = a_yaml[:k] + "}\n"
@@ -281,7 +351,8 @@ class TimeseriesYoda(object):
 
     def get_featureactions(self):
         factions = self.tdao.get_all_featureactions()
-        attrs = self.get_object_attrs('FeatureActions',"ID")
+        # attrs = self.get_object_attrs('FeatureActions',"ID")
+        attrs = ['SamplingFeatureObj','ActionObj']
         fa_yaml = "FeatureActions:\n"
         index = 1
         for fa in factions:
@@ -309,7 +380,8 @@ class TimeseriesYoda(object):
 
     def get_actionbys(self):
         actionbys = self.tdao.get_all_actionbys()
-        attrs = self.get_object_attrs('ActionBy',"ID")
+        # attrs = self.get_object_attrs('ActionBy',"ID")
+        attrs = ['ActionObj','AffiliationObj','IsActionLead','RoleDescription']
         ab_yaml = "ActionBy:\n"
         for ab in actionbys:
             ab_yaml += ' - {'
@@ -324,10 +396,10 @@ class TimeseriesYoda(object):
                     break
             affObj = getattr(ab,"Affiliation")
             perObj = getattr(affObj,"Person")
-            for key in self._references.keys():
+            for key in self._references_aff.keys():
                 if not isinstance(key,basestring):
                     if key.__dict__ == perObj.__dict__:
-                        setattr(ab,"AffiliationObj",self._references[key])
+                        setattr(ab,"AffiliationObj",self._references_aff[key])
                         break
             ab_yaml = self.get_odm2model_yaml(ab,attrs,ab_yaml)
             k  = ab_yaml.rfind(',')
@@ -336,8 +408,11 @@ class TimeseriesYoda(object):
 
     def get_results(self):
         results = self.tdao.get_all_results()
-        attrs = self.get_object_attrs('Results',"ID")
-        attrs.insert(0,"ResultUUID")
+        # attrs = self.get_object_attrs('Results',"ID")
+        # attrs.insert(0,"ResultUUID")
+        attrs = ['ResultUUID','FeatureActionObj','ResultTypeCV','VariableObj','UnitsObj',
+                 'TaxonomicClassifierObj','ProcessingLevelObj','ResultDateTime','ResultDateTimeUTCOffset',
+                 'ValidDateTime','ValidDateTimeUTCOffset','StatusCV','SampledMediumCV','ValueCount']
         r_yaml = "Results:\n"
         index = 1
         for r in results:
@@ -369,7 +444,10 @@ class TimeseriesYoda(object):
 
     def get_timeseriesresults(self):
         tresults = self.tdao.get_all_timeseriesresults()
-        attrs = self.get_object_attrs('TimeSeriesResults',"ID")
+        # attrs = self.get_object_attrs('TimeSeriesResults',"ID")
+        attrs = ['ResultObj','XLocation','XLocationUnitsObj','YLocation','YLocationUnitsObj',
+                 'ZLocation','ZLocationUnitsObj','SpatialReferenceObj','IntendedTimeSpacing',
+                 'IntendedTimeSpacingUnitsObj','AggregationStatisticCV']
         tr_yaml = "TimeSeriesResults:\n"
         index = 1
         for tr in tresults:
@@ -437,20 +515,28 @@ class TimeseriesYoda(object):
             index += 1
         dvalues = self.tdao.get_all_datavalues()
         trv_yaml +=" Data:\n"
-        noU = []
+        # noU = []
+        trv_yaml +="   - [ "
         for d in datavalue_header:
-            noU.append(str(d))
-        trv_yaml +="   - {0}\n".format(noU)
+            trv_yaml +="{0}, ".format(d)
+            # noU.append(str(d))
+        k = trv_yaml.rfind(',')
+        trv_yaml = trv_yaml[:k] + " ]\n"
         for dv in dvalues:
-            dv_array = []
+            dv_array ="   - [ "
             for dvh in datavalue_header:
                 v = getattr(dv,dvh,0)
                 if dvh == 'ValueDateTime':
-                    v = '{:%Y-%m-%d %H:%M:%S}'.format(v)
-                if dvh == 'ValueDateTimeUTCOffset':
-                    v = int(v)
-                dv_array.append(v)
-            trv_yaml +='   - {0}\n'.format(dv_array)
+                    v = '"{:%Y-%m-%d %H:%M:%S}"'.format(v)
+                elif dvh == 'ValueDateTimeUTCOffset':
+                    v = str(int(v))
+                else:
+                    v = str(v)
+                dv_array += v + ", "
+            # trv_yaml +='   - {0}\n'.format(dv_array)
+            k = dv_array.rfind(',')
+            dv_array = dv_array[:k] + " ]\n"
+            trv_yaml += dv_array
         return trv_yaml.replace('None','NULL')
 
     def create_yoda(self,out_file):
@@ -460,6 +546,9 @@ class TimeseriesYoda(object):
             yaml_schema_file.write(self.get_organizations())
             yaml_schema_file.write(self.get_people())
             yaml_schema_file.write(self.get_affiliations())
+            yaml_schema_file.write(self.get_citation())
+            yaml_schema_file.write(self.get_authorlists())
+            yaml_schema_file.write(self.get_datasetcitation())
             yaml_schema_file.write(self.get_spatialreferences())
             yaml_schema_file.write(self.get_samplingfeatures())
             yaml_schema_file.write(self.get_sites())

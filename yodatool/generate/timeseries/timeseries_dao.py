@@ -75,7 +75,7 @@ class TimeseriesXlDao(BaseXldao):
             if x[1] is not None: #check middle name
                 p_name = '%s %s %s' % (x[0],x[1],x[2])
             else:
-                p_name = '%s %s' % (x[0],x[2])
+                p_name = '%s  %s' % (x[0],x[2])
             perObj = model.Person(x[0:3])
             peopleResults.update({p_name: perObj})
         return peopleResults
@@ -378,13 +378,25 @@ class TimeseriesXlDao(BaseXldao):
         return uResults
 
     def get_all_spatialreferences(self):
+        # sites
+        sheet = xw.Sheet(Sheet_Names["4"])
+        if sheet is None:
+            return None
+
+        LatLonDatum = xw.Range(sheet,'LatLonDatum').value
+        # SRSName list
+        srsname_list = [LatLonDatum]
+
+        # timeseries result
+        # currently can't be found in the sheet
+
         sheet = xw.Sheet(Sheet_Names["13"])
         if sheet is None:
             return None
         sr = xw.Range(sheet,'SpatialReferences').value
         srResults = []
         for s in sr:
-            if any(s):
+            if any(s) and s[1] in srsname_list:
                 srResults.append(model.SpatialReference(s))
         return srResults
 
