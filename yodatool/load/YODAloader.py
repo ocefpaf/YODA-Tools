@@ -3,6 +3,7 @@ from odm2api.ODMconnection import dbconnection
 
 from YODAqueries import yodaService as yodaservice
 from db_schema.create_schema import odm2CreateSchema as odm2schema
+from db_schema.cvload import runCVscript as odm2cv
 
 class obj(object):
     def __init__(self, d):
@@ -21,11 +22,24 @@ class yodaLoad():
     def __init__(self):
         self.yoda_service = ''
 
-    def db_info(self):
+    def db_setup(self,db_engine,db_name,address=None,
+                 user=None,password=None,script_filename=None):
         odm2model = odm2schema()
-        odm2model.createDBSchema('sqlite', 'odm2')
-        conn = dbconnection.createConnection('sqlite', 'odm2')
-        self.yoda_service = yodaservice(conn)
+        # create schema
+        if db_engine == 'sqlite':
+            conn_string = odm2model.getconnectionstring(db_engine,db_name)
+            odm2model.runSQLiteScript(script_filename,db_name)
+            odm2cv(conn_string)
+            conn = dbconnection.createConnection(db_engine, db_name)
+            self.yoda_service = yodaservice(conn)
+        elif db_engine == 'postgresql':
+            conn_string = odm2model.getconnectionstring(db_engine,address,db_name,user,password)
+            odm2model.runPostgeSQLScript(db_name,address,user,password,script_filename)
+            odm2cv(conn_string)
+            conn = dbconnection.createConnection(db_engine,address,db_name,user,password)
+            self.yoda_service = yodaservice(conn)
+        else:
+            print "other database type is not supported yet........"
 
     def getOrganization(self, model, org):
         if hasattr(org, 'OrganizationObj'):
@@ -491,7 +505,6 @@ class yodaLoad():
                     if hasattr(x, 'Result'):
                         trv = self.getTimeSeriesResultValues(x, valuelist[0], valuelist[1], valuelist[x.ColumnNumber - 1])
                         print "ValueID:", trv.ValueID
-
             elif attr == 'MeasurementResults':
                 print "MeasurementResults:=========="
                 for x in value:

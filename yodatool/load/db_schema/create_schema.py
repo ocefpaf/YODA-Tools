@@ -1,10 +1,18 @@
 from odm2api.base import *
 from sqlalchemy import *
+import sqlite3 as sqlite
+import psycopg2
 
 class odm2CreateSchema():
 
     def __init__(self, debug=False):
         self._connection_format = "%s+%s://%s:%s@%s/%s"
+
+    def getconnectionstring(self,engine, address, db=None, user=None, password=None):
+        if engine == 'sqlite':
+            return engine +':///'+address
+        else:
+            return self.buildConnDict(engine, address, db, user, password)
 
     @classmethod
     def createDBSchema(self, engine, address, db=None, user=None, password=None):
@@ -48,3 +56,68 @@ class odm2CreateSchema():
             conn_dict['db'])
         # print conn_string
         return conn_string
+
+    def runSQLiteScript(self,scriptfilename,dbfilename):
+        connection = None
+        cursor = None
+        try:
+            print "Opening SQLite DB..."
+            connection = sqlite.connect(dbfilename)
+            cursor = connection.cursor()
+
+            print "Reading SQLite Script..."
+            scriptFile = open(scriptfilename, 'r')
+            script = scriptFile.read()
+            scriptFile.close()
+
+            print "Running Script..."
+            cursor.executescript(script)
+
+            connection.commit()
+            print "Loading schema successfully committed\n"
+
+        except Exception, e:
+            print "Something went wrong:"
+            print e
+        finally:
+            print "Closing DB..."
+            cursor.close()
+            connection.close()
+
+    def runPostgeSQLScript(self,dbfilename, address, user, password, scriptfilename,):
+        connection = None
+        cursor = None
+        idx = address.find(':')
+        if idx > 0:
+            host = address[0:idx]
+            port = address[idx+1:]
+        else:
+            host = address
+            port = "5432"
+        try:
+            print "Opening PostgreSQL DB..."
+            connection = psycopg2.connect(database=dbfilename,
+                                          host=host,
+                                          port=port,
+                                          user=user,
+                                          password=password)
+            cursor = connection.cursor()
+
+            print "Reading PostgreSQL Script..."
+            scriptFile = open(scriptfilename, 'r')
+            script = scriptFile.read()
+            scriptFile.close()
+
+            print "Running Script..."
+            cursor.execute(script)
+
+            connection.commit()
+            print "Loading schema successfully committed\n"
+
+        except Exception, e:
+            print "Something went wrong:"
+            print e
+        finally:
+            print "Closing DB..."
+            cursor.close()
+            connection.close()

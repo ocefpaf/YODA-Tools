@@ -4,6 +4,8 @@ import argparse
 import copy
 import inspect
 import logging
+import os.path
+import sys
 
 import yaml
 from yodatool.generate.measurement.measurement_yoda import MeasurementYoda
@@ -48,6 +50,15 @@ def yoda_validate(args):
 
 def yoda_load(args):
     print "Type: %s" % args.type
+    print "DB engine: %s" % args.engine
+    print "DB name: %s" % args.dbname
+    print "DB server address: %s" % args.address
+    print "DB username: %s" % args.username
+    print "DB password: %s" % args.password
+    print "DB blank schema file: %s" % args.scriptfilename
+    if not os.path.exists(args.scriptfilename):
+        print "The schema script file, \"%s\", is not existed!!!" % args.scriptfilename
+        sys.exit(0)
     if args.type == 'timeseries':
         load_timeseries(args)
     elif args.type == 'measurement':
@@ -102,11 +113,12 @@ def validate_timeseries(yodaFile, level=1,cvtype=False):
 def load_timeseries(args):
     logger = yoda_logger(logging.INFO,logging.WARNING)
     stream = file(args.yoda_file)
-    yaml_data = yaml.load (stream)
+    yaml_data = yaml.load(stream)
 
     yodadb = yodaLoad()
-    yodadb.db_info()
-
+    yodadb.db_setup(args.engine,args.dbname,
+                    args.address,args.username,args.password,
+                    args.scriptfilename)
     yodadb.data_load(yaml_data)
 
 def generate_measurement(args):
@@ -136,11 +148,18 @@ def main():
     generate_parser.add_argument('--type', type=str, default="measurement", required=False, help='data type: measurement, timeseries')
     generate_parser.set_defaults(func=yoda_generate)
 
-    # A load command
-    # load_parser = subparsers.add_parser('load', help='Load yoda file')
-    # load_parser.add_argument('yoda_file', type=str, help='yoda file name')
-    # load_parser.add_argument('--type', type=str, default="timeseries", required=False, help='data type: measurement, timeseries')
-    # load_parser.set_defaults(func=yoda_load)
+    # A loaddatabase command
+    load_parser = subparsers.add_parser('loaddatabase', help='Load yoda file into database')
+    load_parser.add_argument('yoda_file', type=str, help='yoda file name')
+    load_parser.add_argument('--type', type=str, default="timeseries", required=False, help='data type: measurement, timeseries')
+    load_parser.add_argument('--engine', type=str, default="sqlite", required=False, help='ODM2 database engine (sqlite,postgresql)')
+    load_parser.add_argument('--dbname', type=str, default="odm2", required=False, help='ODM2 database name')
+    load_parser.add_argument('--address', type=str, default="localhost", required=False, help='ODM2 server address(host:port)')
+    load_parser.add_argument('--username', type=str, default="odm2", required=False, help='ODM2 database user name')
+    load_parser.add_argument('--password', type=str, default="odm2", required=False, help='ODM2 database password')
+    load_parser.add_argument('--scriptfilename', type=str, default="ODM2_for_SQLite.sql", required=False, help='ODM2 blank schema script')
+
+    load_parser.set_defaults(func=yoda_load)
 
     args = parser.parse_args()
     args.func(args)

@@ -36,7 +36,32 @@ optional arguments:
 Example:
   $ python yodatool.py generate --type measurement yodatool/examples/YODA_Specimen_TEMPLATE_WORKING.xlsm generated_measurement.yaml
 ```
+Testing for loading yoda data into database. 
+You can download scripts for database schema (https://github.com/ODM2/ODM2/tree/master/src/blank_schema_scripts).
+```
+usage: yodatool.py loaddatabase [-h] [--type TYPE] [--engine ENGINE]
+                                [--dbname DBNAME] [--address ADDRESS]
+                                [--username USERNAME] [--password PASSWORD]
+                                [--scriptfilename SCRIPTFILENAME]
+                                yoda_file
 
+positional arguments:
+  yoda_file             yoda file name
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --type TYPE           data type: measurement, timeseries
+  --engine ENGINE       ODM2 database engine (sqlite,postgresql)
+  --dbname DBNAME       ODM2 database name
+  --address ADDRESS     ODM2 server address(host:port)
+  --username USERNAME   ODM2 database user name
+  --password PASSWORD   ODM2 database password
+  --scriptfilename SCRIPTFILENAME
+                        ODM2 blank schema script
+Example:
+  $ python yodatool.py loaddatabase --type timeseries --engine sqlite --dbname odm2 --scriptfilename yodatool/blank_schema_scripts/ODM2_for_SQLite.sql yodatool/examples/generatedYODAfiles/YODA_TimeSeries_Example1_Template_0.3.1-alpha_generated.yaml
+  $ python yodatool.py loaddatabase --type timeseries --engine postgresql --dbname odm2 --address localhost:5432 --username odm2 --password odm2 --scriptfilename yodatool/blank_schema_scripts/ODM2_for_PostgreSQL.sql yodatool/examples/generatedYODAfiles/YODA_TimeSeries_Example1_Template_0.3.1-alpha_generated.yaml
+```
 Intitial thoguhts:
   * yoda validate [format] [file] [strict?]
      * validates a yoda file. formats [TS-timeseries, SP-Specimens]
