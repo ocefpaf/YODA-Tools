@@ -267,7 +267,10 @@ class BaseDataColumn(object):
     ResultTypeCV = None
     VariableCode = None
     UnitName = None
+    StatusCV = None
     SampledMediumCV = None
+    IntendedTimeSpacing = None
+    IntendedTimeSpacingUnit = None
     ResultAnalyst = None
     AnalysisDateTimeUTCOffset = None
     AnalysisMethodCode = None

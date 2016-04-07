@@ -22,7 +22,8 @@ optional arguments:
 Example:
   $ python yodatool.py validate --type timeseries --level 1 yodatool/examples/YODA_TimeSeries_Example1_Template_0.3.1-alpha.yaml 
 ```
-Testing for generating yoda file from xl file
+Testing for generating yoda file from xl file.
+<font color="red">Timeseries YODA excel template (https://github.com/ODM2/YODA-File/tree/Time-Series-0.3.2/examples/time_series/v0.3.2) was updated by Jeff!!!</font>
 ```
 usage: yodatool.py generate [-h] [--type TYPE] xl_file out_file
 
@@ -34,7 +35,7 @@ optional arguments:
   -h, --help   show this help message and exit
   --type TYPE  data type: measurement, timeseries
 Example:
-  $ python yodatool.py generate --type measurement yodatool/examples/YODA_Specimen_TEMPLATE_WORKING.xlsm generated_measurement.yaml
+  $ python yodatool.py generate --type timeseries yodatool/examples/YODA_TimeSeries_0.3.2-alpha_WtrTemp_LR_Mendon_AA.xlsm yoda_output.yaml
 ```
 Testing for loading yoda data into database. 
 You can download scripts for database schema (https://github.com/ODM2/ODM2/tree/master/src/blank_schema_scripts).

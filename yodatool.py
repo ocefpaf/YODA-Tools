@@ -8,8 +8,10 @@ import os.path
 import sys
 
 import yaml
+
 from yodatool.generate.measurement.measurement_yoda import MeasurementYoda
-from yodatool.generate.timeseries.timeseries_yoda import TimeseriesYoda
+# from yodatool.generate.timeseries.v0_3_1.timeseries_yoda import TimeseriesYoda
+from yodatool.generate.timeseries.v0_3_2.timeseries_yoda import TimeseriesYoda
 from yodatool.load.YODAloader import yodaLoad
 from yodatool.validate.cvvalidator import CVvalidator
 from yodatool.validate.timeseriesvalidator import TSvalidator

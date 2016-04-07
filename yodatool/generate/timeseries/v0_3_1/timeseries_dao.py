@@ -1,11 +1,11 @@
-import xlwings as xw
-import io
 import sys
+
+import xlwings as xw
+
 sys.path.append("..")
 
 from yodatool.YODAPy.ydt.dao import BaseXldao
-import timeseries_models as model
-import odm2api.ODM2.models as odm2model
+import yodatool.generate.timeseries.v0_3_1.timeseries_models as model
 import math
 
 wb = None

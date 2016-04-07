@@ -1,9 +1,12 @@
 __author__ = 'Choonhan Youn'
 
-from timeseries_dao import TimeseriesXlDao
-import datetime
-import odm2api.ODM2.models as odm2model
 import copy
+import datetime
+
+import odm2api.ODM2.models as odm2model
+
+from yodatool.generate.timeseries.v0_3_1.timeseries_dao import TimeseriesXlDao
+
 
 class TimeseriesYoda(object):
 

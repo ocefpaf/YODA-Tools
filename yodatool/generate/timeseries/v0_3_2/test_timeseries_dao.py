@@ -1,4 +1,4 @@
-from timeseries_dao import TimeseriesXlDao
+from yodatool.generate.timeseries.v0_3_2.timeseries_dao import TimeseriesXlDao
 
 class TestTimeSeriesDao(object):
 
