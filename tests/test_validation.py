@@ -17,7 +17,7 @@ from yodatool.validate.cvvalidator import CVvalidator
 class validateYodaTestCases(unittest.TestCase):
 
     def setUp(self):
-        yodafile='../yodatool/examples/YODA_TimeSeries_Example1_Template_0.3.1-alpha.yaml'
+        yodafile='./yodatool/examples/YODA_TimeSeries_Example1_Template_0.3.1-alpha.yaml'
         stream = file(yodafile)
         yaml_data = yaml.load(stream)
 

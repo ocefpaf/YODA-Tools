@@ -1,11 +1,13 @@
 six
 sqlalchemy
-geoalchemy2
+-e git+https://github.com/ODM2/geoalchemy.git@odm2#egg=geoalchemy-0.7.3
+shapely
+pandas
 
 matplotlib
 dateutils
 
-sqlalchemy-migrate
-
 typecheck
 valideer
+xlwings
+pyyaml

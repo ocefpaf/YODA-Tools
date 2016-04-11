@@ -7,7 +7,8 @@ from yodatool.generate.timeseries.v0_3_1.timeseries_dao import TimeseriesXlDao
 class TestTimeSeries(unittest.TestCase):
 
     def setUp(self):
-        self.loader = TimeseriesXlDao('../yodatool/examples/YODA_TimeSeries_Example1_Template_0.3.1-alpha.xlsm')
+        # run pytest from Yoda-Tools.
+        self.loader = TimeseriesXlDao('./yodatool/examples/YODA_TimeSeries_Example1_Template_0.3.1-alpha.xlsm')
 
     def test_timeseries(self):
         # yodat header

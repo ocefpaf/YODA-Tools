@@ -5,7 +5,7 @@ import yodatool.generate.measurement.measurement_models as model
 class TestMeasurement(unittest.TestCase):
 
     def setUp(self):
-        self.loader = MeasurementXlDao('../yodatool/examples/YODA_Specimen_TEMPLATE_WORKING.xlsm')
+        self.loader = MeasurementXlDao('./yodatool/examples/YODA_Specimen_TEMPLATE_WORKING.xlsm')
 
     def test_measurement(self):
         # test_affiliations
