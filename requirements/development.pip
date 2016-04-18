@@ -1,4 +1,4 @@
--r requirements.txt
+-r requirements/requirements.txt
 pytest
 pytest-cov
 mock
