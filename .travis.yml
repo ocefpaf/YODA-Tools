@@ -83,5 +83,5 @@ install: # now just our code
 script:
 # just the connection part
 
-  - py.test
+  - py.test tests
 
