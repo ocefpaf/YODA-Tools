@@ -15,12 +15,26 @@ from setuptools import setup, find_packages
 # To use a consistent encoding
 from codecs import open
 from os import path
+from sys import platform as _platform
+
 
 here = path.abspath(path.dirname(__file__))
-# with open('requirements.txt') as f:
-#     require = f.readlines()
-# install_requires = [r.strip() for r in require if
-#                     not r.startswith('http') and not r.startswith('#')]
+
+from pip.req import parse_requirements
+install_reqs = parse_requirements('requirements/requirements.txt', session=False)
+reqs = [str(ir.req) for ir in install_reqs]
+
+install_tests = parse_requirements('requirements/development.pip', session=False)
+reqs_test = [str(ir.req) for ir in install_tests]
+
+if _platform == "linux" or _platform == "linux2":
+    # linux
+    install_reqs = install_reqs
+elif _platform == "darwin":
+    # OS X
+    install_reqs.append('xlwings')
+elif _platform == "win32" or _platform == "cygwin":
+    install_reqs.append('xlwings')
 
 # Get the long description from the relevant file
 with open(path.join(here, 'README.md'), encoding='utf-8') as f:
@@ -96,6 +110,11 @@ setup(
         'shapely',
 #        'dateutils',
         'pandas',
+        'xlwings',
+        'typecheck',
+        'valideer',
+        'pyyaml',
+        'xlwings'
     ],
     # dependency_links- geoalchemy from the ODM repository
     dependency_links=[
