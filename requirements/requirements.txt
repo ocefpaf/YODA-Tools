@@ -2,7 +2,7 @@ argparse
 typecheck
 valideer
 pyyaml
-xlwings
+#xlwings
 
 #odm2api dependecies, for now
 six
