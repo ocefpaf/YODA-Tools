@@ -1,7 +1,7 @@
 argparse
 typecheck
 valideer
-yaml
+pyyaml
 xlwings
 
 #odm2api dependecies, for now
