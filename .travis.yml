@@ -39,8 +39,8 @@ addons:
 #addons:
 #  mariadb: '10.1'
 before_script:
-  - ./scripts/mysql_setup.sh
-  - ./scripts/postgres_setup.sh
+ # - ./scripts/mysql_setup.sh
+ # - ./scripts/postgres_setup.sh
 
 before_install:
   ## From: http://conda.pydata.org/docs/travis.htm

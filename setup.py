@@ -41,22 +41,23 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
      long_description = f.read()
 #long_description = ""
 setup(
-    name='odm2api',
+    name='yodatools',
 
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.1',
+    version='0.5',
 
-    description='A Python-based application programmers interface for the Observations Data Model 2 (ODM2) ',
+    description='A Python-based application for validating, generating YODA files. And a tool that can use the' +
+                'ODM2PythonAPI (Observations Data Model 2 [ODM2] Python API) to load YODA into database',
     long_description=long_description,
 
     # The project's main homepage.
-    url='https://github.com/ODM2/ODM2PythonAPI',
+    url='https://github.com/ODM2/Yoda-Tools',
 
     # Author details
-    author='ODM2 team-Stephanie Reeder',
-    author_email='stephanie.reeder@usu.edu',
+    author='ODM2 team-Choonhan Youn',
+    author_email='cyoun@sdsc.edu',
 
     # note: maintainer gets listed as author in PKG-INFO, so leaving
     # this commented out for now
@@ -64,7 +65,7 @@ setup(
     maintainer_email='david.valentine@gmail.com',
 
     # Choose your license
-    license='BSD',
+    license='BSD3',
 
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
@@ -89,12 +90,12 @@ setup(
     ],
 
     # What does your project relate to?
-    keywords='Observations Data Model ODM2',
+    keywords='YODA, ODM2PythonAPI, Observations Data Model ODM2, Critical Zone Observatories (CZO)',
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
 
-    packages=find_packages(exclude=['Examples', 'setup', 'tests*', 'Forms']),
+    packages=find_packages(exclude=['ODM2PythonAPI', 'setup', 'tests*', 'yodatool']),
 
     # List run-time dependencies here.  These will be installed by pip when
     # your project is installed. For an analysis of "install_requires" vs pip's
