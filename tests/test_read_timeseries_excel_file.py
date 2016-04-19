@@ -1,13 +1,15 @@
 import unittest
 
 import yodatool.generate.timeseries.v0_3_1.timeseries_models as model
-from yodatool.generate.timeseries.v0_3_1.timeseries_dao import TimeseriesXlDao
+
 
 from tests._utils import (
     _init_logging, TemporaryDirectory, check_excell_installed, xw_Workbook,
     xw_close_workbook)
 
 is_excel_installed = check_excell_installed()
+if (is_excel_installed):
+    from yodatool.generate.timeseries.v0_3_1.timeseries_dao import TimeseriesXlDao
 
 @unittest.skipIf(not is_excel_installed, "Cannot test xlwings without MS Excel.")
 class TestTimeSeries(unittest.TestCase):

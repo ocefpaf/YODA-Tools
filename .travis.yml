@@ -71,7 +71,7 @@ install: # now just our code
   - pip install -r requirements/development.pip
   # ODM2
   - pip install git+https://github.com/ODM2/geoalchemy.git@odm2#egg=geoalchemy-0.7.3
-  - cd ODM2PythonAPI;  pip install . 
+  - cd ODM2PythonAPI;  pip install .
   - cd ..; pip install  -e .
 #  - pip install  -r requirements_tests.txt  --allow-external pyodbc --allow-unverified pyodbc
     # pysqlite
