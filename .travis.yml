@@ -59,7 +59,7 @@ before_install:
   - |
       python --version
       conda info -a
-  - git submodules init
+  - git submodule init
   - git submodule update
 
 install: # now just our code

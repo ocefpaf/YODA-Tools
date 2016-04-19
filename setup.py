@@ -108,6 +108,7 @@ setup(
     dependency_links=[
         "git+https://github.com/ODM2/geoalchemy.git@v0.7.3#egg=geoalchemy-0.7.3"
     ],
+    tests_require=reqs_test,
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax,
@@ -117,7 +118,7 @@ setup(
         'mysql': ['pymysql'],
         'postgis': ['psycopg2'],
         'sqlite': ['pyspatialite >=3.0.0'], # need to look at: http://www.gaia-gis.it/spatialite-2.4.0-4/splite-python.html
-        'test': ['coverage'],
+        'xlwings': ['xlwings']
     },
 
     # If there are data files included in your packages that need to be

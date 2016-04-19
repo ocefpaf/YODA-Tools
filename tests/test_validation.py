@@ -14,6 +14,12 @@ logger = logging.getLogger("Test.YODATool")
 from yodatool.validate.timeseriesvalidator import TSvalidator
 from yodatool.validate.cvvalidator import CVvalidator
 
+from tests._utils import (
+    _init_logging, TemporaryDirectory, check_excell_installed, xw_Workbook,
+    xw_close_workbook)
+
+is_excel_installed = check_excell_installed()
+
 class validateYodaTestCases(unittest.TestCase):
 
     def setUp(self):
