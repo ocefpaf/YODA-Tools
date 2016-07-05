@@ -1,11 +1,20 @@
 import unittest
-from yodatool.generate.measurement.measurement_dao import MeasurementXlDao
+
 import yodatool.generate.measurement.measurement_models as model
 
+from tests._utils import (
+    _init_logging, TemporaryDirectory, check_excell_installed, xw_Workbook,
+    xw_close_workbook)
+
+is_excel_installed = check_excell_installed()
+if (is_excel_installed):
+    from yodatool.generate.measurement.measurement_dao import MeasurementXlDao
+
+@unittest.skipIf(not is_excel_installed, "Cannot test xlwings without MS Excel.")
 class TestMeasurement(unittest.TestCase):
 
     def setUp(self):
-        self.loader = MeasurementXlDao('../yodatool/examples/YODA_Specimen_TEMPLATE_WORKING.xlsm')
+        self.loader = MeasurementXlDao('./yodatool/examples/YODA_Specimen_TEMPLATE_WORKING.xlsm')
 
     def test_measurement(self):
         # test_affiliations

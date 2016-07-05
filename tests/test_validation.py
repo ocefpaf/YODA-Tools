@@ -14,10 +14,16 @@ logger = logging.getLogger("Test.YODATool")
 from yodatool.validate.timeseriesvalidator import TSvalidator
 from yodatool.validate.cvvalidator import CVvalidator
 
+from tests._utils import (
+    _init_logging, TemporaryDirectory, check_excell_installed, xw_Workbook,
+    xw_close_workbook)
+
+is_excel_installed = check_excell_installed()
+
 class validateYodaTestCases(unittest.TestCase):
 
     def setUp(self):
-        yodafile='../yodatool/examples/YODA_TimeSeries_Example1_Template_0.3.1-alpha.yaml'
+        yodafile='./yodatool/examples/YODA_TimeSeries_Example1_Template_0.3.1-alpha.yaml'
         stream = file(yodafile)
         yaml_data = yaml.load(stream)
 
