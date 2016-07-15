@@ -297,7 +297,13 @@ class Loader(object):
                 #this has been added to support sqlite,
                 #print "%s is a date type. %s"%(key, value)
                 if value is not None:
-                    value = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+
+                    try:
+
+                        value = self.try_parsing_date(value)#datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+                    except Exception as e:
+                        print ("error converting datetime {}".format(e))
+                        # value = datetime.strptime(value, "%Y-%m-%d")
 
             resolved_values[key] = self.resolve_value(value)
 
@@ -316,6 +322,17 @@ class Loader(object):
 
         return obj
 
+
+
+    def try_parsing_date(self, text):
+        for fmt in ('%Y-%m-%d %H:%M:%S', '%Y-%m-%d %H:%M', '%Y-%m-%d'):
+            try:
+                return datetime.strptime(text, fmt)
+            except ValueError:
+                pass
+        raise ValueError('no valid date format found')
+
+
     def obtain_object_id(self, key, value):
         self.session.flush()
 
@@ -324,6 +341,9 @@ class Loader(object):
         try:
 
             ref = self._references[value[1:]]
+
+            # if "SamplingFeature" in key or "Result" in key:
+            #     print ("hello world")
 
             if key.endswith("ID"):
                 # obtain the primary key value
@@ -334,6 +354,7 @@ class Loader(object):
             #         value = getattr(ref, "UnitsID")
             elif key.endswith("Obj"):
                 value = ref
+
 
             return value
         except Exception as e:
@@ -480,6 +501,7 @@ class Loader(object):
         MinValues = None
         MaxValues = None
 
+        self.session.flush()
         for value in merged_dicts:
             resolved_values = self._check_types(klass, value)
             obj = self.create_obj(klass, resolved_values)
@@ -488,7 +510,7 @@ class Loader(object):
                 self.session.flush()
             except  Exception as e :
                 print "error adding obj: %s. %s" % (obj, e)
-
+                self.session.rollback()
 
     def add_klasses(self, klass, items):
         """

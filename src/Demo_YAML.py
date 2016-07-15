@@ -55,8 +55,9 @@ print("---------------------------------------------------------------------")
 
 files = []
 
-files.append(os.path.join('.', 'test.yaml'))
 
+#files.append(os.path.join('.', 'test.yaml'))
+files.append('/Users/stephanie/Desktop/YODA_TimeSeriesSpecimen_Example_0.3-alpha.yaml')
 
 
 
