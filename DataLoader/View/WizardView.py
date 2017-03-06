@@ -88,5 +88,5 @@ class WizardView(wx.Frame):
 
     def add_page(self, page):
         self.wizard_pages.append(page)
-        self.body_sizer.Add(page, 1, wx.EXPAND | wx.ALL, 5)
+        self.body_sizer.Add(page, 1, wx.EXPAND | wx.ALL, 0)
 
