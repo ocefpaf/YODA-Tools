@@ -1,6 +1,4 @@
 import wx
-from WizardHomePageView import WizardHomePageView
-from WizardYodaPageView import WizardYodaPage
 
 
 class WizardView(wx.Frame):
@@ -11,7 +9,7 @@ class WizardView(wx.Frame):
 
         header_panel = wx.Panel(panel)
         self.body_panel = wx.Panel(panel)
-        footer_panel = wx.Panel(panel)
+        self.footer_panel = wx.Panel(panel)
 
         ########################
         # HEADER
@@ -53,9 +51,9 @@ class WizardView(wx.Frame):
         ########################
 
         # Components
-        break_line_footer = wx.StaticLine(footer_panel)
-        self.next_button = wx.Button(footer_panel, label="Next")
-        self.back_button = wx.Button(footer_panel, label="Back")
+        break_line_footer = wx.StaticLine(self.footer_panel)
+        self.next_button = wx.Button(self.footer_panel, label="Next")
+        self.back_button = wx.Button(self.footer_panel, label="Back")
 
         # Sizer
         footer_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -67,12 +65,12 @@ class WizardView(wx.Frame):
         footer_sizer.Add(break_line_footer, 0, wx.EXPAND, 0)
         footer_sizer.Add(button_sizer, 0, wx.ALIGN_RIGHT)
 
-        footer_panel.SetSizer(footer_sizer)
+        self.footer_panel.SetSizer(footer_sizer)
 
         self.frame_sizer = wx.BoxSizer(wx.VERTICAL)
         self.frame_sizer.Add(header_panel, 0, wx.EXPAND | wx.ALL, 2)
         self.frame_sizer.Add(self.body_panel, 1, wx.EXPAND | wx.ALL, 2)
-        self.frame_sizer.Add(footer_panel, 0, wx.EXPAND | wx.ALL, 2)
+        self.frame_sizer.Add(self.footer_panel, 0, wx.EXPAND | wx.ALL, 2)
 
         panel.SetSizer(self.frame_sizer)
 
