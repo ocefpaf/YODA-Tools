@@ -34,6 +34,10 @@ class WizardHomePageView(wx.Panel):
         sizer.Add(static_box_sizer, 1, wx.EXPAND | wx.ALL, 5)
 
         self.SetSizer(sizer)
-        sizer.Fit(self)
-
         self.Hide()
+
+        # Bindings
+        self.browse_button.Bind(wx.EVT_BUTTON, self.on_browse_button)
+
+    def on_browse_button(self, event):
+        pass
