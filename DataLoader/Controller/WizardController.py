@@ -67,7 +67,7 @@ class WizardController(WizardView):
         for page in self.wizard_pages:
             page.Hide()
 
-        self.page_number = 3
+        self.page_number = 0
         self.__update_page()
 
 
