@@ -1,4 +1,4 @@
-from DataLoader.Model.Abstract import iInputs
+from Model.Abstract import iInputs
 
 
 class yamlInput(iInputs):

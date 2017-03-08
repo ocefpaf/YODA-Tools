@@ -1,5 +1,5 @@
 
-from DataLoader.Model import *
+from Model import *
 
 class iOutputs():
 
