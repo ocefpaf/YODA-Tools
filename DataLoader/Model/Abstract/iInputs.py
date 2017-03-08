@@ -4,10 +4,10 @@ from Model import *
 class iInputs():
 
     def parse(self):
-        pass
+        raise NotImplementedError()
 
     def verify(self):
-        pass
+        raise NotImplementedError()
 
     def sendODM2Session(self):
-        pass
+        raise NotImplementedError()

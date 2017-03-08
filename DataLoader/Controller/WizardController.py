@@ -9,12 +9,21 @@ from WizardSummaryPageController import WizardSummaryPageController
 class WizardController(WizardView):
     def __init__(self, parent):
         super(WizardController, self).__init__(parent)
-
-        self.home_page = WizardHomePageController(self.body_panel, title="Yoda Wizard")
+        self.parent = parent
         self.yoda_page = WizardYodaPageController(self.body_panel, title="Yoda")
         self.excel_page = WizardExcelPageController(self.body_panel, title="Excel")
         self.database_page = WizardDatabasePageController(self.body_panel, title="OMD2")
         self.summary_page = WizardSummaryPageController(self. body_panel, title="Summary")
+        self.home_page = WizardHomePageController(self.body_panel, title="Yoda Wizard")
+
+        # The key must match the checkbox id
+        self.home_page.pages_enabled = {
+            0: True,   # home page
+            1: False,  # yoda page
+            2: False,  # excel page
+            3: False,  # database page
+            4: True    # summary page
+        }
 
         self.add_page(self.home_page)
         self.add_page(self.yoda_page)
@@ -23,7 +32,6 @@ class WizardController(WizardView):
         self.add_page(self.summary_page)
 
         self.show_home_page()
-        # self.frame_sizer.Fit(self)
         self.SetSize((450, 450))
 
     def on_next_button(self, event):
@@ -32,13 +40,31 @@ class WizardController(WizardView):
         # Boundary checking
         self.page_number = min(self.page_number + 1, len(self.wizard_pages) - 1)
 
+        if not self.home_page.pages_enabled[self.page_number]:
+            self.page_number = self.__go_to_next_available_page(forward=True)
+
         self.__update_page()
+
+    def __go_to_next_available_page(self, forward=True):
+        if forward:
+            for i in range(self.page_number, len(self.home_page.pages_enabled.values())):
+                if self.home_page.pages_enabled[i]:
+                    return i
+        else:
+            for i in range(self.page_number, -1, -1):
+                if self.home_page.pages_enabled[i]:
+                    return i
+
+        return 0
 
     def on_back_button(self, event):
         self.wizard_pages[self.page_number].Hide()
 
         # Boundary checking
         self.page_number = max(self.page_number - 1, 0)
+
+        if not self.home_page.pages_enabled[self.page_number]:
+            self.page_number = self.__go_to_next_available_page(forward=False)
 
         self.__update_page()
 
@@ -62,6 +88,7 @@ class WizardController(WizardView):
 
     def will_flip_to_last_page(self):
         self.next_button.SetLabel("Finish")
+        self.back_button.Show()
 
     def show_home_page(self):
         for page in self.wizard_pages:
@@ -69,5 +96,3 @@ class WizardController(WizardView):
 
         self.page_number = 0
         self.__update_page()
-
-

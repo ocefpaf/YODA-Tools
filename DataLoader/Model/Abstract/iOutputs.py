@@ -4,7 +4,7 @@ from Model import *
 class iOutputs():
 
     def save(self):
-        pass
+        raise NotImplementedError()
 
     def accept(self):
-        pass
+        raise NotImplementedError()
