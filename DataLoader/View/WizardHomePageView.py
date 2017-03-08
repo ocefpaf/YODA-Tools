@@ -10,9 +10,9 @@ class WizardHomePageView(wx.Panel):
         # self.input_file_text_ctrl = RichTextCtrl(self)
         self.input_file_text_ctrl = wx.TextCtrl(self)
         self.browse_button = wx.Button(self, label="Browse")
-        yoda_check_box = wx.CheckBox(self, label="YODA")
-        excel_check_box = wx.CheckBox(self, label="Excel Template")
-        odm2_check_box = wx.CheckBox(self, label="ODM2 Database")
+        self.yoda_check_box = wx.CheckBox(self, id=1, label="YODA")
+        self.excel_check_box = wx.CheckBox(self, id=2, label="Excel Template")
+        self.odm2_check_box = wx.CheckBox(self, id=3, label="ODM2 Database")
 
         # Style components
         self.input_file_text_ctrl.SetHint("Input file...")
@@ -25,9 +25,9 @@ class WizardHomePageView(wx.Panel):
         # Add components to sizer
         input_sizer.Add(self.input_file_text_ctrl, 1, wx.EXPAND | wx.ALL, 2)
         input_sizer.Add(self.browse_button, 0, wx.ALL, 0)
-        static_box_sizer.Add(yoda_check_box, 0, flag=wx.EXPAND | wx.ALL, border=15)
-        static_box_sizer.Add(excel_check_box, 0, flag=wx.EXPAND | wx.ALL, border=15)
-        static_box_sizer.Add(odm2_check_box, 0, flag=wx.EXPAND | wx.ALL, border=15)
+        static_box_sizer.Add(self.yoda_check_box, 0, flag=wx.EXPAND | wx.ALL, border=15)
+        static_box_sizer.Add(self.excel_check_box, 0, flag=wx.EXPAND | wx.ALL, border=15)
+        static_box_sizer.Add(self.odm2_check_box, 0, flag=wx.EXPAND | wx.ALL, border=15)
 
         sizer.Add(instructions_text, 0, wx.EXPAND | wx.ALL, 5)
         sizer.Add(input_sizer, 0, wx.EXPAND | wx.ALL, 5)
@@ -38,6 +38,18 @@ class WizardHomePageView(wx.Panel):
 
         # Bindings
         self.browse_button.Bind(wx.EVT_BUTTON, self.on_browse_button)
+        self.yoda_check_box.Bind(wx.EVT_CHECKBOX, self.on_check_box)
+        self.excel_check_box.Bind(wx.EVT_CHECKBOX, self.on_check_box)
+        self.odm2_check_box.Bind(wx.EVT_CHECKBOX, self.on_check_box)
+
+    def on_check_box(self, event):
+        pass
 
     def on_browse_button(self, event):
-        pass
+        dialog = wx.FileDialog(self,
+                               message="Add file",
+                               # wildcard="CSV File (*.csv)|*.csv",
+                               style=wx.FD_CHANGE_DIR)
+
+        if dialog.ShowModal() == wx.ID_OK:
+            self.input_file_text_ctrl.SetValue(dialog.GetPath())
