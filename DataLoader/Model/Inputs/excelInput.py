@@ -1,4 +1,4 @@
-from Model.Abstract import iInputs
+from DataLoader.Model.Abstract import iInputs
 
 
 class excelInput(iInputs):
