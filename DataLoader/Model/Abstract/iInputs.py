@@ -3,7 +3,7 @@ from DataLoader.Model import *
 
 class iInputs():
 
-    def parse(self):
+    def parse(self, file_path):
         raise NotImplementedError()
 
     def verify(self):
