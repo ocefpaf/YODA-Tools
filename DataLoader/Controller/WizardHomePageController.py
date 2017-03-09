@@ -10,3 +10,7 @@ class WizardHomePageController(WizardHomePageView):
 
     def on_check_box(self, event):
         self.pages_enabled[event.GetId()] = event.Checked()
+        if True in self.pages_enabled.values()[1:4]:
+            self.GetTopLevelParent().next_button.Enable()
+        else:
+            self.GetTopLevelParent().next_button.Disable()

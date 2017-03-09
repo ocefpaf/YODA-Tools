@@ -1,5 +1,5 @@
 import wx
-from Controller.WizardController import WizardController
+from DataLoader.Controller.WizardController import WizardController
 
 
 if __name__ == '__main__':

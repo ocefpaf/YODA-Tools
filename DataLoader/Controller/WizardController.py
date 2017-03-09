@@ -30,6 +30,7 @@ class WizardController(WizardView):
         self.add_page(self.excel_page)
         self.add_page(self.database_page)
         self.add_page(self.summary_page)
+        self.next_button.Disable()
 
         self.show_home_page()
         self.SetSize((450, 450))
