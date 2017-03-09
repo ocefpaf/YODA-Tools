@@ -1,9 +1,4 @@
-<<<<<<< HEAD
-from Model.Abstract import iInputs
 
-
-class yamlInput(iInputs):
-=======
 from DataLoader.Model.Abstract import iInputs
 from yodaLoader.YAML.yamlFunctions import YamlFunctions
 from odm2api.ODM2.models import modelBase
@@ -14,7 +9,7 @@ class yamlInput(iInputs):
     def __init__(self):
         self.odm2session=None
         pass
->>>>>>> 6ab4fa2a60fe475bd83d42dd0abe0e886b189f65
+
 
     def parse(self, file_path):
 
