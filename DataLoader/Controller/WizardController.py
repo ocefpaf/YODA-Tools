@@ -4,6 +4,7 @@ from WizardYodaPageController import WizardYodaPageController
 from WizardExcelPageController import WizardExcelPageController
 from WizardDatabasePageController import WizardDatabasePageController
 from WizardSummaryPageController import WizardSummaryPageController
+import wx
 
 
 class WizardController(WizardView):
@@ -13,7 +14,7 @@ class WizardController(WizardView):
         self.yoda_page = WizardYodaPageController(self.body_panel, title="Yoda")
         self.excel_page = WizardExcelPageController(self.body_panel, title="Excel")
         self.database_page = WizardDatabasePageController(self.body_panel, title="OMD2")
-        self.summary_page = WizardSummaryPageController(self. body_panel, title="Summary")
+        self.summary_page = WizardSummaryPageController(self, self.body_panel, title="Summary")
         self.home_page = WizardHomePageController(self.body_panel, title="Yoda Wizard")
 
         # The key must match the checkbox id
@@ -36,6 +37,10 @@ class WizardController(WizardView):
         self.SetSize((450, 450))
 
     def on_next_button(self, event):
+        if self.page_number + 2 > len(self.wizard_pages):
+            self.summary_page.run()
+            self.Close()
+
         self.wizard_pages[self.page_number].Hide()
 
         # Boundary checking

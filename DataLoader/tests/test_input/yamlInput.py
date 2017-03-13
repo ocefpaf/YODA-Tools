@@ -7,7 +7,7 @@ class TestYaml:
         self.yi = yamlInput()
 
     def test_parse_yaml(self):
-        self.yi.parse(self.file_path)
+        self.yi.parse_file(self.file_path)
         session = self.yi.sendODM2Session
         print session
         assert session != None

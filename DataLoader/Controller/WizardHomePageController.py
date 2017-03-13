@@ -1,4 +1,5 @@
 from DataLoader.View.WizardHomePageView import WizardHomePageView
+import wx
 
 
 class WizardHomePageController(WizardHomePageView):
@@ -14,3 +15,16 @@ class WizardHomePageController(WizardHomePageView):
             self.GetTopLevelParent().next_button.Enable()
         else:
             self.GetTopLevelParent().next_button.Disable()
+
+    def on_browse_button(self, event):
+        wildcards = "All Files (*.*) | *.*"
+
+        dialog = wx.FileDialog(self,
+                               message="Add file",
+                               wildcard=wildcards,
+                               style=wx.FD_CHANGE_DIR)
+
+        if dialog.ShowModal() != wx.ID_OK:
+            return
+
+        self.input_file_text_ctrl.SetValue(dialog.GetPath())

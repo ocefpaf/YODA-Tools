@@ -1,8 +1,4 @@
-
-
-
-class iInputs():
-
+class iInputs(object):
     def parse(self, file_path):
         raise NotImplementedError()
 

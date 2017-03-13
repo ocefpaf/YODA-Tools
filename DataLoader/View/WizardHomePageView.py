@@ -46,10 +46,4 @@ class WizardHomePageView(wx.Panel):
         pass
 
     def on_browse_button(self, event):
-        dialog = wx.FileDialog(self,
-                               message="Add file",
-                               # wildcard="CSV File (*.csv)|*.csv",
-                               style=wx.FD_CHANGE_DIR)
-
-        if dialog.ShowModal() == wx.ID_OK:
-            self.input_file_text_ctrl.SetValue(dialog.GetPath())
+        pass
