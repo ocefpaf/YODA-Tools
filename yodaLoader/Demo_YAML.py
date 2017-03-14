@@ -55,7 +55,7 @@ print("---------------------------------------------------------------------")
 
 files = []
 
-files.append(os.path.join('.', 'test.yaml'))
+files.append(os.path.join('.', 'test_ts.yaml'))
 
 
 
