@@ -13,9 +13,9 @@ class WizardController(WizardView):
         self.parent = parent
         self.yoda_page = WizardYodaPageController(self.body_panel, title="Yoda")
         self.excel_page = WizardExcelPageController(self.body_panel, title="Excel")
-        self.database_page = WizardDatabasePageController(self.body_panel, title="OMD2")
+        self.database_page = WizardDatabasePageController(self.body_panel, title="ODM2")
         self.summary_page = WizardSummaryPageController(self, self.body_panel, title="Summary")
-        self.home_page = WizardHomePageController(self.body_panel, title="Yoda Wizard")
+        self.home_page = WizardHomePageController(self.body_panel, title="Loader Wizard")
 
         # The key must match the checkbox id
         self.home_page.pages_enabled = {

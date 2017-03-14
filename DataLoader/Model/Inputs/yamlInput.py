@@ -15,10 +15,10 @@ class yamlInput(iInputs):
 
 
         #create connection to temp sqlite db
-        session_factory = dbconnection.createConnection('sqlite', 'D:/DEV/ODM2.sqlite', 2.0)
+        #session_factory = dbconnection.createConnection('sqlite', 'D:/DEV/ODM2.sqlite', 2.0)
+        session_factory = dbconnection.createConnection('sqlite', ':memory:', 2.0)
         _session = session_factory.getSession()
         _engine = session_factory.engine
-        setSchema(_engine)
         Base.metadata.create_all(_engine)
 
         yaml_load = YamlFunctions(_session, _engine)

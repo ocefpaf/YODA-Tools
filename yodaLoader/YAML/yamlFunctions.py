@@ -84,7 +84,7 @@ class YamlFunctions(object):
 
 
         # load the Time Series Result information
-        self._session.flush()
+        # self._session.flush()
         #yl.loadTimeSeriesResults(self._session, self._engine, timeSeries)
         #self._session.flush()
 

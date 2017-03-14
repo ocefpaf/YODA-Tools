@@ -290,6 +290,9 @@ class Loader(object):
         for key, value in resolved_values.iteritems():
 
             # if "ID" in key and "UUID" not in key:
+            if key == 'SamplingFeatureObj':
+                key = 'SamplingFeatureID'
+                value = self.obtain_object_id(key, value)
             if value and isinstance(value, basestring) and value.startswith('*'):
                 value = self.obtain_object_id(key, value)
                 # key, value = self.obtain_key_value(key, value, resolved_values)
@@ -333,7 +336,10 @@ class Loader(object):
             #     else:
             #         value = getattr(ref, "UnitsID")
             elif key.endswith("Obj"):
-                value = ref
+                if not 'SamplingFeatureObj' in key:
+                    value = ref
+                else:
+                    value = inspect(ref.identity[0])
 
             return value
         except Exception as e:
