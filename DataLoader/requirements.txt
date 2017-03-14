@@ -1,0 +1,9 @@
+pyodbc
+pymysql
+numpy
+sqlalchemy
+wxpython
+pyyaml
+openpyxl
+
+
