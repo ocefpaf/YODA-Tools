@@ -1,9 +1,9 @@
 import unittest
-
+import os
 import yodatool.generate.timeseries.v0_3_1.timeseries_models as model
 
 
-from tests._utils import (
+from ._utils import (
     _init_logging, TemporaryDirectory, check_excell_installed, xw_Workbook,
     xw_close_workbook)
 
@@ -16,7 +16,9 @@ class TestTimeSeries(unittest.TestCase):
 
     def setUp(self):
         # run pytest from Yoda-Tools.
-        self.loader = TimeseriesXlDao('./yodatool/examples/YODA_TimeSeries_Example1_Template_0.3.1-alpha.xlsm')
+        # self.loader = TimeseriesXlDao('./yodatool/examples/YODA_TimeSeries_Example1_Template_0.3.1-alpha.xlsm')
+        curr_folder = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+        self.loader = os.path.join(curr_folder, 'examples', 'YODA_TimeSeries_Example1_Template_0.3.1-alpha.xlsm')
 
     def test_timeseries(self):
         # yodat header

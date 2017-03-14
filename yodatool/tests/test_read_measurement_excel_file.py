@@ -1,8 +1,8 @@
 import unittest
-
+import os
 import yodatool.generate.measurement.measurement_models as model
 
-from tests._utils import (
+from ._utils import (
     _init_logging, TemporaryDirectory, check_excell_installed, xw_Workbook,
     xw_close_workbook)
 
@@ -14,7 +14,9 @@ if (is_excel_installed):
 class TestMeasurement(unittest.TestCase):
 
     def setUp(self):
-        self.loader = MeasurementXlDao('./yodatool/examples/YODA_Specimen_TEMPLATE_WORKING.xlsm')
+        # self.loader = MeasurementXlDao('./yodatool/examples/YODA_Specimen_TEMPLATE_WORKING.xlsm')
+        curr_folder = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+        self.loader = os.path.join(curr_folder, 'examples', 'YODA_Specimen_TEMPLATE_WORKING.xlsm')
 
     def test_measurement(self):
         # test_affiliations

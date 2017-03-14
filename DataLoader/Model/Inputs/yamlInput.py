@@ -19,9 +19,13 @@ class yamlInput(iInputs):
         session_factory = dbconnection.createConnection('sqlite', ':memory:', 2.0)
         _session = session_factory.getSession()
         _engine = session_factory.engine
+        setSchema(_engine)
         Base.metadata.create_all(_engine)
 
+
+
         yaml_load = YamlFunctions(_session, _engine)
+
 
         yaml_load.loadFromFile(file_path)
         self.odm2session=_session
