@@ -3,10 +3,10 @@ typecheck
 valideer
 pyyaml
 #xlwings
+openpyxl
+
 
 #odm2api dependecies, for now
 six
 sqlalchemy
--e git+https://github.com/ODM2/geoalchemy.git@odm2#egg=geoalchemy-0.7.3
-shapely
 pandas

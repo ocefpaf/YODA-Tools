@@ -9,5 +9,6 @@ pymssql
 psycopg2
 #pyspatialite
 mysql-python
-
+openpyxl
+pyyaml
 

@@ -26,13 +26,9 @@ except ImportError as e:
 # Create a connection to the ODM2 database
 
 
-# session_factory = dbconnection.createConnection('mysql', 'jws.uwrl.usu.edu', 'odm2', 'ODM', 'ODM123!!')
-
 # session_factory = dbconnection.createConnection('mssql', 'arroyoodm2', 'LBRODM2', 'ODM', 'odm')
 # session_factory = dbconnection.createConnection('postgresql', 'localhost', 'ODM2', 'odm', 'odm')
 session_factory = dbconnection.createConnection('mysql', "localhost", 'ODM2', 'ODM', 'odm')
-
-# session_factory = dbconnection.createConnection('mysql', 'arroyo.uwrl.usu.edu', 'LBRODM2', 'Stephanie', 'odm')
 # session_factory = dbconnection.createConnection('sqlite', '/Users/stephanie/DEV/DBs/ODM2.sqlite', 2.0)
 
 

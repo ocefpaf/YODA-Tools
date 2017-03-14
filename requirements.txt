@@ -5,5 +5,5 @@ sqlalchemy
 wxpython
 pyyaml
 openpyxl
-
+pandas
 

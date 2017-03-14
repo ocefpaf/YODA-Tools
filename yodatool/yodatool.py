@@ -9,12 +9,12 @@ import sys
 
 import yaml
 
-from yodatool.generate.measurement.measurement_yoda import MeasurementYoda
+from generate.measurement.measurement_yoda import MeasurementYoda
 # from yodatool.generate.timeseries.v0_3_1.timeseries_yoda import TimeseriesYoda
-from yodatool.generate.timeseries.v0_3_2.timeseries_yoda import TimeseriesYoda
-from yodatool.load.YODAloader import yodaLoad
-from yodatool.validate.cvvalidator import CVvalidator
-from yodatool.validate.timeseriesvalidator import TSvalidator
+from generate.timeseries.v0_3_2.timeseries_yoda import TimeseriesYoda
+from load.YODAloader import yodaLoad
+from validate.cvvalidator import CVvalidator
+from validate.timeseriesvalidator import TSvalidator
 
 
 def yoda_logger(file_log_level, console_log_level = None):
