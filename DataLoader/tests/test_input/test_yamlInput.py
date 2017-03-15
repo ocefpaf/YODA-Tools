@@ -11,22 +11,23 @@ class TestYaml:
 
     def test_parse_ts(self):
         file_path = os.path.join(curr_folder, 'test_files', 'test_ts.yaml')
-        print file_path
-        # self.file_path = "../test_files/test_ts.yaml"
         self.yi.parse(file_path)
-        session = self.yi.sendODM2Session
+
+        session = self.yi.sendODM2Session()
         print session
         assert session != None
-        # assert  != None
+        assert len(session.dirty)>0;
+
+
 
     def test_parse_specimen(self):
         file_path = os.path.join(curr_folder, 'test_files', 'test_specimen_ts.yaml')
 
-        # self.file_path = "../test_files/test_specimen_ts.yaml"
         self.yi.parse(file_path)
-        session = self.yi.sendODM2Session
-        print session
+        session = self.yi.sendODM2Session()
+
         assert session != None
+        assert len(session.dirty) > 0;
 
 
 

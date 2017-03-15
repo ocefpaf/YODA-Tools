@@ -311,7 +311,7 @@ class Loader(object):
                 #print "%s is a date type. %s"%(key, value)
                 if value is not None:
                     value = self.try_parsing_date(value)
-                    # value = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+
 
             resolved_values[key] = self.resolve_value(value)
 

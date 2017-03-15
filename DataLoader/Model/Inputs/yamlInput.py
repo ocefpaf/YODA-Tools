@@ -15,8 +15,8 @@ class yamlInput(iInputs):
 
 
         #create connection to temp sqlite db
-        #session_factory = dbconnection.createConnection('sqlite', 'D:/DEV/ODM2.sqlite', 2.0)
-        session_factory = dbconnection.createConnection('sqlite', ':memory:', 2.0)
+        session_factory = dbconnection.createConnection('sqlite', 'D:/DEV/ODM2.sqlite', 2.0)
+        # session_factory = dbconnection.createConnection('sqlite', ':memory:', 2.0)
         _session = session_factory.getSession()
         _engine = session_factory.engine
         setSchema(_engine)
@@ -29,6 +29,8 @@ class yamlInput(iInputs):
 
         yaml_load.loadFromFile(file_path)
         self.odm2session=_session
+        _session.close()
+
 
 
     def verify(self):
