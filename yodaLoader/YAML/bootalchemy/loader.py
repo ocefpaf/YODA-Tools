@@ -36,6 +36,16 @@ class Loader(object):
           check_types
             introspect the target model class to re-cast the data appropriately.
     """
+
+    def try_parsing_date(self, text):
+        for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M", "%Y-%m-%d %H"):
+            try:
+                return datetime.strptime(text, fmt)
+            except ValueError:
+                pass
+        raise ValueError('no valid date format found')
+
+
     default_encoding = 'utf-8'
 
     def cast(self, type_, cast_func, value):
@@ -300,7 +310,8 @@ class Loader(object):
                 #this has been added to support sqlite,
                 #print "%s is a date type. %s"%(key, value)
                 if value is not None:
-                    value = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+                    value = self.try_parsing_date(value)
+                    # value = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
 
             resolved_values[key] = self.resolve_value(value)
 
