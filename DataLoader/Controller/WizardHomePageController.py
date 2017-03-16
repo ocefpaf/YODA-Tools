@@ -17,7 +17,7 @@ class WizardHomePageController(WizardHomePageView):
             self.GetTopLevelParent().next_button.Disable()
 
     def on_browse_button(self, event):
-        wildcards = "All Files (*.*) | *.*"
+        wildcards = "All File (*.*) | *.*"
 
         dialog = wx.FileDialog(self,
                                message="Add file",

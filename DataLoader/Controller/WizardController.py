@@ -38,7 +38,7 @@ class WizardController(WizardView):
 
     def on_next_button(self, event):
         if self.page_number + 2 > len(self.wizard_pages):
-            self.summary_page.run()
+            self.summary_page.run(self.selected_pages())
             self.Close()
 
         self.wizard_pages[self.page_number].Hide()
@@ -102,3 +102,14 @@ class WizardController(WizardView):
 
         self.page_number = 0
         self.__update_page()
+
+    def selected_pages(self):
+        pages = {}
+        if self.home_page.pages_enabled[1]:
+            pages['yoda'] = self.yoda_page
+        if self.home_page.pages_enabled[2]:
+            pages['excel'] = self.excel_page
+        if self.home_page.pages_enabled[3]:
+            pages['odm2'] = self.database_page
+
+        return pages

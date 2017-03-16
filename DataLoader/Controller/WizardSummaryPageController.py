@@ -7,7 +7,9 @@ class WizardSummaryPageController(WizardSummaryPageView):
         self.parent = parent
         self.title = title
 
-    def run(self):
-        input_file = self.parent.home_page.input_file_text_ctrl.GetValue()
-        excel = ExcelInput(input_file)
-        excel.parse()
+    def run(self, selection):
+        if 'excel' in selection:
+            # excel_page = selection['excel']
+            input_file = self.parent.home_page.input_file_text_ctrl.GetValue()
+            excel = ExcelInput(input_file)
+            excel.parse()
