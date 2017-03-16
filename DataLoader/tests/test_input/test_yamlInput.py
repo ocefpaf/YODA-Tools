@@ -1,4 +1,4 @@
-from DataLoader.Model.Inputs.yamlInput import yamlInput
+from DataLoader.model.Inputs.yamlInput import yamlInput
 
 import os
 

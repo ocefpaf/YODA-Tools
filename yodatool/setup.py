@@ -49,7 +49,7 @@ setup(
     version='0.5',
 
     description='A Python-based application for validating, generating YODA files. And a tool that can use the' +
-                'ODM2PythonAPI (Observations Data Model 2 [ODM2] Python API) to load YODA into database',
+                'ODM2PythonAPI (Observations Data model 2 [ODM2] Python API) to load YODA into database',
     long_description=long_description,
 
     # The project's main homepage.
@@ -90,7 +90,7 @@ setup(
     ],
 
     # What does your project relate to?
-    keywords='YODA, ODM2PythonAPI, Observations Data Model ODM2, Critical Zone Observatories (CZO)',
+    keywords='YODA, ODM2PythonAPI, Observations Data model ODM2, Critical Zone Observatories (CZO)',
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().

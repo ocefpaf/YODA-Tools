@@ -1,5 +1,5 @@
 from DataLoader.View.WizardSummaryPageView import WizardSummaryPageView
-from DataLoader.Model.Inputs.ExcelInput import ExcelInput
+from DataLoader.model.Inputs.ExcelInput import ExcelInput
 
 class WizardSummaryPageController(WizardSummaryPageView):
     def __init__(self, parent, panel, title):

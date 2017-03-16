@@ -1,5 +1,5 @@
 
-from DataLoader.Model.Abstract import iInputs
+from DataLoader.model.Abstract import iInputs
 from yodaLoader.YAML.yamlFunctions import YamlFunctions
 from odm2api.ODM2.models import Base, setSchema
 

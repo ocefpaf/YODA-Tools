@@ -1,7 +1,7 @@
 import os
 import openpyxl
 from openpyxl.cell.cell import get_column_letter, column_index_from_string
-from DataLoader.Model.Abstract import iInputs
+from DataLoader.model.Abstract import iInputs
 from odm2api.ODM2.models import *
 
 
