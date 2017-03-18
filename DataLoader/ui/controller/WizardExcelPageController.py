@@ -1,4 +1,4 @@
-from DataLoader.View.WizardExcelPageView import WizardExcelPageView
+from DataLoader.ui.view.WizardExcelPageView import WizardExcelPageView
 
 
 class WizardExcelPageController(WizardExcelPageView):

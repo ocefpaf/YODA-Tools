@@ -1,5 +1,5 @@
 import wx
-from DataLoader.Controller.pnlDBConfig import pnlDBConfig
+from DataLoader.ui.controller.pnlDBConfig import pnlDBConfig
 
 
 class WizardDatabasePageView(wx.Panel):

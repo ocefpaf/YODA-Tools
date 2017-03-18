@@ -1,3 +1,3 @@
-from DataLoader.Controller import WizardController
+from DataLoader.ui.controller.WizardController import WizardController
 
 __all__ = ['WizardController']

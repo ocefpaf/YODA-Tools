@@ -1,4 +1,4 @@
-from DataLoader.View.WizardYodaPageView import WizardYodaPage
+from DataLoader.ui.view.WizardYodaPageView import WizardYodaPage
 
 
 class WizardYodaPageController(WizardYodaPage):

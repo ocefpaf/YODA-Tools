@@ -1,4 +1,4 @@
-from DataLoader.View.WizardDatabasePageView import WizardDatabasePageView
+from DataLoader.ui.view.WizardDatabasePageView import WizardDatabasePageView
 
 
 class WizardDatabasePageController(WizardDatabasePageView):

@@ -1,4 +1,4 @@
-from DataLoader.View.WizardHomePageView import WizardHomePageView
+from DataLoader.ui.view.WizardHomePageView import WizardHomePageView
 import wx
 
 

@@ -1,10 +1,9 @@
-from DataLoader.View.WizardView import WizardView
+from DataLoader.ui.view.WizardView import WizardView
 from WizardHomePageController import WizardHomePageController
 from WizardYodaPageController import WizardYodaPageController
 from WizardExcelPageController import WizardExcelPageController
 from WizardDatabasePageController import WizardDatabasePageController
 from WizardSummaryPageController import WizardSummaryPageController
-import wx
 
 
 class WizardController(WizardView):
