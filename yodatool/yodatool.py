@@ -39,7 +39,7 @@ def yoda_logger(file_log_level, console_log_level = None):
 
 def yoda_validate(args):
     print "Type: %s Level: %s CV type: %s" % (args.type,args.level,args.cvtype)
-    if args.level in [1,2,3]:
+    if args.level in [1, 2, 3]:
         if args.type == 'timeseries':
             validate_timeseries(args.yoda_file,args.level,args.cvtype)
         elif args.type == 'measurement':

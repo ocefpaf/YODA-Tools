@@ -1,8 +1,12 @@
 argparse
 typecheck
 valideer
+
+pyodbc
+pymysql
+numpy
+wxpython
 pyyaml
-xlwings
 openpyxl
 
 
