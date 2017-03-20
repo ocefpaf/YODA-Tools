@@ -332,39 +332,23 @@ class Loader(object):
 
     def obtain_object_id(self, key, value):
         self.session.flush()
-
         ref = None
-
         try:
-
             ref = self._references[value[1:]]
-
             if key.endswith("ID"):
                 # obtain the primary key value
                 value = inspect(ref).identity[0]
-            #     if not 'UnitsID' in key:
-            #         value = getattr(ref, key)
-            #     else:
-            #         value = getattr(ref, "UnitsID")
+
             elif key.endswith("Obj"):
-                if not 'SamplingFeatureObj' in key:
-                    value = ref
-                else:
-                    value = inspect(ref.identity[0])
+                # if not 'SamplingFeatureObj' in key:
+                #     value = ref
+                # else:
+                value = inspect(ref.identity[0])
 
             return value
         except Exception as e:
             return value
-            # print "key: ", key, " value: ", value
 
-            # value = None
-            # if ref:
-            #     if not 'UnitsID' in key:
-            #         value = getattr(ref, key)
-            #     else:
-            #         value = getattr(ref, "UnitsID")
-            #
-            # return value
 
     def resolve_references(self, session, values):
         """

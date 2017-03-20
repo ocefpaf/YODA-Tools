@@ -9,12 +9,12 @@ class TestYaml:
     def setup(self):
         self.yo = yamlOutput()
 
-    def test_test_ts(self):
+    def test_create_ts(self):
         session = build_ts_session()
         file_path = ""
         self.yo.save(session, file_path)
 
-    def test_test_specimen(self):
+    def test_create_specimen(self):
         session = build_ts_sepecimen_db()
         file_path = ""
         self.yo.save(session, file_path)

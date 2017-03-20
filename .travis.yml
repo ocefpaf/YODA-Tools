@@ -83,7 +83,6 @@ install: # now just our code
 # command to run tests
 script:
 # just the connection part
-
   - py.test
 
 #  - py.test yodatool/tests
