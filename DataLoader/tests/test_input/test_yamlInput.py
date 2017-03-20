@@ -1,4 +1,5 @@
 from DataLoader.model.Inputs.yamlInput import yamlInput
+from DataLoader.tests.test_util import build_session
 
 import os
 
@@ -14,11 +15,10 @@ class TestYaml:
         self.yi.parse(file_path)
 
         session = self.yi.sendODM2Session()
-        print session
+
         assert session != None
-        assert len(session.dirty)>0;
-
-
+        from odm2api.ODM2.models import People
+        assert len(session.query(People).all()) > 0
 
     def test_parse_specimen(self):
         file_path = os.path.join(curr_folder, 'test_files', 'test_specimen_ts.yaml')
@@ -27,7 +27,8 @@ class TestYaml:
         session = self.yi.sendODM2Session()
 
         assert session != None
-        assert len(session.dirty) > 0;
+        from odm2api.ODM2.models import People
+        assert len(session.query(People).all()) > 0
 
 
 

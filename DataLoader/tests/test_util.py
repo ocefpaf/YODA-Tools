@@ -3,15 +3,20 @@ from odm2api.ODM2.models import Base
 from odm2api.ODMconnection import dbconnection
 
 
-def build_db(engine):
+def build_db():
 
     # create connection to temp sqlite db
     session_factory = dbconnection.createConnection('sqlite', 'D:/DEV/ODM2.sqlite', 2.0)
+
     _engine = session_factory.engine
-    Base.metadata.create_all(_engine)
+    # Base.metadata.create_all(_engine)
+    return session_factory
 
 
-def build_session(session_factory):
+def build_session():
+    session_factory= build_db()
+    session = session_factory.getSession()
+    return session
     # get
     # persons = _session.query(People).limit(50).all()
     # datasets = _session.query(DataSets).limit(50).all()

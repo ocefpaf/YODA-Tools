@@ -3,12 +3,12 @@ By Jacob Meline
     Creates a factory logging method to be used within any class
 '''
 
-__author__ = 'Jacob'
+__author__ = 'Stephanie'
 
 import logging
 import os
 
-from odmtools.lib.Appdirs.appdirs import user_log_dir
+from .Appdirs.appdirs import user_log_dir
 
 
 
@@ -33,7 +33,7 @@ class LoggerTool():
 
 
 
-        logPath = user_log_dir("ODMTools", "UCHIC")
+        logPath = user_log_dir("yodatools", "ODM2")
         if not os.path.exists(logPath):
             os.makedirs(logPath, 0755)
         fileHandler = logging.FileHandler(os.path.join(logPath, logFile), mode=m)

@@ -1,35 +1,27 @@
 
 from DataLoader.model.Abstract import iInputs
-from yodaLoader.YAML.yamlFunctions import YamlFunctions
-from odm2api.ODM2.models import Base, setSchema
+from yodaloader.YAML.yamlFunctions import YamlFunctions
 
-from odm2api.ODMconnection import dbconnection
+
+
 
 class yamlInput(iInputs):
     def __init__(self):
         self.odm2session=None
         pass
 
-
+    # def create_memory_db(self):
+    #     self.session_factory =
     def parse(self, file_path):
 
+        self.create_memory_db()
 
-        #create connection to temp sqlite db
-        session_factory = dbconnection.createConnection('sqlite', 'D:/DEV/ODM2.sqlite', 2.0)
-        # session_factory = dbconnection.createConnection('sqlite', ':memory:', 2.0)
-        _session = session_factory.getSession()
-        _engine = session_factory.engine
-        setSchema(_engine)
-        Base.metadata.create_all(_engine)
-
-
-
-        yaml_load = YamlFunctions(_session, _engine)
-
+        yaml_load = YamlFunctions(self._session, self._engine)
 
         yaml_load.loadFromFile(file_path)
-        self.odm2session=_session
-        _session.close()
+        self.odm2session=self._session
+        #dont close the session, you wont be able to access it :-)
+        #_session.close()
 
 
 
