@@ -3,8 +3,6 @@ from DataLoader.model.Abstract import iInputs
 from yodaloader.YAML.yamlFunctions import YamlFunctions
 
 
-
-
 class yamlInput(iInputs):
     def __init__(self):
         self.odm2session=None
@@ -13,17 +11,14 @@ class yamlInput(iInputs):
     # def create_memory_db(self):
     #     self.session_factory =
     def parse(self, file_path):
-
         self.create_memory_db()
 
         yaml_load = YamlFunctions(self._session, self._engine)
 
         yaml_load.loadFromFile(file_path)
-        self.odm2session=self._session
+        self.odm2session = self._session
         #dont close the session, you wont be able to access it :-)
         #_session.close()
-
-
 
     def verify(self):
         pass

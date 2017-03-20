@@ -7,7 +7,8 @@ class yamlOutput(iOutputs):
 
     def save(self, session):
         tables = self.parseObjects()
-
+        print tables
 
     def accept(self):
         raise NotImplementedError()
+

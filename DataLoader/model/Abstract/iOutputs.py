@@ -8,8 +8,8 @@ class iOutputs():
         import inspect
         import sys
         # get a list of all of the classes in the module
-        clsmembers = inspect.getmembers(sys.modules[Base],
-                                        lambda member: inspect.isclass(member) and member.__module__ == __name__)
+        clsmembers = inspect.getmembers(sys.modules["odm2api.ODM2.models"],
+                                        lambda member: inspect.isclass(member) and member.__module__ == "odm2api.ODM2.models")
 
         for name, Tbl in clsmembers:
             import sqlalchemy.ext.declarative.api as api
