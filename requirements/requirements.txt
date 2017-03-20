@@ -5,7 +5,7 @@ valideer
 pyodbc
 pymysql
 numpy
-wxpython
+
 pyyaml
 openpyxl
 
