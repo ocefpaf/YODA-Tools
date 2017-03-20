@@ -25,7 +25,6 @@ class TestYaml:
         session = self.yi.sendODM2Session()
 
         assert session!=None
-        session.commit()
         from odm2api.ODM2.models import People, SamplingFeatures
         assert len(session.query(People).all()) > 0
         assert len(session.query(SamplingFeatures).all()) > 0

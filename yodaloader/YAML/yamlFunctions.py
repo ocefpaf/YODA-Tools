@@ -57,7 +57,6 @@ class YamlFunctions(object):
         s = yaml.load(reconstructed_values)
         return s
 
-
     def loadFromFile(self, filename):
         """
         Open a YAML file to be loaded into the SQLAlchemy connection
@@ -75,6 +74,8 @@ class YamlFunctions(object):
         if "TimeSeriesResultValues" in s:
             print "Found TimeSeriesResults"
             timeSeries = s.pop('TimeSeriesResultValues')
+
+
 
         # debugging information
         # self.printValues(s)
@@ -98,12 +99,12 @@ class YamlFunctions(object):
         for item in files:
             self.loadFromFile(item)
 
-    def writeValues(self, s):
+    def writeValues(self, data, file_path):
         import os
 
         print "PWD: ", os.getcwd()
-        with open('data.yaml', 'w') as outfile:
-            outfile.write(yaml.dump(s, default_flow_style=True))
+        with open(file_path, 'w') as outfile:
+            outfile.write(yaml.dump(data, default_flow_style=True))
 
     def saveToDB(self):
         self._session.commit()
