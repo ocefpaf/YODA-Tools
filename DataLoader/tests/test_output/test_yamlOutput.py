@@ -1,5 +1,5 @@
 from DataLoader.model.Outputs.yamlOutput import yamlOutput
-from DataLoader.tests.test_util import build_session
+from DataLoader.tests.test_util import build_ts_session, build_ts_sepecimen_db
 
 import os
 curr_folder = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
@@ -7,12 +7,14 @@ curr_folder = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
 class TestYaml:
     def setup(self):
-        self.session = build_session()
         self.yo = yamlOutput()
 
     def test_test_ts(self):
-        self.yo.save(self.session)
-        pass
+        session = build_ts_session()
+        file_path = ""
+        self.yo.save(session, file_path)
 
     def test_test_specimen(self):
-        pass
+        session = build_ts_sepecimen_db()
+        file_path = ""
+        self.yo.save(session, file_path)

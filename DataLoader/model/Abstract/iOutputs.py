@@ -18,7 +18,7 @@ class iOutputs():
                 tables.append(Tbl)
         return tables
 
-    def save(self, session):
+    def save(self, session, file_path):
         raise NotImplementedError()
 
     def accept(self):

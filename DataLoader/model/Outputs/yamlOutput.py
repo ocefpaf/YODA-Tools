@@ -5,9 +5,10 @@ from yodaloader.YAML.yamlFunctions import YamlFunctions
 
 class yamlOutput(iOutputs):
 
-    def save(self, session):
+    def save(self, session, file_path):
         tables = self.parseObjects()
-        print tables
+        print file_path
+
 
     def accept(self):
         raise NotImplementedError()
