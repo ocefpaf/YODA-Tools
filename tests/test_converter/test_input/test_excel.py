@@ -12,7 +12,7 @@ class ExcelTest(unittest.TestCase):
         self.before_each_do()
 
     def before_each_do(self):
-        curr_folder = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+        curr_folder = os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
         file_path = os.path.join(curr_folder, 'test_files', 'YODA_TimeSeriesSpecimen_RB_2014-15_pub.xlsx')
 
         if not does_file_exit(file_path):

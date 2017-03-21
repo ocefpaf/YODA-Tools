@@ -6,4 +6,3 @@ wxpython
 pyyaml
 openpyxl
 pandas
-xlwings

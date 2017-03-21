@@ -14,8 +14,9 @@ class yamlOutput(iOutputs):
                     data.append(o)
             except Exception as e:
                 print e
-
-        yaml.dump_all(data, open(file_path, 'w'))
+        with open(file_path, "w+") as f:
+            f.write("test")
+            yaml.dump_all(data, f)
 
     def accept(self):
         raise NotImplementedError()

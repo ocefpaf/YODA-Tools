@@ -2,7 +2,7 @@ import os
 
 from yodatools.converter.Inputs.yamlInput import yamlInput
 
-curr_folder = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+curr_folder = os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
 class TestYaml:
     def setup(self):
