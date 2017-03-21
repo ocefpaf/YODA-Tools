@@ -12,7 +12,7 @@ class TestYaml:
 
         session = self.yi.sendODM2Session()
 
-        assert session!=None
+        assert session != None
         from odm2api.ODM2.models import People, SamplingFeatures
         assert len(session.query(People).all()) > 0
         assert len(session.query(SamplingFeatures).all()) > 0
@@ -24,8 +24,7 @@ class TestYaml:
         self.yi.parse(file_path)
         session = self.yi.sendODM2Session()
 
-        assert session!=None
-        session.commit()
+        assert session != None
         from odm2api.ODM2.models import People, SamplingFeatures
         assert len(session.query(People).all()) > 0
         assert len(session.query(SamplingFeatures).all()) > 0
