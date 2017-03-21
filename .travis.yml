@@ -83,8 +83,8 @@ install: # now just our code
 # command to run tests
 script:
 # just the connection part
-#  - py.test
+  - py.test tests
 
 #  - py.test yodatool/tests
-  - py.test DataLoader/tests
+#  - py.test DataLoader/tests
 
