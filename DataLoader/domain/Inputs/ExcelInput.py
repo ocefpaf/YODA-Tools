@@ -3,9 +3,11 @@ import openpyxl
 from openpyxl.cell.cell import get_column_letter, column_index_from_string
 from DataLoader.domain.Abstract import iInputs
 from odm2api.ODM2.models import *
+import time
 
 
 class ExcelInput(iInputs):
+    # https://automatetheboringstuff.com/chapter12/
     def __init__(self, input_file, output_file=None):
         super(ExcelInput, self).__init__()
         self.input_file = input_file
@@ -15,24 +17,18 @@ class ExcelInput(iInputs):
 
         self.output_file = output_file
         self.workbook = None
-        self.sheets = None
+        self.sheets = []
         self.name_ranges = None
 
     def parse(self, file_path=None):
-
-        if file_path is not None:
-            self.input_file = file_path
-
-        if not os.path.isfile(self.input_file):
-            print "File does not exist"
+        if not self.verify(file_path):
+            print "Something is wrong with the file but what?"
             return
 
-        self.workbook = openpyxl.load_workbook(self.input_file, read_only=True)
-        self.name_ranges = self.workbook.get_named_ranges()
-        self.sheets = self.workbook.get_sheet_names()
-        # print self.workbook.get_sheet_by_name(self.sheets[0])
 
-        self.__extract_method()
+        methods = self.__extract_method()
+        # data_values = self.__extract_data_values()
+
 
     def __extract_method(self):
 
@@ -65,8 +61,61 @@ class ExcelInput(iInputs):
 
         return method_information
 
-    def verify(self):
-        pass
+    def __extract_data_values(self):
+        """
+        Returns the data with its values but
+        this could easily be changed to return the
+        openpyxl cell object instead
+        :return: dictionary
+        """
+        start = time.time()
+        if 'Data Values' not in self.sheets:
+            return
+
+        data_sheet = self.workbook.get_sheet_by_name('Data Values')
+        data = {
+            'header': [],
+            'values': [],
+        }
+
+        for i in range(1, data_sheet.max_column + 1):
+            data['header'].append(data_sheet.cell(row=1, column=i).value)
+
+        # data in openpyxl.cell objects
+        # a = data_sheet['A2': get_column_letter(data_sheet.max_column) + str(data_sheet.max_row)]
+
+        for i in range(2, data_sheet.max_row + 1):
+            for j in range(1, data_sheet.max_column + 1):
+                data['values'].append(data_sheet.cell(row=i, column=j).value)
+
+            if i % 100 == 0:
+                print i
+
+        # data_sheet['A2': get_column_letter(data_sheet.max_column) + str(data_sheet.max_row)]
+
+        end = time.time()
+        print end - start
+
+        return data
+
+    def verify(self, file_path=None):
+
+        if file_path is not None:
+            self.input_file = file_path
+
+        if not os.path.isfile(self.input_file):
+            print "File does not exist"
+            return False
+
+        self.workbook = openpyxl.load_workbook(self.input_file, read_only=True)
+        self.name_ranges = self.workbook.get_named_ranges()
+        self.sheets = self.workbook.get_sheet_names()
+
+        # self.name_ranges[0].destinations.next()
+        # self.name_ranges[1].attr_text
+        # 'INDEX(ControlledVocabularies[actiontype],1,1):INDEX(ControlledVocabularies[actiontype],COUNTA(ControlledVocabularies[actiontype]))'
+
+        return True
 
     def sendODM2Session(self):
         pass

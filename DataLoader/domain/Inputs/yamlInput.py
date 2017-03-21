@@ -3,6 +3,7 @@ from DataLoader.domain.Abstract import iInputs
 from DataLoader.domain.work.yodaloader.YAML.yamlFunctions import YamlFunctions
 
 
+
 class yamlInput(iInputs):
     def __init__(self):
         self.odm2session=None
