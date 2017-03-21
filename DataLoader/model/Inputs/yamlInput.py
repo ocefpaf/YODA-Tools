@@ -1,6 +1,6 @@
 
 from DataLoader.model.Abstract import iInputs
-from yodaloader.YAML.yamlFunctions import YamlFunctions
+from yodaLoader.YAML.yamlFunctions import YamlFunctions
 
 
 class yamlInput(iInputs):
