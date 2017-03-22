@@ -1,4 +1,4 @@
-from yodatools.DataLoader import WizardExcelPageView
+from yodatools.dataloader.view.WizardExcelPageView import WizardExcelPageView
 
 
 class WizardExcelPageController(WizardExcelPageView):

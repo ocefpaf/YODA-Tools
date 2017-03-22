@@ -1,9 +1,9 @@
 import wx
 
 
-class WizardYodaPage(wx.Panel):
+class WizardYodaPageView(wx.Panel):
     def __init__(self, parent):
-        super(WizardYodaPage, self).__init__(parent)
+        super(WizardYodaPageView, self).__init__(parent)
 
         # Components
         instructions_text = wx.StaticText(self, label="Choose a location to save YODA export")

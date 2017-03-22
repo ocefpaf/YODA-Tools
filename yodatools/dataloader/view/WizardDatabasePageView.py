@@ -1,6 +1,6 @@
 import wx
 
-from yodatools.DataLoader.controller.pnlDBConfig import pnlDBConfig
+from yodatools.dataloader.controller.pnlDBConfig import pnlDBConfig
 
 
 class WizardDatabasePageView(wx.Panel):

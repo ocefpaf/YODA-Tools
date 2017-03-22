@@ -1,4 +1,4 @@
-from yodatools.DataLoader import WizardDatabasePageView
+from yodatools.dataloader.view.WizardDatabasePageView import WizardDatabasePageView
 
 
 class WizardDatabasePageController(WizardDatabasePageView):
