@@ -1,6 +1,6 @@
 import wx
+from yodatools.dataloader.controller.WizardController import WizardController
 
-from yodatools.DataLoader import WizardController
 
 if __name__ == '__main__':
     app = wx.App()

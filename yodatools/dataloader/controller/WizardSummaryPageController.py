@@ -1,5 +1,4 @@
-from yodatools.DataLoader import WizardSummaryPageView
-
+from yodatools.dataloader.view.WizardSummaryPageView import WizardSummaryPageView
 from yodatools.converter.Inputs.ExcelInput import ExcelInput
 
 

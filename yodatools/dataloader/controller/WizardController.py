@@ -2,15 +2,15 @@ from WizardDatabasePageController import WizardDatabasePageController
 from WizardExcelPageController import WizardExcelPageController
 from WizardHomePageController import WizardHomePageController
 from WizardSummaryPageController import WizardSummaryPageController
-from WizardYodaPageController import WizardYodaPageController
-from yodatools.DataLoader import WizardView
+from WizardYodaPageController import WizardYodaPageViewController
+from yodatools.dataloader.view.WizardView import WizardView
 
 
 class WizardController(WizardView):
     def __init__(self, parent):
         super(WizardController, self).__init__(parent)
         self.parent = parent
-        self.yoda_page = WizardYodaPageController(self.body_panel, title="Yoda")
+        self.yoda_page = WizardYodaPageViewController(self.body_panel, title="Yoda")
         self.excel_page = WizardExcelPageController(self.body_panel, title="Excel")
         self.database_page = WizardDatabasePageController(self.body_panel, title="ODM2")
         self.summary_page = WizardSummaryPageController(self, self.body_panel, title="Summary")

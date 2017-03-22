@@ -2,7 +2,7 @@
 
 import wx
 
-from yodatools.DataLoader.view.clsDBConfig import clsDBConfiguration
+from yodatools.dataloader.view.clsDBConfig import clsDBConfiguration
 
 
 class frmDBConfig(wx.Dialog):

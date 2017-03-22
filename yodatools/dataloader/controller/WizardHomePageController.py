@@ -1,6 +1,5 @@
 import wx
-
-from yodatools.DataLoader import WizardHomePageView
+from yodatools.dataloader.view.WizardHomePageView import WizardHomePageView
 
 
 class WizardHomePageController(WizardHomePageView):
