@@ -26,10 +26,15 @@ class ExcelInput(iInputs):
             print "Something is wrong with the file but what?"
             return
 
-
+        tables = self.get_tables_by_sheet('Methods')
         methods = self.__extract_method()
         # data_values = self.__extract_data_values()
 
+    def get_cells_in_table(self, table):
+        a = self.get_tables_by_sheet('Specimens')
+        sp = self.workbook.get_sheet_by_name('Specimens')
+        q, w = a[0].ref.split(':')
+        z = sp[q: w]
 
     def __extract_method(self):
 
@@ -108,7 +113,7 @@ class ExcelInput(iInputs):
             print "File does not exist"
             return False
 
-        self.workbook = openpyxl.load_workbook(self.input_file, read_only=True)
+        self.workbook = openpyxl.load_workbook(self.input_file, data_only=True)
         self.name_ranges = self.workbook.get_named_ranges()
         self.sheets = self.workbook.get_sheet_names()
 
@@ -117,6 +122,13 @@ class ExcelInput(iInputs):
         # 'INDEX(ControlledVocabularies[actiontype],1,1):INDEX(ControlledVocabularies[actiontype],COUNTA(ControlledVocabularies[actiontype]))'
 
         return True
+
+    def get_tables_by_sheet(self, sheet_name):
+        if sheet_name not in self.sheets:
+            print "%s not in excel sheet" % sheet_name
+            return IndexError
+
+        return self.workbook.get_sheet_by_name(sheet_name)._tables
 
     def sendODM2Session(self):
         pass
