@@ -26,15 +26,15 @@ class ExcelInput(iInputs):
             print "Something is wrong with the file but what?"
             return
 
-        tables = self.get_tables_by_sheet('Methods')
-        methods = self.__extract_method()
-        # data_values = self.__extract_data_values()
+        # tables = self.get_tables_by_sheet('Methods')
+        # methods = self.__extract_method()
+        cells = self.get_cells_in_sheet("Specimens")
 
-    def get_cells_in_table(self, table):
-        a = self.get_tables_by_sheet('Specimens')
-        sp = self.workbook.get_sheet_by_name('Specimens')
-        q, w = a[0].ref.split(':')
-        z = sp[q: w]
+    def get_cells_in_sheet(self, sheet_name):
+        sheet = self.workbook.get_sheet_by_name(sheet_name)
+        table = self.get_tables_by_sheet(sheet_name)
+        top_left_cell, bottom_right_cell = table[0].ref.split(':')
+        return sheet[top_left_cell: bottom_right_cell]
 
     def __extract_method(self):
 
