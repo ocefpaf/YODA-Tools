@@ -129,6 +129,8 @@ def generate_measurement(args):
 
 def generate_timeseries(args):
     yoda_format = TimeseriesYoda(args.xl_file)
+
+    # what is in here before all try to write to yoda
     yoda_format.create_yoda(args.out_file)
 
 def main():
