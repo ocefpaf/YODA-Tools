@@ -3,6 +3,7 @@ import time
 
 import openpyxl
 from openpyxl.cell.cell import get_column_letter
+from odm2api.ODM2.models import *
 
 from yodatools.converter.Abstract import iInputs
 
@@ -28,13 +29,112 @@ class ExcelInput(iInputs):
 
         # tables = self.get_tables_by_sheet('Methods')
         # methods = self.__extract_method()
-        cells = self.get_cells_in_sheet("Specimens")
+        # cells = self.get_cells_in_sheet("Methods")
+        methods = self.parse_methods()
+        variables = self.parse_variables()
+        specimens = self.parse_specimens()
+        units = self.parse_units()
+        processing_levels = self.parse_processing_level()
 
-    def get_cells_in_sheet(self, sheet_name):
+    def parse_units(self):
+        tables = self.get_tables_in_sheet('Units')
+
+        units = []
+        for table in tables:
+            for row in table[1:]:
+                unit = Units()
+                unit.UnitsTypeCV = row[0].value
+                unit.UnitsAbbreviation = row[1].value
+                unit.UnitsName = row[2].value
+                unit.UnitsLink = row[3].value
+                units.append(unit)
+
+        return units
+
+    def parse_processing_level(self):
+        tables = self.get_tables_in_sheet('Processing Levels')
+        processing_levels = []
+        for table in tables:
+            for row in table[1:]:
+                proc_lvl = ProcessingLevels()
+                proc_lvl.ProcessingLevelCode = row[0].value
+                proc_lvl.Definition = row[1].value
+                proc_lvl.Explanation = row[2].value
+                processing_levels.append(proc_lvl)
+
+        return processing_levels
+
+    def parse_specimens(self):
+        tables = self.get_tables_in_sheet('Specimens')
+        specimens = []
+        for table in tables:
+            for row in table[1:]:
+                sp = Specimens()
+                sp.SamplingFeatureUUID = row[0].value
+                sp.SamplingFeatureCode = row[1].value
+                sp.SamplingFeatureName = row[2].value
+                sp.SamplingFeatureDescription = row[3].value
+                sp.SamplingFeatureTypeCV = row[4].value
+                sp.SpecimenMediumCV = row[5].value
+                sp.IsFieldSpecimen = row[6].value
+                specimens.append(sp)
+
+        return specimens
+
+    def parse_methods(self):
+        tables = self.get_tables_in_sheet('Methods')
+
+        methods = []
+        for table in tables:
+            for row in table[1:]:  # Skip the table header
+                method = Methods()
+                method.MethodTypeCV = row[0].value
+                method.MethodCode = row[1].value
+                method.MethodName = row[2].value
+                method.MethodDescription = row[3].value
+                method.MethodLink = row[4].value
+
+                org = Organizations()
+                org.OrganizationName = row[5].value
+                method.OrganizationObj = org
+
+                methods.append(method)
+
+        return methods
+
+    def get_tables_in_sheet(self, sheet_name):
+        """
+        :param sheet_name: 
+        :rtype: list
+        :return:
+        """
+
+        if sheet_name not in self.sheets:
+            print "%s not in excel sheet" % sheet_name
+            return IndexError
+
         sheet = self.workbook.get_sheet_by_name(sheet_name)
-        table = self.get_tables_by_sheet(sheet_name)
-        top_left_cell, bottom_right_cell = table[0].ref.split(':')
-        return sheet[top_left_cell: bottom_right_cell]
+        tables = []
+        for table in sheet._tables:
+            top_left_cell, bottom_right_cell = table.ref.split(':')
+            tables.append(sheet[top_left_cell: bottom_right_cell])
+        return tables
+
+    def parse_variables(self):
+        tables = self.get_tables_in_sheet('Variables')
+
+        variables = []
+        for table in tables:
+            for row in table[1:]:
+                var = Variables()
+                var.VariableTypeCV = row[0].value
+                var.VariableCode = row[1].value
+                var.VariableNameCV = row[2].value
+                var.VariableDefinition = row[3].value
+                var.SpeciationCV = row[4].value
+                var.NoDataValue = row[5].value
+                variables.append(var)
+        return variables
 
     def __extract_method(self):
 
@@ -122,13 +222,6 @@ class ExcelInput(iInputs):
         # 'INDEX(ControlledVocabularies[actiontype],1,1):INDEX(ControlledVocabularies[actiontype],COUNTA(ControlledVocabularies[actiontype]))'
 
         return True
-
-    def get_tables_by_sheet(self, sheet_name):
-        if sheet_name not in self.sheets:
-            print "%s not in excel sheet" % sheet_name
-            return IndexError
-
-        return self.workbook.get_sheet_by_name(sheet_name)._tables
 
     def sendODM2Session(self):
         pass
