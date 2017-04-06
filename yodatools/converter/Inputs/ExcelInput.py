@@ -14,6 +14,8 @@ class ExcelInput(iInputs):
         super(ExcelInput, self).__init__()
         self.input_file = input_file
 
+        # self.workbook.get_named_range('Organizations_Table').attr_text
+
         if output_file is None:
             output_file = "export.csv"
 
@@ -21,15 +23,33 @@ class ExcelInput(iInputs):
         self.workbook = None
         self.sheets = []
         self.name_ranges = None
+        self.tables = {}
+
+    def get_table_name_ranges(self):
+        """
+        Returns a list of the name range that have a table.
+        The name range should contain the cells locations of the data.
+        :rtype: list
+        """
+        CONST_NAME = "_Table"
+        table_name_range = {}
+        for name_range in self.name_ranges:
+            if CONST_NAME in name_range.name:
+                sheet = name_range.attr_text.split('!')[0]
+
+                if sheet in table_name_range:
+                    table_name_range[sheet].append(name_range)
+                else:
+                    table_name_range[sheet] = [name_range]
+
+        return table_name_range
 
     def parse(self, file_path=None):
         if not self.verify(file_path):
             print "Something is wrong with the file but what?"
             return
 
-        # tables = self.get_tables_by_sheet('Methods')
-        # methods = self.__extract_method()
-        # cells = self.get_cells_in_sheet("Methods")
+        self.tables = self.get_table_name_ranges()
         methods = self.parse_methods()
         variables = self.parse_variables()
         specimens = self.parse_specimens()
@@ -82,11 +102,22 @@ class ExcelInput(iInputs):
         return specimens
 
     def parse_methods(self):
-        tables = self.get_tables_in_sheet('Methods')
+        # tables = self.get_tables_in_sheet('Methods')
+
+        CONST_METHODS = "Methods"
+
+        if CONST_METHODS not in self.tables:
+            return []
+
+        sheet = self.workbook.get_sheet_by_name(CONST_METHODS)
+        tables = self.tables[CONST_METHODS]
 
         methods = []
         for table in tables:
-            for row in table[1:]:  # Skip the table header
+            cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
+            cells = cells[1:]  # Remove the column names
+
+            for row in cells:
                 method = Methods()
                 method.MethodTypeCV = row[0].value
                 method.MethodCode = row[1].value
@@ -115,6 +146,7 @@ class ExcelInput(iInputs):
 
         sheet = self.workbook.get_sheet_by_name(sheet_name)
         tables = []
+        # sheet['A1:B3']
         for table in sheet._tables:
             top_left_cell, bottom_right_cell = table.ref.split(':')
             tables.append(sheet[top_left_cell: bottom_right_cell])
@@ -213,7 +245,7 @@ class ExcelInput(iInputs):
             print "File does not exist"
             return False
 
-        self.workbook = openpyxl.load_workbook(self.input_file, data_only=True)
+        self.workbook = openpyxl.load_workbook(self.input_file, read_only=True)
         self.name_ranges = self.workbook.get_named_ranges()
         self.sheets = self.workbook.get_sheet_names()
 
