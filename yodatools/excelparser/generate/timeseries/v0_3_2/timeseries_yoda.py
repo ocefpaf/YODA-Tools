@@ -72,7 +72,7 @@ class TimeseriesYoda(object):
     def get_citation(self):
         ci = self.tdao.get_citation()
         # attrs = self.get_object_attrs('Citations',"CitationID")
-        attrs = ['Title','Publisher','PublicationYear','CitationLink']
+        attrs = ['Title', 'Publisher', 'PublicationYear', 'CitationLink']
         ci_yaml = "Citations:\n - &CitationID0001 {"
         ci_yaml = self.get_odm2model_yaml(ci,attrs,ci_yaml)
         k  = ci_yaml.rfind(',')
@@ -85,7 +85,14 @@ class TimeseriesYoda(object):
         attrs = ['OrganizationTypeCV','OrganizationCode','OrganizationName','OrganizationDescription','OrganizationLink']
         org_yaml = "Organizations:\n"
         index = 1
+        org_list = []
         for org in orgs:
+
+            #create object
+            o = odm2model.Organizations
+            org_list.append(o)
+
+            #print yaml
             orgname = getattr(org,"OrganizationName")
             self._references[orgname] = '*OrganizationID{:0>3d}'.format(index)
             org_yaml += ' - &OrganizationID{:0>3d} '.format(index)
@@ -519,7 +526,7 @@ class TimeseriesYoda(object):
             trv_yaml += 'QualityCodeCV: {0}, '.format(getattr(trv,'QualityCodeCV'))
             trv_yaml += 'TimeAggregationInterval: {0}, '.format(getattr(trv,'TimeAggregationInterval'))
             uObj = getattr(trv,'TimeAggregationIntervalUnit')
-            trv_yaml += 'TimeAggregationIntervalUnitsObj: {0}'.format(self._references[uObj.UnitsName])
+            # trv_yaml += 'TimeAggregationIntervalUnitsObj: {0}'.format(self._references[uObj.UnitsName])
             trv_yaml += "}\n"
             index += 1
         dvalues = self.tdao.get_all_datavalues()
@@ -552,26 +559,26 @@ class TimeseriesYoda(object):
         with open(out_file, 'w') as yaml_schema_file:
             yaml_schema_file.write(self.get_header())
             yaml_schema_file.write(self.get_dataset())
-            yaml_schema_file.write(self.get_organizations())
-            yaml_schema_file.write(self.get_people())
-            yaml_schema_file.write(self.get_affiliations())
-            yaml_schema_file.write(self.get_citation())
-            yaml_schema_file.write(self.get_authorlists())
-            yaml_schema_file.write(self.get_datasetcitation())
-            yaml_schema_file.write(self.get_spatialreferences())
-            yaml_schema_file.write(self.get_samplingfeatures())
-            yaml_schema_file.write(self.get_sites())
-            yaml_schema_file.write(self.get_units())
-            # rf = self.get_relatedfeatures()
-            # if rf:
-            #    yaml_schema_file.write(rf)
-            yaml_schema_file.write(self.get_methods())
-            yaml_schema_file.write(self.get_variables())
-            yaml_schema_file.write(self.get_processinglevels())
-            yaml_schema_file.write(self.get_actions())
-            yaml_schema_file.write(self.get_featureactions())
-            yaml_schema_file.write(self.get_actionbys())
-            yaml_schema_file.write(self.get_results())
-            yaml_schema_file.write(self.get_datasetresults())
-            yaml_schema_file.write(self.get_timeseriesresults())
+            # yaml_schema_file.write(self.get_organizations())
+            # yaml_schema_file.write(self.get_people())
+            # yaml_schema_file.write(self.get_affiliations())
+            # yaml_schema_file.write(self.get_citation())
+            # yaml_schema_file.write(self.get_authorlists())
+            # yaml_schema_file.write(self.get_datasetcitation())
+            # yaml_schema_file.write(self.get_spatialreferences())
+            # yaml_schema_file.write(self.get_samplingfeatures())
+            # yaml_schema_file.write(self.get_sites())
+            # yaml_schema_file.write(self.get_units())
+            # # rf = self.get_relatedfeatures()
+            # # if rf:
+            # #    yaml_schema_file.write(rf)
+            # yaml_schema_file.write(self.get_methods())
+            # yaml_schema_file.write(self.get_variables())
+            # yaml_schema_file.write(self.get_processinglevels())
+            # yaml_schema_file.write(self.get_actions())
+            # yaml_schema_file.write(self.get_featureactions())
+            # yaml_schema_file.write(self.get_actionbys())
+            # yaml_schema_file.write(self.get_results())
+            # yaml_schema_file.write(self.get_datasetresults())
+            # yaml_schema_file.write(self.get_timeseriesresults())
             yaml_schema_file.write(self.get_timeseriesresultvalues())

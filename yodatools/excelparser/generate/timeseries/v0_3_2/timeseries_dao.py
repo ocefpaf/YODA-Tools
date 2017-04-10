@@ -82,7 +82,8 @@ class TimeseriesXlDao(BaseXldao):
         sheet = self.wb.get_sheet_by_name(Sheet_Names["2"])
         if sheet is None:
             return None
-        people = xw.Range(sheet,"People").value
+        # people = xw.Range(sheet,"People").value
+        people = sheet[self.wb.get_named_range('People').value.split('!')[1]].value
         if people is None:
             return None
         peopleResults = {}
@@ -116,14 +117,18 @@ class TimeseriesXlDao(BaseXldao):
         if sheet is None:
             return None
         # orgs = xw.Range(sheet,"Organizations").value
-        orgs = sheet[self.wb.get_named_range('Organizations').value.split('!')[1]].value
+        # orgs = sheet[self.wb.get_named_range('Organizations').value.split('!')[1]].value
 
-        if orgs is None:
-            return None
+
+        # if orgs is None:
+        #     return None
 
         orgResults = []
-        for x in orgs:
-            if any(x):
+        # for x in orgs:
+        for x in sheet.rows:
+
+            # if any(x):
+            if x[2] and x[0]:
                 orgResults.append(model.Organization(x))
         return orgResults
 
@@ -442,7 +447,8 @@ class TimeseriesXlDao(BaseXldao):
         if sheet is None:
             return None
         datacloumnResults = []
-        DataColumns = xw.Range(sheet,'DataColumns').value
+        # DataColumns = xw.Range(sheet,'DataColumns').value
+        DataColumns= sheet.iter_rows(range_string = self.wb.get_named_range('DataColumnsTable').value.split('!')[1])
         for d in DataColumns:
             if any(d):
                 datacloumnResults.append(model.DataColumn(d))
@@ -455,9 +461,11 @@ class TimeseriesXlDao(BaseXldao):
         sheet = self.wb.get_sheet_by_name(Sheet_Names["11"])
         if sheet is None:
             return None
-        bdate = xw.Range(sheet,(2,1)).value
-        utcoffset = int(xw.Range(sheet,(2,2)).value)
-        return bdate,utcoffset
+        # bdate = xw.Range(sheet,(2,1)).value
+        bdate = sheet.cell(row=2, column=1).value
+        # utcoffset = int(xw.Range(sheet,(2,2)).value)
+        utcoffset = int(sheet.cell(row=2, column=2).value)
+        return bdate, utcoffset
 
     def get_all_actions(self):
         aResults = []
@@ -465,7 +473,7 @@ class TimeseriesXlDao(BaseXldao):
         if dc_list is None:
             return None
         actiontypecv = "Observation"
-        begindatetime,beginUTCOffset = self.get_begindate_and_utcoffset()
+        begindatetime, beginUTCOffset = self.get_begindate_and_utcoffset()
         mcodelist = []
         for dc in dc_list:
             mcode = getattr(dc,'MethodCode')
@@ -550,7 +558,9 @@ class TimeseriesXlDao(BaseXldao):
         sheet = self.wb.get_sheet_by_name(Sheet_Names["11"])
         if sheet is None:
             return None
-        v_count = xw.Range(sheet,'A1').table.last_cell.row - 1
+        # v_count = xw.Range(sheet,'A1').table.last_cell.row - 1
+        v_count =sheet.max_row-2
+
         return v_count
 
     def get_all_results(self):
@@ -666,8 +676,11 @@ class TimeseriesXlDao(BaseXldao):
         sheet = self.wb.get_sheet_by_name(Sheet_Names["11"])
         if sheet is None:
             return None
-        last_row = xw.Range(sheet,'A1').table.last_cell.row
-        DataValues = xw.Range(sheet,(2,col),(last_row,col)).value
+        # last_row = xw.Range(sheet,'A1').table.last_cell.row
+        last_row = sheet.max_row-1
+        # DataValues = xw.Range(sheet,(2,col),(last_row,col)).value
+        # DataValues = sheet.iter_rows(range_string = self.wb.get_named_range('DataColumnsTable').value.split('!')[1])
+        DataValues = sheet.iter_rows()
         return DataValues
 
     def get_all_timeseriesresultvalues(self):
@@ -681,11 +694,11 @@ class TimeseriesXlDao(BaseXldao):
         valuecount = self.get_valuecount()
         for dc in dc_list:
             vObj = model.Variable()
-            vObj.VariableCode = getattr(dc,'VariableCode')
+            vObj.VariableCode = getattr(dc, 'VariableCode')
             sfObj = model.SamplingFeature()
-            sfObj.SamplingFeatureCode = getattr(dc,'SamplingFeatureCode')
+            sfObj.SamplingFeatureCode = getattr(dc, 'SamplingFeatureCode')
             mObj = model.Method()
-            mObj.MethodCode = getattr(dc,'MethodCode')
+            mObj.MethodCode = getattr(dc, 'MethodCode')
             caObj = model.Action()
             caObj.ActionTypeCV = actiontypecv
             caObj.BeginDateTime = begindatetime
@@ -695,8 +708,8 @@ class TimeseriesXlDao(BaseXldao):
             faObj.Action = caObj
             faObj.SamplingFeature = sfObj
             pObj = model.ProcessingLevel()
-            p_code = getattr(dc,'ProcessingLevelCode')
-            if isinstance(p_code,float):
+            p_code = getattr(dc, 'ProcessingLevelCode')
+            if isinstance(p_code, float):
                 pObj.ProcessingLevelCode = str(int(p_code))
             else:
                 pObj.ProcessingLevelCode = p_code
@@ -745,7 +758,8 @@ class TimeseriesXlDao(BaseXldao):
         start_row = 2
         start_col = 1
         last_col = len(datavalue_header)
-        last_row = xw.Range(sheet,'A1').table.last_cell.row
+        last_row = sheet.max_row
+        # last_row = xw.Range(sheet,'A1').table.last_cell.row
         max_row = 20000
         num_partition = 0
         if last_row > max_row and last_col >= 70: # Apple event timed out error
@@ -754,7 +768,8 @@ class TimeseriesXlDao(BaseXldao):
         if num_partition > 0:
             partition_row = 20001
             while num_partition > 0:
-                DataValues = xw.Range(sheet,(start_row,start_col),(partition_row,last_col)).value
+                # DataValues = xw.Range(sheet,(start_row,start_col),(partition_row,last_col)).value
+                DataValues = sheet.iter_rows(min_row=start_row, max_row=partition_row, min_col=start_col, max_col=last_col)
                 for dv in DataValues:
                     dvobj = model.DataValue(datavalue_header,dv)
                     datavalueResults.append(dvobj)
@@ -764,7 +779,8 @@ class TimeseriesXlDao(BaseXldao):
                     partition_row = last_row
                 num_partition -= 1
         else:
-            DataValues = xw.Range(sheet,(start_row,start_col),(last_row,last_col)).value
+            # DataValues = xw.Range(sheet,(start_row,start_col),(last_row,last_col)).value
+            DataValues = sheet.iter_rows(min_row=start_row, max_row=last_row, min_col=start_col, max_col=last_col)
             for dv in DataValues:
                 dvobj = model.DataValue(datavalue_header,dv)
                 datavalueResults.append(dvobj)
