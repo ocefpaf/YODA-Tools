@@ -17,11 +17,11 @@ class WizardHomePageController(WizardHomePageView):
             self.GetTopLevelParent().next_button.Disable()
 
     def on_browse_button(self, event):
-        wildcards = "All File (*.*) | *.*"
+        # wildcards = "All File (*.*) | *.*"
 
         dialog = wx.FileDialog(self,
                                message="Add file",
-                               wildcard=wildcards,
+                               # wildcard=wildcards,
                                style=wx.FD_CHANGE_DIR)
 
         if dialog.ShowModal() != wx.ID_OK:
