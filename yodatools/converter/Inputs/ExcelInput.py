@@ -6,6 +6,8 @@ from openpyxl.cell.cell import get_column_letter
 from odm2api.ODM2.models import *
 
 from yodatools.converter.Abstract import iInputs
+import xlrd
+import pandas
 
 
 class ExcelInput(iInputs):
@@ -36,6 +38,7 @@ class ExcelInput(iInputs):
         for name_range in self.name_ranges:
             if CONST_NAME in name_range.name:
                 sheet = name_range.attr_text.split('!')[0]
+                sheet = sheet.replace('\'', '')
 
                 if sheet in table_name_range:
                     table_name_range[sheet].append(name_range)
@@ -55,13 +58,25 @@ class ExcelInput(iInputs):
         specimens = self.parse_specimens()
         units = self.parse_units()
         processing_levels = self.parse_processing_level()
+        # sampling_feature = self.parse_sampling_feature()
+        data_values = self.read_data_values()
 
     def parse_units(self):
-        tables = self.get_tables_in_sheet('Units')
+
+        CONST_UNITS = 'Units'
+
+        if CONST_UNITS not in self.tables:
+            return []
+
+        sheet = self.workbook.get_sheet_by_name(CONST_UNITS)
+        tables = self.tables[CONST_UNITS]
 
         units = []
         for table in tables:
-            for row in table[1:]:
+            cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
+            cells = cells[1:]  # Remove the column names
+
+            for row in cells:
                 unit = Units()
                 unit.UnitsTypeCV = row[0].value
                 unit.UnitsAbbreviation = row[1].value
@@ -71,11 +86,25 @@ class ExcelInput(iInputs):
 
         return units
 
+    def read_data_values(self):
+        dataframes = pandas.read_excel(io=self.input_file, sheetname='Data Values')
+        print dataframes
+
     def parse_processing_level(self):
-        tables = self.get_tables_in_sheet('Processing Levels')
+        CONST_PROC_LEVEL = 'Processing Levels'
+
+        if CONST_PROC_LEVEL not in self.tables:
+            return []
+
+        sheet = self.workbook.get_sheet_by_name(CONST_PROC_LEVEL)
+        tables = self.tables[CONST_PROC_LEVEL]
+
         processing_levels = []
         for table in tables:
-            for row in table[1:]:
+            cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
+            cells = cells[1:]  # Remove the column names
+
+            for row in cells:
                 proc_lvl = ProcessingLevels()
                 proc_lvl.ProcessingLevelCode = row[0].value
                 proc_lvl.Definition = row[1].value
@@ -84,11 +113,41 @@ class ExcelInput(iInputs):
 
         return processing_levels
 
+    def parse_sampling_feature(self):
+        CONST_SAMP_FEAT = 'Sampling Features'
+
+        if CONST_SAMP_FEAT not in self.tables:
+            return []
+
+        sheet = self.workbook.get_sheet_by_name(CONST_SAMP_FEAT)
+        tables = self.tables[CONST_SAMP_FEAT]
+
+        sampling_features = []
+        for table in tables:
+            cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
+            cells = cells[1:]  # Remove the column names
+
+            for row in cells:
+                sf = SamplingFeatures()
+                sampling_features.append(sf)
+
+        return sampling_features
+
     def parse_specimens(self):
-        tables = self.get_tables_in_sheet('Specimens')
+        CONST_SPECIMENS = 'Specimens'
+
+        if CONST_SPECIMENS not in self.tables:
+            return []
+
+        sheet = self.workbook.get_sheet_by_name(CONST_SPECIMENS)
+        tables = self.tables[CONST_SPECIMENS]
+
         specimens = []
         for table in tables:
-            for row in table[1:]:
+            cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
+            cells = cells[1:]  # Remove the column names
+
+            for row in cells:
                 sp = Specimens()
                 sp.SamplingFeatureUUID = row[0].value
                 sp.SamplingFeatureCode = row[1].value
@@ -153,11 +212,20 @@ class ExcelInput(iInputs):
         return tables
 
     def parse_variables(self):
-        tables = self.get_tables_in_sheet('Variables')
+
+        CONST_VARIABLES = "Variables"
+
+        if CONST_VARIABLES not in self.tables:
+            return []
+
+        sheet = self.workbook.get_sheet_by_name(CONST_VARIABLES)
+        tables = self.tables[CONST_VARIABLES]
 
         variables = []
         for table in tables:
-            for row in table[1:]:
+            cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
+            cells = cells[1:]  # Remove the column names
+            for row in cells:
                 var = Variables()
                 var.VariableTypeCV = row[0].value
                 var.VariableCode = row[1].value
@@ -166,6 +234,7 @@ class ExcelInput(iInputs):
                 var.SpeciationCV = row[4].value
                 var.NoDataValue = row[5].value
                 variables.append(var)
+
         return variables
 
     def __extract_method(self):
