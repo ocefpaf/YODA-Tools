@@ -88,6 +88,11 @@ class ExcelInput(iInputs):
 
     def read_data_values(self):
         dataframes = pandas.read_excel(io=self.input_file, sheetname='Data Values')
+        # dataframes.transpose()
+        dataframes = dataframes.set_index(['LocalDateTime'])
+        unstacked_dataframes = dataframes.unstack()
+        avg = unstacked_dataframes['AirTemp_Avg']
+        avg.values
         print dataframes
 
     def parse_processing_level(self):
