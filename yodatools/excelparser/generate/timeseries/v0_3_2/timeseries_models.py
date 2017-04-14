@@ -202,32 +202,33 @@ class TimeSeriesResultValue(ydt_base.BaseTimeSeriesResultValue):
 
 class DataColumn(ydt_base.BaseDataColumn):
     def __init__(self, dc=None):
-        if isinstance(dc,list):
-            self.ColumnNumber = dc[0]
-            self.ColumnLabel = dc[1]
-            self.ResultUUID = dc[2]
-            self.SamplingFeatureCode = dc[3]
-            self.MethodCode = dc[4]
-            self.DataCollector = dc[5]
-            self.ResultTypeCV = dc[6]
-            self.VariableCode = dc[7]
-            self.UnitName = dc[8]
-            self.ProcessingLevelCode = dc[9]
-            #self.StatusCV = dc[10]
-            self.SampledMediumCV = dc[10]
-            # self.IntendedTimeSpacing = dc[12]
-            # self.IntendedTimeSpacingUnit = dc[13]
-            self.TimeAggregationInterval = dc[11]
-            self.TimeAggregationIntervalUnitCode = dc[12]
-            self.AggregationStatisticCV = dc[13]
-            self.CensorCodeCV = dc[14]
-            self.QualityCodeCV = dc[15]
+
+        # if isinstance(row,list):
+        self.ColumnNumber = dc[0].value
+        self.ColumnLabel = dc[1].value
+        self.ResultUUID = dc[2].value
+        self.SamplingFeatureCode = dc[3].value
+        self.MethodCode = dc[4].value
+        self.DataCollector = dc[5].value
+        self.ResultTypeCV = dc[6].value
+        self.VariableCode = dc[7].value
+        self.UnitName = dc[8].value
+        self.ProcessingLevelCode = dc[9].value
+        #self.StatusCV = dc[10]
+        self.SampledMediumCV = dc[10].value
+        # self.IntendedTimeSpacing = dc[12]
+        # self.IntendedTimeSpacingUnit = dc[13]
+        self.TimeAggregationInterval = dc[11].value
+        self.TimeAggregationIntervalUnitCode = dc[12].value
+        self.AggregationStatisticCV = dc[13].value
+        self.CensorCodeCV = dc[14].value
+        self.QualityCodeCV = dc[15].value
 
 class DataValue(ydt_base.BaseDataValue):
     def __init__(self, dvheader=None, dv=None):
         if isinstance(dvheader, list):
             for name, value in zip(dvheader, dv):
-                ydt_base.BaseDataValue.__setattr__(self,name,value)
+                ydt_base.BaseDataValue.__setattr__(self, name, value)
 
 class SpatialReference(ydt_base.BaseSpatialReference):
     def __init__(self, sr=None):
