@@ -1,5 +1,5 @@
 import yaml
-
+from yaml.representer import Representer
 from yodatools.converter.Abstract import iOutputs
 
 
@@ -12,11 +12,15 @@ class yamlOutput(iOutputs):
             try:
                 for o in session.query(t).all():
                     data.append(o)
+                    Representer.add_representer(o, Representer.represent_name)
             except Exception as e:
                 print e
+
+
         with open(file_path, "w+") as f:
             f.write("test")
-            yaml.dump_all(data, f)
+            yaml.safe_dump_all(data, f)
+            #yaml.dump(data, f)
 
     def accept(self):
         raise NotImplementedError()
