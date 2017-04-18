@@ -47,18 +47,24 @@ class ExcelInput(iInputs):
 
         self.tables = self.get_table_name_ranges()
         methods = self.parse_methods()
-        variables = self.parse_variables()
-        units = self.parse_units()
-        processing_levels = self.parse_processing_level()
-        sampling_feature = self.parse_sampling_feature()
-        affiliations = self.parse_affiliations()
-
         self._session.add_all(methods)
+
+        variables = self.parse_variables()
         self._session.add_all(variables)
+
+        units = self.parse_units()
         self._session.add_all(units)
+
+        processing_levels = self.parse_processing_level()
         self._session.add_all(processing_levels)
+
+        sampling_feature = self.parse_sampling_feature()
         self._session.add_all(sampling_feature)
+
+        affiliations = self.parse_affiliations()
         self._session.add_all(affiliations)
+
+        self.parse_specimens()
 
     def parse_sites(self):
         return self.parse_sampling_feature()
@@ -204,13 +210,13 @@ class ExcelInput(iInputs):
 
             for row in cells:
                 sf = SamplingFeatures()
-                sf.SamplingFeatureUUID = row[0]
-                sf.SamplingFeatureCode = row[1]
-                sf.SamplingFeatureName = row[2]
-                sf.SamplingFeatureDescription = row[3]
-                sf.FeatureGeometryWKT = row[4]
-                sf.Elevation_m = row[5]
-                sf.SamplingFeatureTypeCV = row[6]
+                sf.SamplingFeatureUUID = row[0].value
+                sf.SamplingFeatureCode = row[1].value
+                sf.SamplingFeatureName = row[2].value
+                sf.SamplingFeatureDescription = row[3].value
+                sf.FeatureGeometryWKT = row[4].value
+                sf.Elevation_m = row[5].value
+                sf.SamplingFeatureTypeCV = row[6].value
                 sampling_features.append(sf)
 
         return sampling_features
@@ -228,6 +234,10 @@ class ExcelInput(iInputs):
 
             for row in cells:
                 sp = Specimens()
+                a = Actions()
+                rf = RelatedFeatures()
+
+                # First the Specimen/Sampling Feature
                 sp.SamplingFeatureUUID = row[0].value
                 sp.SamplingFeatureCode = row[1].value
                 sp.SamplingFeatureName = row[2].value
@@ -235,6 +245,23 @@ class ExcelInput(iInputs):
                 sp.SamplingFeatureTypeCV = row[4].value
                 sp.SpecimenMediumCV = row[5].value
                 sp.IsFieldSpecimen = row[6].value
+                sp.ElevationDatumCV = 'unknown'
+                sp.SpecimenTypeCV = 'grab'
+                sp.SpecimenMediumCV = 'liquidAqueous'
+
+                # Next is Related Features
+                rf.RelationshipTypeCV = 'wasCollectedAt'
+                # rf.RelatedFeatureID is the CollectionSite.
+                # Query the site id using the collection site (which is the site code)
+
+                # Last is the Action/SampleCollectionAction
+                a.ActionTypeCV = 'specimenCollection'
+                a.BeginDateTime = row[8].value
+                a.BeginDateTimeUTCOffset = row[9].value
+
+                # Link things together
+                rf.SamplingFeatureID = sp.SamplingFeatureID
+
                 specimens.append(sp)
 
         return specimens
