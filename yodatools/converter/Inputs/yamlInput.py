@@ -24,4 +24,4 @@ class yamlInput(iInputs):
         pass
 
     def sendODM2Session(self):
-        return self.odm2session
+        return self._session

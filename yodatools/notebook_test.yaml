@@ -1,0 +1,2 @@
+--- !!python/object:__main__.Hero {hp: -3, name: Galain Ysseleg, sp: 2}
+--- !!python/object:__main__.Hero {hp: 10, name: Sandy Beaches, sp: -1}

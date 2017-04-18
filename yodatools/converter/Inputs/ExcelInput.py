@@ -1,20 +1,15 @@
 import os
-import time
-
 import openpyxl
-from openpyxl.cell.cell import get_column_letter
 from odm2api.ODM2.models import *
-
 from yodatools.converter.Abstract import iInputs
+import pandas
 
 
 class ExcelInput(iInputs):
-    # https://automatetheboringstuff.com/chapter12/
     def __init__(self, input_file, output_file=None):
         super(ExcelInput, self).__init__()
+        self.create_memory_db()
         self.input_file = input_file
-
-        # self.workbook.get_named_range('Organizations_Table').attr_text
 
         if output_file is None:
             output_file = "export.csv"
@@ -36,6 +31,7 @@ class ExcelInput(iInputs):
         for name_range in self.name_ranges:
             if CONST_NAME in name_range.name:
                 sheet = name_range.attr_text.split('!')[0]
+                sheet = sheet.replace('\'', '')
 
                 if sheet in table_name_range:
                     table_name_range[sheet].append(name_range)
@@ -52,16 +48,34 @@ class ExcelInput(iInputs):
         self.tables = self.get_table_name_ranges()
         methods = self.parse_methods()
         variables = self.parse_variables()
-        specimens = self.parse_specimens()
         units = self.parse_units()
         processing_levels = self.parse_processing_level()
+        sampling_feature = self.parse_sampling_feature()
+        affiliations = self.parse_affiliations()
+
+        self._session.add_all(methods)
+        self._session.add_all(variables)
+        self._session.add_all(units)
+        self._session.add_all(processing_levels)
+        self._session.add_all(sampling_feature)
+        self._session.add_all(affiliations)
+
+    def parse_sites(self):
+        return self.parse_sampling_feature()
 
     def parse_units(self):
-        tables = self.get_tables_in_sheet('Units')
+        CONST_UNITS = 'Units'
+
+        sheet, tables = self.get_sheet_and_table(CONST_UNITS)
+
+        if not len(tables):
+            return []
 
         units = []
         for table in tables:
-            for row in table[1:]:
+            cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
+
+            for row in cells:
                 unit = Units()
                 unit.UnitsTypeCV = row[0].value
                 unit.UnitsAbbreviation = row[1].value
@@ -71,11 +85,99 @@ class ExcelInput(iInputs):
 
         return units
 
+    def read_data_values(self):
+        dataframes = pandas.read_excel(io=self.input_file, sheetname='Data Values')
+        # dataframes.transpose()
+        dataframes = dataframes.set_index(['LocalDateTime'])
+        unstacked_dataframes = dataframes.unstack()
+        avg = unstacked_dataframes['AirTemp_Avg']
+        # avg.values
+        print dataframes
+
+    def parse_affiliations(self):  # rename to Affiliations
+        SHEET_NAME = 'People and Organizations'
+        sheet, tables = self.get_sheet_and_table(SHEET_NAME)
+
+        if not len(tables):
+            return []
+
+        def parse_organizations(table):
+            organizations = {}
+            cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
+            for row in cells:
+                org = Organizations()
+                org.OrganizationTypeCV = row[0].value
+                org.OrganizationCode = row[1].value
+                org.OrganizationName = row[2].value
+                org.OrganizationDescription = row[3].value
+                org.OrganizationLink = row[4].value
+
+                organizations[org.OrganizationName] = org
+
+            return organizations
+
+        def parse_authors(table):
+            authors = []
+            cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
+            for row in cells:
+                ppl = People()
+                org = Organizations()
+                aff = Affiliations()
+
+                ppl.PersonFirstName = row[0].value
+                ppl.PersonMiddleName = row[1].value
+                ppl.PersonLastName = row[2].value
+
+                org.OrganizationName = row[3].value
+                aff.AffiliationStartDate = row[5].value
+                aff.AffiliationEndDate = row[6].value
+                aff.PrimaryPhone = row[7].value
+                aff.PrimaryEmail = row[8].value
+                aff.PrimaryAddress = row[9].value
+                aff.PersonLink = row[10].value
+
+                aff.OrganizationObj = org
+                aff.PersonObj = ppl
+
+                authors.append(aff)
+            return authors
+
+        # Combine table and authors
+
+        orgs = {}
+        affiliations = []
+        for table in tables:
+            if 'Authors_Table' == table.name:
+                affiliations = parse_authors(table)
+            else:
+                orgs = parse_organizations(table)
+
+        for aff in affiliations:
+            if aff.OrganizationObj.OrganizationName in orgs:
+                aff.OrganizationObj = orgs[aff.OrganizationObj.OrganizationName]
+
+        return affiliations
+
+    def get_sheet_and_table(self, sheet_name):
+        if sheet_name not in self.tables:
+            return [], []
+        sheet = self.workbook.get_sheet_by_name(sheet_name)
+        tables = self.tables[sheet_name]
+
+        return sheet, tables
+
     def parse_processing_level(self):
-        tables = self.get_tables_in_sheet('Processing Levels')
+        CONST_PROC_LEVEL = 'Processing Levels'
+        sheet, tables = self.get_sheet_and_table(CONST_PROC_LEVEL)
+
+        if not len(tables):
+            return []
+
         processing_levels = []
         for table in tables:
-            for row in table[1:]:
+            cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
+
+            for row in cells:
                 proc_lvl = ProcessingLevels()
                 proc_lvl.ProcessingLevelCode = row[0].value
                 proc_lvl.Definition = row[1].value
@@ -84,11 +186,47 @@ class ExcelInput(iInputs):
 
         return processing_levels
 
+    def parse_sampling_feature(self):
+        SAMP_FEAT = 'Sampling Features'
+
+        if SAMP_FEAT not in self.tables:
+            if 'Sites' in self.tables:
+                SAMP_FEAT = 'Sites'
+            else:
+                return []
+
+        sheet = self.workbook.get_sheet_by_name(SAMP_FEAT)
+        tables = self.tables[SAMP_FEAT]
+
+        sampling_features = []
+        for table in tables:
+            cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
+
+            for row in cells:
+                sf = SamplingFeatures()
+                sf.SamplingFeatureUUID = row[0]
+                sf.SamplingFeatureCode = row[1]
+                sf.SamplingFeatureName = row[2]
+                sf.SamplingFeatureDescription = row[3]
+                sf.FeatureGeometryWKT = row[4]
+                sf.Elevation_m = row[5]
+                sf.SamplingFeatureTypeCV = row[6]
+                sampling_features.append(sf)
+
+        return sampling_features
+
     def parse_specimens(self):
-        tables = self.get_tables_in_sheet('Specimens')
+        SPECIMENS = 'Specimens'
+        sheet, tables = self.get_sheet_and_table(SPECIMENS)
+
+        if not len(tables):
+            return []
+
         specimens = []
         for table in tables:
-            for row in table[1:]:
+            cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
+
+            for row in cells:
                 sp = Specimens()
                 sp.SamplingFeatureUUID = row[0].value
                 sp.SamplingFeatureCode = row[1].value
@@ -102,20 +240,15 @@ class ExcelInput(iInputs):
         return specimens
 
     def parse_methods(self):
-        # tables = self.get_tables_in_sheet('Methods')
-
         CONST_METHODS = "Methods"
+        sheet, tables = self.get_sheet_and_table(CONST_METHODS)
 
-        if CONST_METHODS not in self.tables:
+        if not len(tables):
             return []
-
-        sheet = self.workbook.get_sheet_by_name(CONST_METHODS)
-        tables = self.tables[CONST_METHODS]
 
         methods = []
         for table in tables:
             cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
-            cells = cells[1:]  # Remove the column names
 
             for row in cells:
                 method = Methods()
@@ -133,31 +266,20 @@ class ExcelInput(iInputs):
 
         return methods
 
-    def get_tables_in_sheet(self, sheet_name):
-        """
-        :param sheet_name: 
-        :rtype: list
-        :return:
-        """
-
-        if sheet_name not in self.sheets:
-            print "%s not in excel sheet" % sheet_name
-            return IndexError
-
-        sheet = self.workbook.get_sheet_by_name(sheet_name)
-        tables = []
-        # sheet['A1:B3']
-        for table in sheet._tables:
-            top_left_cell, bottom_right_cell = table.ref.split(':')
-            tables.append(sheet[top_left_cell: bottom_right_cell])
-        return tables
-
     def parse_variables(self):
-        tables = self.get_tables_in_sheet('Variables')
+
+        CONST_VARIABLES = "Variables"
+
+        if CONST_VARIABLES not in self.tables:
+            return []
+
+        sheet = self.workbook.get_sheet_by_name(CONST_VARIABLES)
+        tables = self.tables[CONST_VARIABLES]
 
         variables = []
         for table in tables:
-            for row in table[1:]:
+            cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
+            for row in cells:
                 var = Variables()
                 var.VariableTypeCV = row[0].value
                 var.VariableCode = row[1].value
@@ -166,75 +288,8 @@ class ExcelInput(iInputs):
                 var.SpeciationCV = row[4].value
                 var.NoDataValue = row[5].value
                 variables.append(var)
+
         return variables
-
-    def __extract_method(self):
-
-        if 'Methods' not in self.sheets:
-            return
-
-        method_sheet = self.workbook.get_sheet_by_name('Methods')
-
-        # Find 'Method Information'
-        row = 1
-        found = False
-        while not found and row < method_sheet.max_row:
-            cell = method_sheet.cell(row=row, column=1)
-            if cell.value is not None and 'Method Information' in cell.value:
-                found = True
-            row += 1
-
-        # Find the last column that has the data
-        col = 1
-        while col < method_sheet.max_column:
-            cell = method_sheet.cell(row=row, column=col)
-            if not cell.value:
-                col -= 1
-                break
-            col += 1
-
-        top_left_coordinate = 'A' + str(row + 1)
-        bottom_right_coordinate = get_column_letter(col) + str(method_sheet.max_row)
-        method_information = method_sheet[top_left_coordinate: bottom_right_coordinate]
-
-        return method_information
-
-    def __extract_data_values(self):
-        """
-        Returns the data with its values but
-        this could easily be changed to return the
-        openpyxl cell object instead
-        :return: dictionary
-        """
-        start = time.time()
-        if 'Data Values' not in self.sheets:
-            return
-
-        data_sheet = self.workbook.get_sheet_by_name('Data Values')
-        data = {
-            'header': [],
-            'values': [],
-        }
-
-        for i in range(1, data_sheet.max_column + 1):
-            data['header'].append(data_sheet.cell(row=1, column=i).value)
-
-        # data in openpyxl.cell objects
-        # a = data_sheet['A2': get_column_letter(data_sheet.max_column) + str(data_sheet.max_row)]
-
-        for i in range(2, data_sheet.max_row + 1):
-            for j in range(1, data_sheet.max_column + 1):
-                data['values'].append(data_sheet.cell(row=i, column=j).value)
-
-            if i % 100 == 0:
-                print i
-
-        # data_sheet['A2': get_column_letter(data_sheet.max_column) + str(data_sheet.max_row)]
-
-        end = time.time()
-        print end - start
-
-        return data
 
     def verify(self, file_path=None):
 
@@ -249,11 +304,7 @@ class ExcelInput(iInputs):
         self.name_ranges = self.workbook.get_named_ranges()
         self.sheets = self.workbook.get_sheet_names()
 
-        # self.name_ranges[0].destinations.next()
-        # self.name_ranges[1].attr_text
-        # 'INDEX(ControlledVocabularies[actiontype],1,1):INDEX(ControlledVocabularies[actiontype],COUNTA(ControlledVocabularies[actiontype]))'
-
         return True
 
     def sendODM2Session(self):
-        pass
+        return self._session
