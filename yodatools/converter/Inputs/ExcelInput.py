@@ -46,24 +46,13 @@ class ExcelInput(iInputs):
             return
 
         self.tables = self.get_table_name_ranges()
-        methods = self.parse_methods()
-        self._session.add_all(methods)
 
-        variables = self.parse_variables()
-        self._session.add_all(variables)
-
-        units = self.parse_units()
-        self._session.add_all(units)
-
-        processing_levels = self.parse_processing_level()
-        self._session.add_all(processing_levels)
-
-        sampling_feature = self.parse_sampling_feature()
-        self._session.add_all(sampling_feature)
-
-        affiliations = self.parse_affiliations()
-        self._session.add_all(affiliations)
-
+        self.parse_affiliations()
+        self.parse_methods()
+        self.parse_variables()
+        self.parse_units()
+        self.parse_processing_level()
+        self.parse_sampling_feature()
         self.parse_specimens()
 
     def parse_sites(self):
@@ -87,9 +76,12 @@ class ExcelInput(iInputs):
                 unit.UnitsAbbreviation = row[1].value
                 unit.UnitsName = row[2].value
                 unit.UnitsLink = row[3].value
-                units.append(unit)
 
-        return units
+                if unit.UnitsTypeCV is not None:
+                    units.append(unit)
+
+        self._session.add_all(units)
+        self._session.flush()
 
     def read_data_values(self):
         dataframes = pandas.read_excel(io=self.input_file, sheetname='Data Values')
@@ -107,9 +99,10 @@ class ExcelInput(iInputs):
         if not len(tables):
             return []
 
-        def parse_organizations(table):
+        def parse_organizations(org_table, session):
             organizations = {}
-            cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
+
+            cells = sheet[org_table.attr_text.split('!')[1].replace('$', '')]
             for row in cells:
                 org = Organizations()
                 org.OrganizationTypeCV = row[0].value
@@ -117,14 +110,14 @@ class ExcelInput(iInputs):
                 org.OrganizationName = row[2].value
                 org.OrganizationDescription = row[3].value
                 org.OrganizationLink = row[4].value
-
+                session.add(org)
                 organizations[org.OrganizationName] = org
 
             return organizations
 
-        def parse_authors(table):
+        def parse_authors(author_table):
             authors = []
-            cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
+            cells = sheet[author_table.attr_text.split('!')[1].replace('$', '')]
             for row in cells:
                 ppl = People()
                 org = Organizations()
@@ -156,13 +149,16 @@ class ExcelInput(iInputs):
             if 'Authors_Table' == table.name:
                 affiliations = parse_authors(table)
             else:
-                orgs = parse_organizations(table)
+                orgs = parse_organizations(table, self._session)
+
+        self._session.flush()
 
         for aff in affiliations:
             if aff.OrganizationObj.OrganizationName in orgs:
                 aff.OrganizationObj = orgs[aff.OrganizationObj.OrganizationName]
 
-        return affiliations
+        self._session.add_all(affiliations)
+        self._session.flush()
 
     def get_sheet_and_table(self, sheet_name):
         if sheet_name not in self.tables:
@@ -190,7 +186,9 @@ class ExcelInput(iInputs):
                 proc_lvl.Explanation = row[2].value
                 processing_levels.append(proc_lvl)
 
-        return processing_levels
+        # return processing_levels
+        self._session.add_all(processing_levels)
+        self._session.flush()
 
     def parse_sampling_feature(self):
         SAMP_FEAT = 'Sampling Features'
@@ -219,7 +217,8 @@ class ExcelInput(iInputs):
                 sf.SamplingFeatureTypeCV = row[6].value
                 sampling_features.append(sf)
 
-        return sampling_features
+        self._session.add_all(sampling_features)
+        self._session.flush(sampling_features)
 
     def parse_specimens(self):
         SPECIMENS = 'Specimens'
@@ -228,7 +227,6 @@ class ExcelInput(iInputs):
         if not len(tables):
             return []
 
-        specimens = []
         for table in tables:
             cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
 
@@ -252,19 +250,24 @@ class ExcelInput(iInputs):
                 # Next is Related Features
                 rf.RelationshipTypeCV = 'wasCollectedAt'
                 # rf.RelatedFeatureID is the CollectionSite.
-                # Query the site id using the collection site (which is the site code)
+                # Query the site id using the collection site (which is the site code aka Sampling Feature Code)
+                # Link things together
+                sampling_feature = self._session.query(SamplingFeatures).filter_by(SamplingFeatureCode=row[7].value).first()
+                rf.SamplingFeatureID = sampling_feature.SamplingFeatureID
+                # rf.RelatedFeatureID = needs to be set...
 
                 # Last is the Action/SampleCollectionAction
                 a.ActionTypeCV = 'specimenCollection'
                 a.BeginDateTime = row[8].value
                 a.BeginDateTimeUTCOffset = row[9].value
+                method = self._session.query(Methods).filter_by(MethodCode=row[10].value).first()
+                a.MethodID = method.MethodID
 
-                # Link things together
-                rf.SamplingFeatureID = sp.SamplingFeatureID
+                # self._session.add(sp)
+                # self._session.add(a)
+                # self._session.add(rf)
 
-                specimens.append(sp)
-
-        return specimens
+        # self._session.flush()  # Need to set the RelatedFeature.RelatedFeatureID before flush will work
 
     def parse_methods(self):
         CONST_METHODS = "Methods"
@@ -273,7 +276,6 @@ class ExcelInput(iInputs):
         if not len(tables):
             return []
 
-        methods = []
         for table in tables:
             cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
 
@@ -285,13 +287,14 @@ class ExcelInput(iInputs):
                 method.MethodDescription = row[3].value
                 method.MethodLink = row[4].value
 
-                org = Organizations()
-                org.OrganizationName = row[5].value
+                # If organization does not exist then it returns None
+                org = self._session.query(Organizations).filter_by(OrganizationName=row[5].value).first()
                 method.OrganizationObj = org
 
-                methods.append(method)
+                if method.MethodCode:  # Cannot store empty/None objects
+                    self._session.add(method)
 
-        return methods
+        self._session.flush()
 
     def parse_variables(self):
 
@@ -303,7 +306,6 @@ class ExcelInput(iInputs):
         sheet = self.workbook.get_sheet_by_name(CONST_VARIABLES)
         tables = self.tables[CONST_VARIABLES]
 
-        variables = []
         for table in tables:
             cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
             for row in cells:
@@ -313,10 +315,14 @@ class ExcelInput(iInputs):
                 var.VariableNameCV = row[2].value
                 var.VariableDefinition = row[3].value
                 var.SpeciationCV = row[4].value
-                var.NoDataValue = row[5].value
-                variables.append(var)
 
-        return variables
+                if row[5].value is not None:
+                    var.NoDataValue = None if row[5].value.upper() == 'NULL' else row[5].value
+
+                if var.NoDataValue is not None:  # NoDataValue cannot be None
+                    self._session.add(var)
+
+        self._session.flush()
 
     def verify(self, file_path=None):
 
