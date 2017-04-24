@@ -11,7 +11,8 @@ class iOutputs():
                 for o in session.query(t).all():
                     tmplist.append(o)
             except Exception as e:
-                print e
+                # print "error: "+ e
+                pass
             if len(tmplist)>0:
                 data[t.__tablename__] = tmplist
         return data
@@ -32,6 +33,7 @@ class iOutputs():
         return tables
 
     def save(self, session, file_path):
+
         raise NotImplementedError()
 
     def accept(self):

@@ -1,0 +1,67 @@
+---
+YODA:
+ - {Version: "0.1.0", Profile: "SpecimenTimeSeries", CreationTool: "YodaConverter", DateCreated: "2017-04-24", DateUpdated: "2017-04-24"}
+DataSets:
+ - &DataSetID0001 {DataSetTypeCV: "Multi-time series", DataSetCode: "TWDEF_AirTemp", DataSetAbstract: "Air temperature at the TW Daniels Experimental Forest Climate Station. The data were measured using a Campbell Scientific HC2S3 temperature and relative humidity sensor. Measurements represent the average over the 15 minute recording period.", DataSetTitle: "Air temperature at the TW Daniels Experimental Forest Climate Station"}
+ - &DataSetID0002 {DataSetTypeCV: "Specimen time series", DataSetCode: "LR_SpecTS", DataSetAbstract: "This dataset consists of results from the 2013-2014 iUTAH GAMUT synoptic sample collection and analysis effort for the Logan River. Samples were collected by grab sampling once per month each month between June 2013 and June 2014. Analyses were performed for nutrients (total nigrogen and total phosphorus) at the USU Aquatic Biogeochemistry Laboratory, isotopes (D18O and D2H) at the University of Utah Stable Isotope Ratio for Environmental Research Laboratory, and bacteria (E.coli and total coliform) at the BYU Aanderud laboratory.", DataSetTitle: "iUTAH synoptic sampling 2013-2014 for the Logan River specimen time series"}
+Organizations:
+ - &OrganizationID0001 {OrganizationName: "Utah State University", OrganizationTypeCV: "University", OrganizationCode: "USU"}
+ - &OrganizationID0002 {OrganizationLink: "www.stroudcenter.org", OrganizationName: "Stroud Water Research Center", OrganizationTypeCV: "Research institute", OrganizationCode: "SWRC"}
+ - &OrganizationID0003 {OrganizationLink: "http://orcid.org/", OrganizationName: "ORCID", OrganizationTypeCV: "Consortium", OrganizationCode: "ORCID", OrganizationDescription: "ORCID is an open, non-profit, community-driven effort to create and maintain a registry of unique researcher identifiers and a transparent method of linking research activities and outputs to these identifiers."}
+ - &OrganizationID0004 {OrganizationLink: "http://www.doi.org/index.html", OrganizationName: "International DOI Foundation", OrganizationTypeCV: "Consortium", OrganizationCode: "IDF", OrganizationDescription: "The International DOI Foundation (IDF) is a not-for-profit membership organization that is the governance and management body for the federation of Registration Agencies providing DOI services and registration, and is the registration authority for the ISO standard (ISO 26324) for the DOI system. The DOI system provides a technical and social infrastructure for the registration and use of persistent interoperable identifiers, called DOIs, for use on digital networks."}
+ - &OrganizationID0005 {OrganizationLink: "http://www.geosamples.org/", OrganizationName: "System for Earth Sample Registration", OrganizationTypeCV: "Consortium", OrganizationCode: "SESAR", OrganizationDescription: "SESAR operates the registry that distributes the International Geo Sample Number IGSN. SESAR catalogs and preserves sample metadata profiles, and provides access to the sample catalog via the Global Sample Search."}
+ - &OrganizationID0006 {OrganizationLink: "http://www.usu.edu", OrganizationName: "Utah State University", OrganizationTypeCV: "University", OrganizationCode: "USU"}
+ - &OrganizationID0007 {OrganizationLink: "http://www.byu.edu", OrganizationName: "Brigham Young University", OrganizationTypeCV: "University", OrganizationCode: "BYU"}
+ - &OrganizationID0008 {OrganizationLink: "http://www.usu.edu", OrganizationName: "USU Aquatic Biogeochemistry Lab", OrganizationTypeCV: "University", OrganizationCode: "USUABL"}
+ - &OrganizationID0009 {OrganizationLink: "http://www.sirfer.utah.edu", OrganizationName: "Stable Isotope Ratio Facility for Environmental Research", OrganizationTypeCV: "Research organization", OrganizationCode: "SIRFER"}
+People:
+ - &PersonID0001 {PersonLastName: "Horsburgh", PersonFirstName: "Jeffrey"}
+ - &PersonID0002 {PersonLastName: "Spackman Jones", PersonFirstName: "Amber"}
+ - &PersonID0003 {PersonLastName: "Damiano", PersonFirstName: "Sara"}
+ - &PersonID0004 {PersonLastName: "Jones", PersonFirstName: "Erin"}
+ - &PersonID0005 {PersonLastName: "Barnette", PersonFirstName: "Janet"}
+ - &PersonID0006 {PersonLastName: "Bahr", PersonFirstName: "Jason"}
+ - &PersonID0007 {PersonLastName: "Cox", PersonFirstName: "Chris"}
+ - &PersonID0008 {PersonLastName: "Person", PersonFirstName: "Unknown"}
+ - &PersonID0009 {PersonLastName: "Ward", PersonFirstName: "Lisa"}
+Affiliations:
+ - &AffiliationID0001 {PrimaryEmail: "jeff.horsburgh@usu.edu", PersonObj: *PersonID0001, PrimaryAddress: "Civil and Environmental Engineering, Utah Water Research Laboratory, 8200 Old Main Hill, Logan, UT 84322-8200", OrganizationObj: *OrganizationID0001}
+ - &AffiliationID0002 {PrimaryEmail: "amber.jones@usu.edu", PersonObj: *PersonID0002, PrimaryAddress: "Civil and Environmental Engineering, Utah Water Research Laboratory, 8200 Old Main Hill, Logan, UT 84322-8200", OrganizationObj: *OrganizationID0001}
+ - &AffiliationID0003 {PrimaryEmail: "sdamiano@stroudcenter.org", PersonObj: *PersonID0003, PrimaryAddress: "Stroud Water Research Center, 970 Spencer Road, Avondale, PA 19311", OrganizationObj: *OrganizationID0002}
+ - &AffiliationID0004 {PrimaryEmail: "erinfjones@gmail.com", PersonObj: *PersonID0004, OrganizationObj: *OrganizationID0007}
+ - &AffiliationID0005 {PrimaryEmail: "janet.barnette@utah.edu", PersonObj: *PersonID0005, OrganizationObj: *OrganizationID0009}
+ - &AffiliationID0006 {PrimaryEmail: "jrbahr@gmail.com", PersonObj: *PersonID0006, OrganizationObj: *OrganizationID0006}
+ - &AffiliationID0007 {PrimaryEmail: "chris.cox@usu.edu", PersonObj: *PersonID0007, OrganizationObj: *OrganizationID0006}
+ - &AffiliationID0008 {PrimaryEmail: "unknown", PersonObj: *PersonID0008, OrganizationObj: *OrganizationID0006}
+ - &AffiliationID0009 {PrimaryEmail: "lisa.ward@usu.edu", PersonObj: *PersonID0009, OrganizationObj: *OrganizationID0008}
+Citations:
+ - &CitationID0001 {Publisher: "iUTAH Modeling and Data Federation", PublicationYear: 2015, Title: "Air temperature at the TW Daniels Experimental Forest Climate Station", CitationLink: "http://repository.iutahepscor.org/Dataset/iutah-gamut-network-raw-data-at-tw-daniels-forest-climate-site-lr-twdef-c"}
+ - &CitationID0002 {Publisher: "iUTAH", PublicationYear: 2016, Title: "iUTAH GAMUT Logan River Synoptic Sampling Results"}
+AuthorLists:
+ - &AuthorListID0001 {CitationObj: *CitationID0001, PersonObj: *PersonID0001, AuthorOrder: 1}
+ - &AuthorListID0002 {CitationObj: *CitationID0001, PersonObj: *PersonID0002, AuthorOrder: 2}
+ - &AuthorListID0003 {CitationObj: *CitationID0002, PersonObj: *PersonID0008, AuthorOrder: 1}
+DataSetCitations:
+ - &DataSetCitationID0001 {CitationObj: *CitationID0001, RelationshipTypeCV: "Is identical to", DataSetObj: *DataSetID0001}
+ - &DataSetCitationID0002 {CitationObj: *CitationID0002, RelationshipTypeCV: "Is identical to", DataSetObj: *DataSetID0002}
+SpatialReferences:
+ - &SpatialReferenceID0001 {SRSName: "WGS84", SRSDescription: "Horizontal component of 3D system. Used by the GPS satellite navigation system and for NATO military geodetic surveying.", SRSLink: "http://www.epsg-registry.org/export.htm?wkt=urn:ogc:def:crs:EPSG::4326", SRSCode: "EPSG:4326"}
+ - &SpatialReferenceID0002 {SRSName: "WGS84", SRSDescription: "Horizontal component of 3D system. Used by the GPS satellite navigation system and for NATO military geodetic surveying.", SRSLink: "http://www.epsg-registry.org/export.htm?wkt=urn:ogc:def:crs:EPSG::4326", SRSCode: "EPSG:4326"}
+Specimens:
+ - &SamplingFeatureID0001 {SamplingFeatureGeotypeCV: "Not applicable", SamplingFeatureName: "Specimen D101", ElevationDatumCV: "MSL", SamplingFeatureTypeCV: "Specimen", SamplingFeatureCode: "D101", FeatureGeometryWKT: "POINT(30 10)"}
+ - &SamplingFeatureID0002 {SamplingFeatureGeotypeCV: "Not applicable", SamplingFeatureName: "Specimen D102", ElevationDatumCV: "MSL", SamplingFeatureTypeCV: "Specimen", SamplingFeatureCode: "D102", FeatureGeometryWKT: "POINT(30 10)"}
+ - &SamplingFeatureID0003 {SamplingFeatureGeotypeCV: "Not applicable", SamplingFeatureName: "Specimen D3236", ElevationDatumCV: "MSL", SamplingFeatureTypeCV: "Specimen", SamplingFeatureCode: "D3236", FeatureGeometryWKT: "POINT(30 10)"}
+ - &SamplingFeatureID0004 {SamplingFeatureGeotypeCV: "Not applicable", SamplingFeatureName: "Specimen 524", ElevationDatumCV: "MSL", SamplingFeatureTypeCV: "Specimen", SamplingFeatureCode: "524", FeatureGeometryWKT: "POINT(30 10)"}
+ - &SamplingFeatureID0005 {SamplingFeatureDescription: "Whipple Dam State Park, PA, shale rock from bottom of Tyler's pit ", SamplingFeatureGeotypeCV: "Not applicable", SamplingFeatureName: "ald-10-158", Elevation_m: 297.0, ElevationDatumCV: "MSL", SamplingFeatureTypeCV: "Specimen", SamplingFeatureCode: "ald-10-158", FeatureGeometryWKT: "POINT(30 10)"}
+ - &SamplingFeatureID0006 {SamplingFeatureTypeCV: "Specimen", SamplingFeatureCode: "D3236"}
+ - &SamplingFeatureID0007 {SamplingFeatureTypeCV: "Specimen", SamplingFeatureCode: "524"}
+ - &SamplingFeatureID0008 {SamplingFeatureTypeCV: "Specimen", SamplingFeatureCode: "D1147_ISO"}
+ - &SamplingFeatureID0009 {SamplingFeatureTypeCV: "Specimen", SamplingFeatureCode: "D1147"}
+ - &SamplingFeatureID0010 {SamplingFeatureTypeCV: "Specimen", SamplingFeatureCode: "Z052"}
+ - &SamplingFeatureID0011 {SamplingFeatureTypeCV: "Specimen", SamplingFeatureCode: "D977"}
+ - &SamplingFeatureID0012 {SamplingFeatureTypeCV: "Specimen", SamplingFeatureCode: "Z020"}
+Sites:
+ - &SamplingFeatureID0013 {SamplingFeatureGeotypeCV: "Point", SamplingFeatureName: "Knowlton Fork at Knowlton Fork Basic Aquatic", ElevationDatumCV: "MSL", SamplingFeatureTypeCV: "Site", SamplingFeatureCode: "RB_KF_BA", FeatureGeometryWKT: "POINT(30 10)", SpatialReferenceObj: *SpatialReferenceID0001}
+ - &SamplingFeatureID0014 {SamplingFeatureGeotypeCV: "Point", SamplingFeatureName: "Red Butte Creek at Red Butte Gate Basic Aquatic", ElevationDatumCV: "MSL", SamplingFeatureTypeCV: "Site", SamplingFeatureCode: "RB_RBG_BA", FeatureGeometryWKT: "POINT(30 10)", SpatialReferenceObj: *SpatialReferenceID0001}
+ - &SamplingFeatureID0015 {SamplingFeatureDescription: "This is a continuous atmospheric monitoring site that is part of the Gradients Along Mountain to Urban Transitions (GAMUT) monitoring network.", SamplingFeatureGeotypeCV: "Point", SamplingFeatureName: "Climate Station at TW Daniels Experimental Forest", ElevationDatumCV: "MSL", Elevation_m: 2629.2, SamplingFeatureTypeCV: "Site", SamplingFeatureCode: "LR_TWDEF_C", FeatureGeometryWKT: "POINT(30 10)", SpatialReferenceObj: *SpatialReferenceID0001}
+ - &SamplingFeatureID0016 {SamplingFeatureGeotypeCV: "Point", SamplingFeatureName: "Blacksmith Fork River upstream of confluence with Logan River near 800 West 1600 South", ElevationDatumCV: "EGM96", Elevation_m: 1357.352661, SamplingFeatureTypeCV: "Site", SamplingFeatureCode: "LR_BSFork", SpatialReferenceObj: *SpatialReferenceID0002}
