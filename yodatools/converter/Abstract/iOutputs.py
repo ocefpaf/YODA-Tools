@@ -8,8 +8,13 @@ class iOutputs():
         for t in self.get_table_names():
             tmplist = []
             try:
-                for o in session.query(t).all():
-                    tmplist.append(o)
+                if t.__tablename__ == "timeseriesresultvalues":
+                    import pandas as pd
+                    tbl = pd.read_sql("SELECT * FROM TimeSeriesResultValues", session)
+                    tmplist.append(tbl)
+                else:
+                    for o in session.query(t).all():
+                        tmplist.append(o)
             except Exception as e:
                 # print "error: "+ e
                 pass

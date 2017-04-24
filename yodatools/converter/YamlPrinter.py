@@ -26,7 +26,7 @@ class YamlPrinter():
         text = ""
 
         for obj in apiobjs:
-            objlist[obj.__class__.__name__].append(copy.copy(obj))
+            objlist[obj.__class__.__name__].append(obj)
 
         index = 0
         # call current function with each list, send in class name
@@ -62,8 +62,6 @@ class YamlPrinter():
                             primarykey = objname + "ID"
                     break
 
-            #pop unwanted items from the dictionary
-            valuedict.pop("_sa_instance_state")
             #remove all id's from the dictionary
             for k in valuedict.keys():
                 if "id" in k.lower():
@@ -83,8 +81,6 @@ class YamlPrinter():
             text += ' - &{}{:0>4d} '.format(primarykey, index)
             text += self.print_dictionary(valuedict)
             index += 1
-
-
         return text
 
     def print_dictionary(self, dict):
@@ -106,22 +102,20 @@ class YamlPrinter():
 
         return final_string
 
-
     def print_to_file(self, objname, file, data):
 
         if objname in data:
-
             # check to see if this is an inherited object
             if data[objname][0].__class__ != data[objname][0]._sa_instance_state.key[0]:
                 file.write(self.handle_inheritance(apiobjs=data[objname]))
             else:
                 file.write(self.print_objects(data[objname]))
 
+    def generate_ts_objects(self, data):
+        pass
     def print_yoda(self, out_file, data):
-
         with open(out_file, 'w') as yaml_schema_file:
             print data.keys()
-
             #header
             yaml_schema_file.write(self.get_header())
             #dataset
@@ -168,16 +162,19 @@ class YamlPrinter():
             #relatedActions
             self.print_to_file("relatedactions", yaml_schema_file, data)
             #result Not explicitly printed, should be included in measurement or timeseries results
-            #measurement results
-            self.print_to_file("measurementresults", yaml_schema_file, data)
-            #timeseriesresult
-            self.print_to_file("timeseriesresults", yaml_schema_file, data)
-            #datasetresults
-            self.print_to_file("datasetresults", yaml_schema_file, data)
+            self.print_to_file("results", yaml_schema_file, data)
+            # #measurement results
+            # self.print_to_file("measurementresults", yaml_schema_file, data)
+            # #timeseriesresult
+            # self.print_to_file("timeseriesresults", yaml_schema_file, data)
+            # #datasetresults
+            # self.print_to_file("datasetresults", yaml_schema_file, data)
             #measurementResultValues
             self.print_to_file("measurementresultvalues", yaml_schema_file, data)
             #timeseriesresultvalues - ColumnDefinitions:, Data:
-
+            val = "timeseriesresultvalues"
+            if val in data:
+                yaml_schema_file.write(self.generate_ts_objects(data[val]))
             #MeasurementResultValueAnnotations
             self.print_to_file("measurementresultvalueannotations", yaml_schema_file, data)
 
