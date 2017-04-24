@@ -8,7 +8,7 @@ import pandas
 class ExcelInput(iInputs):
     def __init__(self, input_file, output_file=None):
         super(ExcelInput, self).__init__()
-        self.create_memory_db()
+
         self.input_file = input_file
 
         if output_file is None:
@@ -40,7 +40,7 @@ class ExcelInput(iInputs):
 
         return table_name_range
 
-    def parse(self, file_path=None):
+    def parse(self, file_path=None, db_conn = None):
         if not self.verify(file_path):
             print "Something is wrong with the file but what?"
             return
