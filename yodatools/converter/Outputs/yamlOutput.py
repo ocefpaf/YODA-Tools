@@ -1,6 +1,6 @@
 
 from yodatools.converter.Abstract import iOutputs
-from yodatools.converter import YamlPrinter
+from yodatools.converter.YamlPrinter import YamlPrinter
 
 
 
@@ -27,10 +27,10 @@ class yamlOutput(iOutputs):
     #     raise NotImplementedError()
 
     def save(self, session, file_path):
-        data = self.parseObjects()
+        data = self.parseObjects(session)
 
-
-        YamlPrinter.print_yoda(file_path, data)
+        yp = YamlPrinter()
+        yp.print_yoda(file_path, data)
 
 
     def accept(self):

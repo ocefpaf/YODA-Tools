@@ -1,1 +1,3 @@
-test
+---
+YODA:
+ - {Version: "0.1.0", Profile: "SpecimenTimeSeries", CreationTool: "YodaConverter", DateCreated: "2017-04-24", DateUpdated: "2017-04-24"}

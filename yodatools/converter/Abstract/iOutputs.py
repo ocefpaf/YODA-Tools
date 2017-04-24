@@ -12,7 +12,8 @@ class iOutputs():
                     tmplist.append(o)
             except Exception as e:
                 print e
-            data[t.__class__.__name__] = tmplist
+            if len(tmplist)>0:
+                data[t.__tablename__] = tmplist
         return data
 
     def get_table_names(self):
