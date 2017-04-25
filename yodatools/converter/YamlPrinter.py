@@ -87,7 +87,7 @@ class YamlPrinter():
         from numbers import Number
         final_string= "{"
         for k, v in dict.items():
-            #TODO what if the item is null? do we want to print it, or jsut leave it
+            #if the item is null don't print it
             if isinstance(v, Number):
                 final_string += '{}: {}, '.format(k, v)
             if isinstance(v, basestring):
@@ -163,13 +163,13 @@ class YamlPrinter():
             self.print_to_file("relatedactions", yaml_schema_file, data)
             #result Not explicitly printed, should be included in measurement or timeseries results
             self.print_to_file("results", yaml_schema_file, data)
-            # #measurement results
-            # self.print_to_file("measurementresults", yaml_schema_file, data)
-            # #timeseriesresult
-            # self.print_to_file("timeseriesresults", yaml_schema_file, data)
-            # #datasetresults
-            # self.print_to_file("datasetresults", yaml_schema_file, data)
-            #measurementResultValues
+            #measurement results
+            self.print_to_file("measurementresults", yaml_schema_file, data)
+            #timeseriesresult
+            self.print_to_file("timeseriesresults", yaml_schema_file, data)
+            #datasetresults
+            self.print_to_file("datasetsresults", yaml_schema_file, data)
+            # measurementResultValues
             self.print_to_file("measurementresultvalues", yaml_schema_file, data)
             #timeseriesresultvalues - ColumnDefinitions:, Data:
             val = "timeseriesresultvalues"
