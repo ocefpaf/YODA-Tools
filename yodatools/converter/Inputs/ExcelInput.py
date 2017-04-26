@@ -72,57 +72,131 @@ class ExcelInput(iInputs):
                 act_by = ActionBy()
                 measure_result = MeasurementResults()
                 measure_result_value = MeasurementResultValues()
-
-                # First the results
-                variable = self._session.query(Variables).filter_by(VariableCode=row[2].value).first()
-                units = self._session.query(Units).filter_by(UnitsName=row[4].value).first()
-                proc_level = self._session.query(ProcessingLevels).filter_by(ProcessingLevelCode=row[11].value).first()
-
-                result.ResultUUID = row[0].value
-                result.VariableObj = variable
-                result.VariableID = variable.VariableID
-                result.UnitsID = units.UnitsID
-                result.ProcessingLevelObj = proc_level
-                result.ProcessingLevelID = proc_level.ProcessingLevelID
-                result.SampledMediumCV = row[12].value
-
-                # Feature Actions
-                feat_act.SamplingFeatureID = row[1].value
+                related_action = RelatedActions()
 
                 # Measurements Result Value
                 measure_result_value.DataValue = row[3].value
                 measure_result_value.ValueDateTime = row[5].value
                 measure_result_value.ValueDateTimeUTCOffset = row[6].value
 
-                # Measurement Result (Different from Measurement Result Value)
-                units = self._session.query(Units).filter_by(UnitsName=row[14].value).first()
-
-                measure_result.CensorCodeCV = row[9].value
-                measure_result.QualityCodeCV = row[10].value
-                measure_result.TimeAggregationInterval = row[13].value
-                measure_result.TimeAggregationIntervalUnitsObj = units
-                measure_result.TimeAggregationIntervalUnitsID = units.UnitsID
-                measure_result.AggregationStatisticCV = row[15].value
-
                 # Action
                 method = self._session.query(Methods).filter_by(MethodCode=row[7].value).first()
                 action.MethodObj = method
-                action.MethodID = method.MethodID
+                action.ActionTypeCV = "specimenAnalysis"
+                action.BeginDateTime = row[5].value
+                action.BeginDateTimeUTCOffset = row[6].value
+
+                # Feature Actions
+                sampling_feature = self._session.query(SamplingFeatures)\
+                    .filter_by(SamplingFeatureCode=row[1].value)\
+                    .first()
+
+                feat_act.SamplingFeatureObj = sampling_feature
+                feat_act.ActionObj = action
 
                 # Action By
                 first_name, last_name = row[8].value.split(' ')
                 person = self._session.query(People).filter_by(PersonLastName=last_name).first()
                 affiliations = self._session.query(Affiliations).filter_by(PersonID=person.PersonID).first()
                 act_by.AffiliationObj = affiliations
-                act_by.AffiliationID = affiliations.AffiliationID
+                act_by.ActionObj = action
+                act_by.IsActionLead = True
 
-                # Link together
-                result.FeatureActionID = feat_act.FeatureActionID
+                related_action.ActionObj = action
+                related_action.RelationshipTypeCV = "isChildOf"
+                collectionAction = self._session.query(FeatureActions)\
+                    .filter(FeatureActions.FeatureActionID == SamplingFeatures.SamplingFeatureID)\
+                    .filter(SamplingFeatures.SamplingFeatureCode == row[1].value)\
+                    .first()
+
+                related_action.RelatedActionObj = collectionAction.ActionObj
+
+                # Results
+                variable = self._session.query(Variables).filter_by(VariableCode=row[2].value).first()
+                units_for_result = self._session.query(Units).filter_by(UnitsName=row[4].value).first()
+                proc_level = self._session.query(ProcessingLevels).filter_by(ProcessingLevelCode=row[11].value).first()
+
+                # Testing stuff
+                # feat_act.ActionID = 1
+                # result.TaxonomicClassifierID = 1
+                ###############################
+
+                result.ResultUUID = row[0].value
+                result.VariableObj = variable
+                result.UnitsObj = units_for_result
+                result.ProcessingLevelObj = proc_level
+                result.SampledMediumCV = row[12].value
+                result.ValueCount = 1
+                result.StatusCV = "complete"
+                result.ResultTypeCV = "measurement"
                 result.FeatureActionObj = feat_act
+
+                self._session.add(result)
+                try:
+                    self._session.flush()
+                except Exception as e:
+                    print e
+                    print 123
+                    pass
+
+                self._session.add(action)
+                try:
+                    self._session.flush()
+                except:
+                    print 123
+                    pass
+
+                self._session.add(feat_act)
+                try:
+                    self._session.flush()
+                except:
+                    print 123
+                    pass
+
+                self._session.add(act_by)
+                try:
+                    self._session.flush()
+                except:
+                    print 123
+                    pass
+
+                self._session.add(related_action)
+                try:
+                    self._session.flush()
+                except:
+                    print 123
+                    pass
+
+                # Measurement Result (Different from Measurement Result Value)
+                units_for_agg = self._session.query(Units).filter_by(UnitsName=row[14].value).first()
+                measure_result.CensorCodeCV = row[9].value
+                measure_result.QualityCodeCV = row[10].value
+                measure_result.TimeAggregationInterval = row[13].value
+                measure_result.TimeAggregationIntervalUnitsObj = units_for_agg
+                measure_result.AggregationStatisticCV = row[15].value
+                # measure_result.ResultID = result.ResultID
+                measure_result.ResultUUID = result.ResultUUID
+                measure_result_value.ResultID = result.ResultID
+                measure_result.FeatureActionObj = feat_act
+                measure_result.ResultTypeCV = result.ResultTypeCV
+                measure_result.VariableObj = variable
+                measure_result.UnitsObj = units_for_result
+                measure_result.ProcessingLevelObj = proc_level
+                measure_result.StatusCV = result.StatusCV
+                measure_result.SampledMediumCV = result.SampledMediumCV
+                measure_result.ValueCount = result.ValueCount
+
+                self._session.add(measure_result)  # broken
+                self._session.add(measure_result_value)
+                try:
+                    self._session.flush()
+                except:
+                    print 123
+                    pass
 
                 pass
 
-        pass
+        self._session.flush()
 
     def parse_sites(self):
         return self.parse_sampling_feature()
@@ -301,8 +375,9 @@ class ExcelInput(iInputs):
 
             for row in cells:
                 sp = Specimens()
-                a = Actions()
+                action = Actions()
                 rf = RelatedFeatures()
+                ft = FeatureActions()
 
                 # First the Specimen/Sampling Feature
                 sp.SamplingFeatureUUID = row[0].value
@@ -322,20 +397,24 @@ class ExcelInput(iInputs):
                 # Query the site id using the collection site (which is the site code aka Sampling Feature Code)
                 # Link things together
                 sampling_feature = self._session.query(SamplingFeatures).filter_by(SamplingFeatureCode=row[7].value).first()
-                rf.SamplingFeatureID = sampling_feature.SamplingFeatureID
-                rf.RelatedFeatureID = row[7].value
+                rf.SamplingFeatureObj = sp
+                rf.RelatedFeatureObj = sampling_feature
                 # rf.RelatedFeatureID = needs to be set...
 
                 # Last is the Action/SampleCollectionAction
-                a.ActionTypeCV = 'specimenCollection'
-                a.BeginDateTime = row[8].value
-                a.BeginDateTimeUTCOffset = row[9].value
+                action.ActionTypeCV = 'specimenCollection'
+                action.BeginDateTime = row[8].value
+                action.BeginDateTimeUTCOffset = row[9].value
                 method = self._session.query(Methods).filter_by(MethodCode=row[10].value).first()
-                a.MethodID = method.MethodID
+                action.MethodObj = method
+
+                ft.ActionObj = action
+                ft.SamplingFeatureObj = sp
 
                 self._session.add(sp)
-                self._session.add(a)
+                self._session.add(action)
                 self._session.add(rf)
+                self._session.add(ft)
 
         self._session.flush()  # Need to set the RelatedFeature.RelatedFeatureID before flush will work
 
