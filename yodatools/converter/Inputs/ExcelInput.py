@@ -5,6 +5,7 @@ from yodatools.converter.Abstract import iInputs
 import pandas
 import time
 
+
 class ExcelInput(iInputs):
     def __init__(self, input_file, output_file=None):
         super(ExcelInput, self).__init__()
@@ -71,18 +72,12 @@ class ExcelInput(iInputs):
         for table in tables:
             cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
             for row in cells:
-                result = Results()
                 action = Actions()
                 feat_act = FeatureActions()
                 act_by = ActionBy()
                 measure_result = MeasurementResults()
                 measure_result_value = MeasurementResultValues()
                 related_action = RelatedActions()
-
-                # Measurements Result Value
-                measure_result_value.DataValue = row[3].value
-                measure_result_value.ValueDateTime = row[5].value
-                measure_result_value.ValueDateTimeUTCOffset = row[6].value
 
                 # Action
                 method = self._session.query(Methods).filter_by(MethodCode=row[7].value).first()
@@ -116,50 +111,41 @@ class ExcelInput(iInputs):
 
                 related_action.RelatedActionObj = collectionAction.ActionObj
 
-                # Results
-                variable = self._session.query(Variables).filter_by(VariableCode=row[2].value).first()
-                units_for_result = self._session.query(Units).filter_by(UnitsName=row[4].value).first()
-                proc_level = self._session.query(ProcessingLevels).filter_by(ProcessingLevelCode=row[11].value).first()
-
-                result.ResultUUID = row[0].value
-                result.VariableObj = variable
-                result.UnitsObj = units_for_result
-                result.ProcessingLevelObj = proc_level
-                result.SampledMediumCV = row[12].value
-                result.ValueCount = 1
-                result.StatusCV = "complete"
-                result.ResultTypeCV = "measurement"
-                result.FeatureActionObj = feat_act
-
-                self._session.add(result)
                 self._session.add(action)
                 self._session.add(feat_act)
                 self._session.add(act_by)
                 self._session.add(related_action)
 
-                # Measurement Result (Different from Measurement Result Value)
+                # Measurement Result (Different from Measurement Result Value) also creates a Result
+                variable = self._session.query(Variables).filter_by(VariableCode=row[2].value).first()
+                units_for_result = self._session.query(Units).filter_by(UnitsName=row[4].value).first()
+                proc_level = self._session.query(ProcessingLevels).filter_by(ProcessingLevelCode=row[11].value).first()
+
                 units_for_agg = self._session.query(Units).filter_by(UnitsName=row[14].value).first()
                 measure_result.CensorCodeCV = row[9].value
                 measure_result.QualityCodeCV = row[10].value
                 measure_result.TimeAggregationInterval = row[13].value
                 measure_result.TimeAggregationIntervalUnitsObj = units_for_agg
                 measure_result.AggregationStatisticCV = row[15].value
-                # measure_result.ResultID = result.ResultID
-                measure_result.ResultUUID = result.ResultUUID
-                measure_result_value.ResultID = result.ResultID
+                measure_result.ResultUUID = row[0].value
                 measure_result.FeatureActionObj = feat_act
-                measure_result.ResultTypeCV = result.ResultTypeCV
+                measure_result.ResultTypeCV = "measurement"
                 measure_result.VariableObj = variable
                 measure_result.UnitsObj = units_for_result
                 measure_result.ProcessingLevelObj = proc_level
-                measure_result.StatusCV = result.StatusCV
-                measure_result.SampledMediumCV = result.SampledMediumCV
-                measure_result.ValueCount = result.ValueCount
+                measure_result.StatusCV = "complete"
+                measure_result.SampledMediumCV = row[12].value
+                measure_result.ValueCount = 1
+
+                # Measurements Result Value
+                measure_result_value.DataValue = row[3].value
+                measure_result_value.ValueDateTime = row[5].value
+                measure_result_value.ValueDateTimeUTCOffset = row[6].value
+                measure_result_value.ResultObj = measure_result
 
                 self._session.add(measure_result)
                 self._session.add(measure_result_value)
                 self._session.flush()
-
 
     def parse_sites(self):
         return self.parse_sampling_feature()
