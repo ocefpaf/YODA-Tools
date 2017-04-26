@@ -3,7 +3,7 @@ import openpyxl
 from odm2api.ODM2.models import *
 from yodatools.converter.Abstract import iInputs
 import pandas
-
+import time
 
 class ExcelInput(iInputs):
     def __init__(self, input_file, output_file=None):
@@ -45,6 +45,8 @@ class ExcelInput(iInputs):
             print "Something is wrong with the file but what?"
             return
 
+        start = time.time()
+
         self.tables = self.get_table_name_ranges()
 
         self.parse_affiliations()
@@ -55,6 +57,9 @@ class ExcelInput(iInputs):
         self.parse_sampling_feature()
         self.parse_specimens()
         self.parse_analysis_results()
+
+        end = time.time()
+        print(end - start)
 
     def parse_analysis_results(self):
         SHEET_NAME = "Analysis_Results"
@@ -116,11 +121,6 @@ class ExcelInput(iInputs):
                 units_for_result = self._session.query(Units).filter_by(UnitsName=row[4].value).first()
                 proc_level = self._session.query(ProcessingLevels).filter_by(ProcessingLevelCode=row[11].value).first()
 
-                # Testing stuff
-                # feat_act.ActionID = 1
-                # result.TaxonomicClassifierID = 1
-                ###############################
-
                 result.ResultUUID = row[0].value
                 result.VariableObj = variable
                 result.UnitsObj = units_for_result
@@ -132,40 +132,10 @@ class ExcelInput(iInputs):
                 result.FeatureActionObj = feat_act
 
                 self._session.add(result)
-                try:
-                    self._session.flush()
-                except Exception as e:
-                    print e
-                    print 123
-                    pass
-
                 self._session.add(action)
-                try:
-                    self._session.flush()
-                except:
-                    print 123
-                    pass
-
                 self._session.add(feat_act)
-                try:
-                    self._session.flush()
-                except:
-                    print 123
-                    pass
-
                 self._session.add(act_by)
-                try:
-                    self._session.flush()
-                except:
-                    print 123
-                    pass
-
                 self._session.add(related_action)
-                try:
-                    self._session.flush()
-                except:
-                    print 123
-                    pass
 
                 # Measurement Result (Different from Measurement Result Value)
                 units_for_agg = self._session.query(Units).filter_by(UnitsName=row[14].value).first()
@@ -186,17 +156,10 @@ class ExcelInput(iInputs):
                 measure_result.SampledMediumCV = result.SampledMediumCV
                 measure_result.ValueCount = result.ValueCount
 
-                self._session.add(measure_result)  # broken
+                self._session.add(measure_result)
                 self._session.add(measure_result_value)
-                try:
-                    self._session.flush()
-                except:
-                    print 123
-                    pass
+                self._session.flush()
 
-                pass
-
-        self._session.flush()
 
     def parse_sites(self):
         return self.parse_sampling_feature()
