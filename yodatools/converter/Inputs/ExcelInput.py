@@ -42,9 +42,15 @@ class ExcelInput(iInputs):
         return table_name_range
 
     def parse(self, file_path=None):
+        """
+        If any of the methods return early, then check that they have the table ranges
+        The table range should exist in the tables from get_table_name_range()
+        :param file_path: 
+        :return: 
+        """
         if not self.verify(file_path):
             print "Something is wrong with the file but what?"
-            return
+            return False
 
         start = time.time()
 
@@ -62,11 +68,14 @@ class ExcelInput(iInputs):
         end = time.time()
         print(end - start)
 
+        return True
+
     def parse_analysis_results(self):
         SHEET_NAME = "Analysis_Results"
         sheet, tables = self.get_sheet_and_table(SHEET_NAME)
 
         if not len(tables):
+            print "No analysis result found"
             return
 
         for table in tables:
@@ -156,6 +165,7 @@ class ExcelInput(iInputs):
         sheet, tables = self.get_sheet_and_table(CONST_UNITS)
 
         if not len(tables):
+            print "No Units found"
             return
 
         units = []
@@ -189,6 +199,7 @@ class ExcelInput(iInputs):
         sheet, tables = self.get_sheet_and_table(SHEET_NAME)
 
         if not len(tables):
+            print "No affiliations found"
             return []
 
         def parse_organizations(org_table, session):
@@ -265,6 +276,7 @@ class ExcelInput(iInputs):
         sheet, tables = self.get_sheet_and_table(CONST_PROC_LEVEL)
 
         if not len(tables):
+            print "No processing levels found"
             return []
 
         processing_levels = []
@@ -289,6 +301,7 @@ class ExcelInput(iInputs):
             if 'Sites' in self.tables:
                 SAMP_FEAT = 'Sites'
             else:
+                print "No sampling features/sites found"
                 return []
 
         sheet = self.workbook.get_sheet_by_name(SAMP_FEAT)
@@ -317,6 +330,7 @@ class ExcelInput(iInputs):
         sheet, tables = self.get_sheet_and_table(SPECIMENS)
 
         if not len(tables):
+            print "No specimens found"
             return []
 
         for table in tables:
@@ -372,6 +386,7 @@ class ExcelInput(iInputs):
         sheet, tables = self.get_sheet_and_table(CONST_METHODS)
 
         if not len(tables):
+            print "No methods found"
             return []
 
         for table in tables:
@@ -399,6 +414,7 @@ class ExcelInput(iInputs):
         CONST_VARIABLES = "Variables"
 
         if CONST_VARIABLES not in self.tables:
+            print "No Variables found"
             return []
 
         sheet = self.workbook.get_sheet_by_name(CONST_VARIABLES)
@@ -437,5 +453,5 @@ class ExcelInput(iInputs):
 
         return True
 
-    def sendODM2Session(self):
+    def sendODM2Session(self):  # this should be renamed to get not send because it returns a value
         return self._session
