@@ -17,8 +17,8 @@ class dbOutput(iOutputs):
         return self._session_out
 
     def save(self, session, file_path, connection_string):
-        tables = self.parseObjects()
-        session_out = self.create_db_connection()
+        tables = self.parseObjects(session)
+        session_out = self.connect_to_db(connection_string)
         #data = []
 
         for t in tables:
