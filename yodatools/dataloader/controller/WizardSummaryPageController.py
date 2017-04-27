@@ -9,7 +9,7 @@ import threading
 class WizardSummaryPageController(WizardSummaryPageView):
 
     # Static variables
-    thread = None
+    # thread = None
 
     def __init__(self, parent, panel, title):
         super(WizardSummaryPageController, self).__init__(panel)
@@ -17,7 +17,7 @@ class WizardSummaryPageController(WizardSummaryPageView):
         self.title = title
 
     def run(self, selections):
-        WizardSummaryPageController.thread = threading.currentThread()
+        # WizardSummaryPageController.thread = threading.currentThread()
 
         input_file = self.parent.home_page.input_file_text_ctrl.GetValue()
 
@@ -39,7 +39,6 @@ class WizardSummaryPageController(WizardSummaryPageView):
             yoda = yamlInput()
             yoda.parse(input_file)
 
-        self.gauge.SetValue(100)
 
         # Go through each checkbox
         if 'excel' in selections:
@@ -47,7 +46,6 @@ class WizardSummaryPageController(WizardSummaryPageView):
 
         if 'yoda' in selections:
             print 'export to yoda'
-            return
             # Before uncommenting the lines below, make sure the yamlOutput does not
             # overwrite the folder but instead creates a file
 
@@ -62,6 +60,10 @@ class WizardSummaryPageController(WizardSummaryPageView):
             create connection string
             call dboutput and do same as yoda export and send in connection string as filepath
             """
+
+        self.gauge.SetValue(100)
+        self.parent.load_finished_execution()
+        return
 
 
 

@@ -51,17 +51,12 @@ class ExcelInput(iInputs):
         return table_name_range
 
     def count_number_of_rows_to_parse(self, dimensions):
-
+        # http://stackoverflow.com/questions/1450897/python-removing-characters-except-digits-from-string
         top, bottom = dimensions.replace('$', '').split(':')
         all = string.maketrans('', '')
         nodigs = all.translate(all, string.digits)
         top = int(top.translate(all, nodigs))
         bottom = int(bottom.translate(all, nodigs))
-        # for sheet in self.sheets:
-        #     sheet_obj = self.workbook.get_sheet_by_name(sheet)
-        #     count += sheet_obj.max_row
-
-        # self.total_rows_to_read = count
         self.total_rows_to_read += (bottom - top)
 
     def parse(self, file_path=None):

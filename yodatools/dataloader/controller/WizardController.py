@@ -16,6 +16,7 @@ class WizardController(WizardView):
         self.database_page = WizardDatabasePageController(self.body_panel, title="ODM2")
         self.summary_page = WizardSummaryPageController(self, self.body_panel, title="Summary")
         self.home_page = WizardHomePageController(self.body_panel, title="Loader Wizard")
+        self.execution_finished = False
 
         self.is_on_page_before_summary = False
         self.thread = threading.Thread()
@@ -40,7 +41,7 @@ class WizardController(WizardView):
         self.SetSize((450, 450))
 
     def on_next_button(self, event):
-        if self.page_number + 2 > len(self.wizard_pages):
+        if self.page_number + 2 > len(self.wizard_pages) or self.execution_finished:
            # self.summary_page.run(self.selected_pages())
             self.Close()
 
@@ -104,6 +105,11 @@ class WizardController(WizardView):
     def will_flip_to_last_page(self):
         self.next_button.SetLabel("Close")
         self.back_button.Show()
+
+    def load_finished_execution(self):
+        self.execution_finished = True
+        self.next_button.SetLabel("Done")
+        self.back_button.Hide()
 
     def will_flip_to_page_before_summary(self):
         self.next_button.SetLabel("Finish")
