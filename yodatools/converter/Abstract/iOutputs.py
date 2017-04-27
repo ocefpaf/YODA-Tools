@@ -10,13 +10,14 @@ class iOutputs():
             try:
                 if t.__tablename__ == "timeseriesresultvalues":
                     import pandas as pd
-                    tbl = pd.read_sql("SELECT * FROM TimeSeriesResultValues", session)
-                    tmplist.append(tbl)
+                    sql = """SELECT * FROM TimeSeriesResultValues"""
+                    tbl = pd.read_sql(sql, session.connection().connection.connection)
+                    tmplist=tbl
                 else:
                     for o in session.query(t).all():
                         tmplist.append(o)
             except Exception as e:
-                # print "error: "+ e
+                # print "error: " + e.message
                 pass
             if len(tmplist)>0:
                 data[t.__tablename__] = tmplist

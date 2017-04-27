@@ -2,10 +2,10 @@ from odm2api.ODMconnection import dbconnection
 from odm2api.ODM2.models import Base, setSchema
 
 class iInputs(object):
-    def __init__(self, file_path, db_conn = None):
-        self.create_memory_db()
-        if db_conn:
-            self.connect_to_db(db_conn)
+    # def __init__(self, file_path, db_conn = None):
+    #     self.create_memory_db()
+    #     if db_conn:
+    #         self.connect_to_db(db_conn)
 
     def parse(self, file_path, db_conn= None):
         raise NotImplementedError()

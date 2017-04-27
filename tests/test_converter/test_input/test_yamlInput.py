@@ -9,7 +9,8 @@ class TestYaml:
         self.yi = yamlInput()
 
     def test_parse_ts(self):
-        file_path = os.path.join(curr_folder, 'test_files', 'test_ts.yaml')
+        # file_path = os.path.join(curr_folder, 'test_files', 'test_ts.yaml')
+        file_path = os.path.join(curr_folder, 'test_files', 'test_ts_output.yaml')
         self.yi.parse(file_path)
 
         session = self.yi.sendODM2Session()
@@ -21,7 +22,9 @@ class TestYaml:
         session.close()
 
     def test_parse_specimen(self):
-        file_path = os.path.join(curr_folder, 'test_files', 'test_specimen_ts.yaml')
+        # D:\DEV\YODA - Tools\tests\test_files\test_ts_specimen_output.yaml
+        # file_path = os.path.join(curr_folder, 'test_files', 'test_specimen_ts.yaml')
+        file_path = os.path.join(curr_folder, 'test_files', 'test_ts_specimen_output.yaml')
 
         self.yi.parse(file_path)
         session = self.yi.sendODM2Session()

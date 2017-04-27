@@ -28,7 +28,7 @@ def build_ts_sepecimen_db():
 
 
 def build_ts_specimen_session():
-    session_factory = build_ts_db()
+    session_factory = build_ts_sepecimen_db()
     session = session_factory.getSession()
     return session
 
