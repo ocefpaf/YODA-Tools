@@ -4,6 +4,7 @@ from WizardHomePageController import WizardHomePageController
 from WizardSummaryPageController import WizardSummaryPageController
 from WizardYodaPageController import WizardYodaPageViewController
 from yodatools.dataloader.view.WizardView import WizardView
+import threading
 
 
 class WizardController(WizardView):
@@ -17,6 +18,7 @@ class WizardController(WizardView):
         self.home_page = WizardHomePageController(self.body_panel, title="Loader Wizard")
 
         self.is_on_page_before_summary = False
+        self.thread = threading.Thread()
 
         # The key must match the checkbox id
         self.home_page.pages_enabled = {
@@ -39,7 +41,7 @@ class WizardController(WizardView):
 
     def on_next_button(self, event):
         if self.page_number + 2 > len(self.wizard_pages):
-            self.summary_page.run(self.selected_pages())
+           # self.summary_page.run(self.selected_pages())
             self.Close()
 
         self.wizard_pages[self.page_number].Hide()
@@ -84,6 +86,7 @@ class WizardController(WizardView):
             self.will_flip_to_first_page()
         elif self.page_number == len(self.wizard_pages) - 1:
             self.will_flip_to_last_page()
+            self.execute()  # Parse and save
         elif self.is_on_page_before_summary:
             self.will_flip_to_page_before_summary()
         else:
@@ -104,6 +107,7 @@ class WizardController(WizardView):
 
     def will_flip_to_page_before_summary(self):
         self.next_button.SetLabel("Finish")
+        self.back_button.SetLabel("Cancel")
         self.back_button.Show()
 
     def show_home_page(self):
@@ -123,3 +127,21 @@ class WizardController(WizardView):
             pages['odm2'] = self.database_page
 
         return pages
+
+    def execute(self):
+
+        if not self.thread.isAlive():  # Prevent the thread from  being created twice!
+            self.thread = threading.Thread(
+                target=self.summary_page.run,
+                args=(self.selected_pages()),
+                name='execution_thread'
+            )
+
+            # When true, the thread will terminate when app is closed
+            # When false, the thread will continue even after the ap is closed
+            self.thread.setDaemon(True)
+            self.thread.start()
+            # self.summary_page.run(self.selected_pages())
+        else:
+            print "did not start another thread"
+        # thread.join(timeout=2)

@@ -4,18 +4,25 @@ from odm2api.ODM2.models import *
 from yodatools.converter.Abstract import iInputs
 import pandas
 import time
+import string
 
 
 class ExcelInput(iInputs):
-    def __init__(self, input_file, output_file=None):
+    def __init__(self, input_file, **kwargs):
         super(ExcelInput, self).__init__()
         self.create_memory_db()
         self.input_file = input_file
+        self.output_file = "export.csv"
+        self.gauge = None
+        self.total_rows_to_read = 0
+        self.rows_read = 0
 
-        if output_file is None:
-            output_file = "export.csv"
+        if 'output_file' in kwargs:
+            self.output_file = kwargs['output_file']
 
-        self.output_file = output_file
+        if 'gauge' in kwargs:
+            self.gauge = kwargs['gauge']
+
         self.workbook = None
         self.sheets = []
         self.name_ranges = None
@@ -31,7 +38,7 @@ class ExcelInput(iInputs):
         table_name_range = {}
         for name_range in self.name_ranges:
             if CONST_NAME in name_range.name:
-                sheet = name_range.attr_text.split('!')[0]
+                sheet, dimensions = name_range.attr_text.split('!')
                 sheet = sheet.replace('\'', '')
 
                 if sheet in table_name_range:
@@ -39,22 +46,39 @@ class ExcelInput(iInputs):
                 else:
                     table_name_range[sheet] = [name_range]
 
+                self.count_number_of_rows_to_parse(dimensions=dimensions)
+
         return table_name_range
+
+    def count_number_of_rows_to_parse(self, dimensions):
+
+        top, bottom = dimensions.replace('$', '').split(':')
+        all = string.maketrans('', '')
+        nodigs = all.translate(all, string.digits)
+        top = int(top.translate(all, nodigs))
+        bottom = int(bottom.translate(all, nodigs))
+        # for sheet in self.sheets:
+        #     sheet_obj = self.workbook.get_sheet_by_name(sheet)
+        #     count += sheet_obj.max_row
+
+        # self.total_rows_to_read = count
+        self.total_rows_to_read += (bottom - top)
 
     def parse(self, file_path=None):
         """
         If any of the methods return early, then check that they have the table ranges
         The table range should exist in the tables from get_table_name_range()
-        :param file_path: 
-        :return: 
+        :param file_path:
+        :return:
         """
+
         if not self.verify(file_path):
             print "Something is wrong with the file but what?"
             return False
 
-        start = time.time()
-
         self.tables = self.get_table_name_ranges()
+
+        start = time.time()
 
         self.parse_affiliations()
         self.parse_methods()
@@ -70,6 +94,16 @@ class ExcelInput(iInputs):
 
         return True
 
+    def __updateGauge(self):
+        # Objects are passed by reference in Python :)
+        if not self.gauge:
+            print 'returned'
+            return
+
+        self.rows_read += 1
+        value = float(self.rows_read) / self.total_rows_to_read * 100.0
+        self.gauge.SetValue(value)
+
     def parse_analysis_results(self):
         SHEET_NAME = "Analysis_Results"
         sheet, tables = self.get_sheet_and_table(SHEET_NAME)
@@ -81,6 +115,7 @@ class ExcelInput(iInputs):
         for table in tables:
             cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
             for row in cells:
+
                 action = Actions()
                 feat_act = FeatureActions()
                 act_by = ActionBy()
@@ -156,6 +191,8 @@ class ExcelInput(iInputs):
                 self._session.add(measure_result_value)
                 self._session.flush()
 
+                self.__updateGauge()
+
     def parse_sites(self):
         return self.parse_sampling_feature()
 
@@ -181,6 +218,8 @@ class ExcelInput(iInputs):
 
                 if unit.UnitsTypeCV is not None:
                     units.append(unit)
+
+                self.__updateGauge()
 
         self._session.add_all(units)
         self._session.flush()
@@ -215,6 +254,7 @@ class ExcelInput(iInputs):
                 org.OrganizationLink = row[4].value
                 session.add(org)
                 organizations[org.OrganizationName] = org
+                self.__updateGauge()
 
             return organizations
 
@@ -290,6 +330,8 @@ class ExcelInput(iInputs):
                 proc_lvl.Explanation = row[2].value
                 processing_levels.append(proc_lvl)
 
+                self.__updateGauge()
+
         # return processing_levels
         self._session.add_all(processing_levels)
         self._session.flush()
@@ -321,6 +363,8 @@ class ExcelInput(iInputs):
                 sf.Elevation_m = row[5].value
                 sf.SamplingFeatureTypeCV = row[6].value
                 sampling_features.append(sf)
+
+                self.__updateGauge()
 
         self._session.add_all(sampling_features)
         self._session.flush(sampling_features)
@@ -379,6 +423,8 @@ class ExcelInput(iInputs):
                 self._session.add(rf)
                 self._session.add(ft)
 
+                self.__updateGauge()
+
         self._session.flush()  # Need to set the RelatedFeature.RelatedFeatureID before flush will work
 
     def parse_methods(self):
@@ -406,6 +452,8 @@ class ExcelInput(iInputs):
 
                 if method.MethodCode:  # Cannot store empty/None objects
                     self._session.add(method)
+
+                self.__updateGauge()
 
         self._session.flush()
 
@@ -435,6 +483,8 @@ class ExcelInput(iInputs):
 
                 if var.NoDataValue is not None:  # NoDataValue cannot be None
                     self._session.add(var)
+
+                self.__updateGauge()
 
         self._session.flush()
 

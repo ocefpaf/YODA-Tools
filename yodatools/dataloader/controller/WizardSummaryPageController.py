@@ -3,15 +3,21 @@ from yodatools.converter.Inputs.ExcelInput import ExcelInput
 from yodatools.converter.Inputs.yamlInput import yamlInput
 from yodatools.converter.Outputs.yamlOutput import yamlOutput
 from yodatools.converter.Outputs.dbOutput import dbOutput
+import threading
 
 
 class WizardSummaryPageController(WizardSummaryPageView):
+
+    # Static variables
+    thread = None
+
     def __init__(self, parent, panel, title):
         super(WizardSummaryPageController, self).__init__(panel)
         self.parent = parent
         self.title = title
 
     def run(self, selections):
+        WizardSummaryPageController.thread = threading.currentThread()
 
         input_file = self.parent.home_page.input_file_text_ctrl.GetValue()
 
@@ -24,13 +30,16 @@ class WizardSummaryPageController(WizardSummaryPageView):
 
         session = None
         if file_type == 'excel':
-            excel = ExcelInput(input_file)
+            kwargs = {'gauge': self.gauge}
+            excel = ExcelInput(input_file, **kwargs)
             excel.parse()
             session = excel.sendODM2Session()
         else:
             # Must be a yoda file
             yoda = yamlInput()
             yoda.parse(input_file)
+
+        self.gauge.SetValue(100)
 
         # Go through each checkbox
         if 'excel' in selections:
@@ -53,6 +62,7 @@ class WizardSummaryPageController(WizardSummaryPageView):
             create connection string
             call dboutput and do same as yoda export and send in connection string as filepath
             """
+
 
 
 def verify_file_type(input_file):
