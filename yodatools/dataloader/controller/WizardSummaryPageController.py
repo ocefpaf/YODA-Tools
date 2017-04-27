@@ -19,7 +19,7 @@ class WizardSummaryPageController(WizardSummaryPageView):
         file_type = verify_file_type(input_file)
 
         if file_type == 'invalid':  # Accept only excel and yaml files
-            print "File extension is not valid"
+            print "File extension isvalid or no file"
             return
 
         session = None

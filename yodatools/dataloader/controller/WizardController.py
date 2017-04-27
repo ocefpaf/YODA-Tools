@@ -16,6 +16,8 @@ class WizardController(WizardView):
         self.summary_page = WizardSummaryPageController(self, self.body_panel, title="Summary")
         self.home_page = WizardHomePageController(self.body_panel, title="Loader Wizard")
 
+        self.is_on_page_before_summary = False
+
         # The key must match the checkbox id
         self.home_page.pages_enabled = {
             0: True,   # home page
@@ -43,21 +45,25 @@ class WizardController(WizardView):
         self.wizard_pages[self.page_number].Hide()
 
         # Boundary checking
-        self.page_number = min(self.page_number + 1, len(self.wizard_pages) - 1)
-
-        if not self.home_page.pages_enabled[self.page_number]:
-            self.page_number = self.__go_to_next_available_page(forward=True)
+        self.page_number = self.__go_to_next_available_page(forward=True)
+        self.__check_if_on_page_before_summary()
 
         self.__update_page()
+
+    def __check_if_on_page_before_summary(self):
+        self.is_on_page_before_summary = True
+        for i in range(self.page_number + 1, len(self.home_page.pages_enabled.values()) - 1):
+            if self.home_page.pages_enabled[i]:
+                self.is_on_page_before_summary = False
 
     def __go_to_next_available_page(self, forward=True):
         if forward:
             for i in range(self.page_number, len(self.home_page.pages_enabled.values())):
-                if self.home_page.pages_enabled[i]:
+                if self.home_page.pages_enabled[i] and i != self.page_number:
                     return i
         else:
             for i in range(self.page_number, -1, -1):
-                if self.home_page.pages_enabled[i]:
+                if self.home_page.pages_enabled[i] and i != self.page_number:
                     return i
 
         return 0
@@ -66,10 +72,8 @@ class WizardController(WizardView):
         self.wizard_pages[self.page_number].Hide()
 
         # Boundary checking
-        self.page_number = max(self.page_number - 1, 0)
-
-        if not self.home_page.pages_enabled[self.page_number]:
-            self.page_number = self.__go_to_next_available_page(forward=False)
+        self.page_number = self.__go_to_next_available_page(forward=False)
+        self.__check_if_on_page_before_summary()
 
         self.__update_page()
 
@@ -80,6 +84,8 @@ class WizardController(WizardView):
             self.will_flip_to_first_page()
         elif self.page_number == len(self.wizard_pages) - 1:
             self.will_flip_to_last_page()
+        elif self.is_on_page_before_summary:
+            self.will_flip_to_page_before_summary()
         else:
             self.next_button.SetLabel("Next")
             self.back_button.Show()
@@ -89,9 +95,14 @@ class WizardController(WizardView):
         self.footer_panel.Layout()
 
     def will_flip_to_first_page(self):
+        self.next_button.SetLabel("Next")
         self.back_button.Hide()
 
     def will_flip_to_last_page(self):
+        self.next_button.SetLabel("Close")
+        self.back_button.Show()
+
+    def will_flip_to_page_before_summary(self):
         self.next_button.SetLabel("Finish")
         self.back_button.Show()
 
