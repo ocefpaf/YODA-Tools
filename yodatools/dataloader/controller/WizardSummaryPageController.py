@@ -61,6 +61,8 @@ class WizardSummaryPageController(WizardSummaryPageView):
             call dboutput and do same as yoda export and send in connection string as filepath
             """
 
+        session.close_all()
+
         self.gauge.SetValue(100)
         self.parent.load_finished_execution()
         return

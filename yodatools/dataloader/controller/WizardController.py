@@ -5,6 +5,7 @@ from WizardSummaryPageController import WizardSummaryPageController
 from WizardYodaPageController import WizardYodaPageViewController
 from yodatools.dataloader.view.WizardView import WizardView
 import threading
+import wx
 
 
 class WizardController(WizardView):
@@ -40,10 +41,34 @@ class WizardController(WizardView):
         self.show_home_page()
         self.SetSize((450, 450))
 
+    def display_warning(self):
+        """
+        The yes/no are reversed to keep the exit on the left and cancel on the right
+        :return:
+        """
+
+        dialog = wx.MessageDialog(
+            self,
+            message="It is unsafe to exit while a process is running.",
+            style=wx.YES_NO | wx.ICON_EXCLAMATION
+        )
+
+        dialog.SetYesNoLabels(yes="Cancel", no="Exit")
+        if dialog.ShowModal() == wx.ID_NO:
+            self.Destroy()
+        dialog.Destroy()
+
     def on_next_button(self, event):
-        if self.page_number + 2 > len(self.wizard_pages) or self.execution_finished:
-           # self.summary_page.run(self.selected_pages())
-            self.Close()
+        if self.execution_finished:
+            self.Destroy()
+            return
+
+        if self.page_number + 2 > len(self.wizard_pages):
+            if self.thread.isAlive():
+                self.display_warning()
+                return
+            else:
+                self.Destroy()
 
         self.wizard_pages[self.page_number].Hide()
 
@@ -136,18 +161,18 @@ class WizardController(WizardView):
 
     def execute(self):
 
-        if not self.thread.isAlive():  # Prevent the thread from  being created twice!
-            self.thread = threading.Thread(
-                target=self.summary_page.run,
-                args=(self.selected_pages()),
-                name='execution_thread'
-            )
-
-            # When true, the thread will terminate when app is closed
-            # When false, the thread will continue even after the ap is closed
-            self.thread.setDaemon(True)
-            self.thread.start()
-            # self.summary_page.run(self.selected_pages())
-        else:
+        if self.thread.isAlive():  # Prevent the thread from  being created twice!
             print "did not start another thread"
-        # thread.join(timeout=2)
+            return
+
+        self.thread = threading.Thread(
+            target=self.summary_page.run,
+            args=(self.selected_pages()),
+            name='execution_thread'
+        )
+
+        # When true, the thread will terminate when app is closed
+        # When false, the thread will continue even after the ap is closed
+        self.thread.setDaemon(True)
+        self.thread.start()
+        # self.summary_page.run(self.selected_pages())
