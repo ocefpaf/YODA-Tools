@@ -12,7 +12,7 @@ curr_folder = os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(__
 class TestDb:
     def setup(self):
 
-        self.connection_string = 'mysql+pymysql://ODM:odm@localhost/odm2'
+        self.connection_string = 'mysql+pymysql://Bob:odm@localhost/bobrules'
         self.do = dbOutput(self.connection_string)
 
 
@@ -24,4 +24,4 @@ class TestDb:
 
     def test_create_ts(self):
         session = build_ts_session()
-        # self.do.save(session, self.connection_string)
+        # self.dhttp://www.pcgamer.com/meet-the-man-who-loved-stardew-valley-so-much-he-bought-a-farm/o.save(session, self.connection_string)
