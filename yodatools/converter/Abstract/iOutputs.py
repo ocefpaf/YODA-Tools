@@ -15,6 +15,7 @@ class iOutputs():
                     tmplist=tbl
                 else:
                     for o in session.query(t).all():
+                        # session.expunge(o)
                         tmplist.append(o)
             except Exception as e:
                 # print "error: " + e.message
@@ -38,7 +39,7 @@ class iOutputs():
                 tables.append(Tbl)
         return tables
 
-    def save(self, session, file_path):
+    def save(self, session, path):
 
         raise NotImplementedError()
 

@@ -16,7 +16,7 @@ class dbOutput(iOutputs):
         self._engine = self.session_factory_out.engine
         return self._session_out
 
-    def save(self, session, file_path, connection_string):
+    def save(self, session, connection_string):
         data = self.parseObjects(session)
         session_out = self.connect_to_db(connection_string)
 
@@ -77,7 +77,7 @@ class dbOutput(iOutputs):
         # timeseriesresultvalues - ColumnDefinitions:, Data:
         val = "timeseriesresultvalues"
         if val in data:
-            self.save_ts(data[val],session_out)
+            self.save_ts(data[val], session_out)
         # MeasurementResultValueAnnotations
         self.check("measurementresultvalueannotations", data, session_out)
 
@@ -86,20 +86,31 @@ class dbOutput(iOutputs):
     def save_ts(self, values, session_out,):
         pass
 
-    def check(self, objname, data, session_out, ):
+    def check(self, objname, data, session_out ):
         if objname in data:
-            file.write(self.add_to_db(session_out,  data[objname]))
+            self.add_to_db(session_out,  data[objname])
 
     def add_to_db(self, session_out,  values):
         try:
             for obj in values:
                 valuedict = obj.__dict__
-                valuedict.pop("_sa_instance_state")
-                self.get_or_create(session_out, type(obj), **valuedict)
+                try:
+                    valuedict.pop("_sa_instance_state")
+                    for v in valuedict:
+                        if v.lower() == obj.__mapper__.primary_key[0].name:
+                            primarykey = v
+                            break
+                    # pop primary key
+                    valuedict.pop(primarykey)
+                except Exception as e:
+                    print e
+
+                return self.get_or_create(session_out, type(obj), **valuedict)
                 # session_out.add(obj)
 
         except Exception as e:
-            raise e
+            print e
+            # raise e
 
 
 
@@ -109,7 +120,7 @@ class dbOutput(iOutputs):
             return instance
         else:
             instance = model(**kwargs)
-            sess.add(instance)
+            sess.merge(instance)
             sess.flush()
             return instance
 

@@ -15,12 +15,13 @@ class TestDb:
         self.connection_string = 'mysql+pymysql://ODM:odm@localhost/odm2'
         self.do = dbOutput(self.connection_string)
 
-    def test_create_ts(self):
-        session = build_ts_session()
-        file_path = os.path.join(curr_folder,'test_files', 'test_ts_output.yaml' )
-        self.do.save(session, file_path, self.connection_string)
+
 
     def test_create_specimen(self):
         session = build_ts_specimen_session()
-        file_path = file_path = os.path.join(curr_folder,  'test_files', 'test_ts_specimen_output.yaml' )
-        self.do.save(session, file_path, self.connection_string)
+        self.do.save(session, self.connection_string)
+
+
+    def test_create_ts(self):
+        session = build_ts_session()
+        # self.do.save(session, self.connection_string)
