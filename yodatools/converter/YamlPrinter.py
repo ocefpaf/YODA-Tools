@@ -72,7 +72,10 @@ class YamlPrinter():
                 if "obj" in key.lower():  # key.contains("Obj"):
                     try:
                         att = getattr(obj, key)
-                        valuedict[key] = self._references[getattr(obj, key)]
+                        if att is not None:
+                            valuedict[key] = self._references[att]
+                        else:
+                            valuedict[key] = "NULL"
                         #todo: featureaction, samplingfeatureobj not being found
                     except Exception as e:
                         print ("cannot find {} in {}. Error:{} in YamlPrinter".format(key, obj.__class__.__name__, e))

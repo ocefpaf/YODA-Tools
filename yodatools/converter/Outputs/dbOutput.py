@@ -9,6 +9,7 @@ class dbOutput(iOutputs):
     def __init__(self, file_path, connection_string = None):
         if connection_string:
             self.connect_to_db(connection_string)
+        self.added_objs= {}
 
     def connect_to_db(self, connection_string):
         self.session_factory_out = dbconnection.createConnectionFromString(connection_string)
@@ -17,101 +18,130 @@ class dbOutput(iOutputs):
         return self._session_out
 
     def save(self, session, connection_string):
-        data = self.parseObjects(session)
+        self.data = self.parseObjects(session)
         session_out = self.connect_to_db(connection_string)
-
-        # for key in data:
-        #     self.check(session_out, data[key])
-        self.check("datasets", data, session_out)
+        
+        #datasets
+        self.check("datasets", self.data, session_out)
         # organization
-        self.check("organizations", data, session_out)
+        self.check("organizations", self.data, session_out)
         # people
-        self.check("people", data, session_out)
+        self.check("people", self.data, session_out)
         # affiliations
-        self.check("affiliations", data, session_out)
+        self.check("affiliations", self.data, session_out)
         # citations
-        self.check("citations", data, session_out)
+        self.check("citations", self.data, session_out)
         # authorlists
-        self.check("authorlists", data, session_out)
+        self.check("authorlists", self.data, session_out)
         # datasetcitations
-        self.check("datasetcitations", data, session_out)
+        self.check("datasetcitations", self.data, session_out)
         # spatialreferences
-        self.check("spatialreferences", data, session_out)
-        # samplingfeatures: Not explicitly printed, should be included in sites and specimen objects
-        # sites
-        # self.check("sites", data, session_out)
-        # specimens
-        # self.check("specimens", data, session_out)
-
-        self.check("samplingfeatures", data, session_out)
+        self.check("spatialreferences", self.data, session_out)
+        # samplingfeatures: 
+        self.check("samplingfeatures", self.data, session_out)
         # relatedfeatures
-        self.check("relatedfeatures", data, session_out)
+        self.check("relatedfeatures", self.data, session_out)
         # units
-        self.check("units", data, session_out)
+        self.check("units", self.data, session_out)
         # annotations
-        self.check("annotations", data, session_out)
+        self.check("annotations", self.data, session_out)
         # methods
-        self.check("methods", data, session_out)
+        self.check("methods", self.data, session_out)
         # variables
-        self.check("variables", data, session_out)
+        self.check("variables", self.data, session_out)
         # proc level
-        self.check("processinglevels", data, session_out)
+        self.check("processinglevels", self.data, session_out)
         # action
-        self.check("actions", data, session_out)
+        self.check("actions", self.data, session_out)
         # featureaction
-        self.check("featureactions", data, session_out)
+        self.check("featureactions", self.data, session_out)
         # actionby
-        self.check("actionby", data, session_out)
+        self.check("actionby", self.data, session_out)
         # relatedActions
-        self.check("relatedactions", data, session_out)
-        # result Not explicitly printed, should be included in measurement or timeseries results
-        self.check("results", data, session_out)
-        # #measurement results
-        # self.check("measurementresults", data, session_out)
-        # #timeseriesresult
-        # self.check("timeseriesresults", data, session_out)
+        self.check("relatedactions", self.data, session_out)
+        # result 
+        self.check("results", self.data, session_out)
         # datasetresults
-        self.check("datasetsresults", data, session_out)
+        self.check("datasetsresults", self.data, session_out)
         # measurementResultValues
-        self.check("measurementresultvalues", data, session_out)
-        # timeseriesresultvalues - ColumnDefinitions:, Data:
-        val = "timeseriesresultvalues"
-        if val in data:
-            self.save_ts(data[val], session_out)
+        self.check("measurementresultvalues", self.data, session_out)
         # MeasurementResultValueAnnotations
-        self.check("measurementresultvalueannotations", data, session_out)
-
+        self.check("measurementresultvalueannotations", self.data, session_out)
+        # timeseriesresultvalues - ColumnDefinitions:, data:
+        val = "timeseriesresultvalues"
+        if val in self.data:
+            self.save_ts(self.data[val], session_out)
+        
         session_out.commit()
 
     def save_ts(self, values, session_out,):
         pass
 
-    def check(self, objname, data, session_out ):
+    def check(self, objname, data, session_out):
+
         if objname in data:
-            self.add_to_db(session_out,  data[objname])
+            vals = self.add_to_db(session_out,  data[objname])
+        self.added_objs[objname] =vals
 
     def add_to_db(self, session_out,  values):
-        try:
-            for obj in values:
-                valuedict = obj.__dict__
-                try:
-                    valuedict.pop("_sa_instance_state")
-                    for v in valuedict:
-                        if v.lower() == obj.__mapper__.primary_key[0].name:
-                            primarykey = v
-                            break
-                    # pop primary key
-                    valuedict.pop(primarykey)
-                except Exception as e:
-                    print e
+        added = []
+        for obj in values:
+            try:
+                valuedict = obj.__dict__.copy()
 
-                return self.get_or_create(session_out, type(obj), **valuedict)
+
+                # for v in valuedict:
+                #     if v.lower() == obj.__mapper__.primary_key[0].name:
+                #         primarykey = v
+                #         break
+                # # pop primary key
+                # valuedict.pop(primarykey)
+
+
+                for key in dir(obj):
+                    if "obj" in key.lower():  # key.contains("Obj"):
+                        try:
+                            att = getattr(obj, key)
+                            if att is not None:
+                                attdict= att.__dict__.copy()
+                                for v in attdict.keys():
+                                #     if v.lower() == obj.__mapper__.primary_key[0].name:
+                                #         del attdict[v]
+                                #         break
+                                    if "id" in v.lower() and "uuid" not in v.lower():
+                                        del attdict[v]
+                                attdict.pop("_sa_instance_state")
+                                new_obj = session_out.query(type(att)).filter_by(**attdict).first()
+                                objkey = key.replace("Obj", "ID")
+                                if objkey =="RelatedFeatureID":
+                                    newkey =
+                                else:
+                                    newkey = objkey
+                                valuedict[objkey] = getattr(new_obj, newkey)
+
+                        except Exception as e:
+                            print ("cannot find {} in {}. Error:{} in dbOutput".format(key, obj.__class__.__name__, e))
+
+                valuedict.pop("_sa_instance_state")
+
+                #delete primary key
+                for v in valuedict:
+                    if v.lower() == obj.__mapper__.primary_key[0].name:
+                        del valuedict[v]
+                        break
+                # for k in valuedict.keys():
+                #     if "id" in k.lower() and "uuid" not in k.lower():
+                #         objkey=k.replace("ID", "Obj")
+                #         valuedict[k] = getattr(obj, objkey)
+                #         # del valuedict[k]
+                added.append(self.get_or_create(session_out, type(obj), **valuedict))
                 # session_out.add(obj)
 
-        except Exception as e:
-            print e
-            # raise e
-
+            except Exception as e:
+                print e
+                session_out.rollback()
+                # raise e
+        return added
 
 
     def get_or_create(self, sess, model, **kwargs):
@@ -120,7 +150,7 @@ class dbOutput(iOutputs):
             return instance
         else:
             instance = model(**kwargs)
-            sess.merge(instance)
+            new_instance = sess.merge(instance)
             sess.flush()
-            return instance
+            return new_instance
 
