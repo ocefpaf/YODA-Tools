@@ -9,7 +9,7 @@ import string
 
 class ExcelInput(iInputs):
     def __init__(self, input_file, **kwargs):
-        super(ExcelInput, self).__init__()
+        super(ExcelInput, self).__init__(input_file)
 
         self.input_file = input_file
         self.output_file = "export.csv"
@@ -82,9 +82,12 @@ class ExcelInput(iInputs):
         self.parse_variables()
         self.parse_units()
         self.parse_processing_level()
-        self.parse_sampling_feature()
+        # self.parse_sampling_feature()
+        self.parse_sites()
         self.parse_specimens()
         self.parse_analysis_results()
+
+        self._session.commit()
 
         end = time.time()
         print(end - start)
@@ -334,37 +337,83 @@ class ExcelInput(iInputs):
         self._session.flush()
 
     def parse_sampling_feature(self):
-        SAMP_FEAT = 'Sampling Features'
+        SHEET_NAME = 'Sampling Features'
 
-        if SAMP_FEAT not in self.tables:
+        if SHEET_NAME not in self.tables:
             if 'Sites' in self.tables:
-                SAMP_FEAT = 'Sites'
+                SHEET_NAME = 'Sites'
             else:
                 print "No sampling features/sites found"
                 return []
 
-        sheet = self.workbook.get_sheet_by_name(SAMP_FEAT)
-        tables = self.tables[SAMP_FEAT]
+        sheet = self.workbook.get_sheet_by_name(SHEET_NAME)
+        tables = self.tables[SHEET_NAME]
 
-        sampling_features = []
+        sites_table = tables[0] if tables[0].name == 'Sites_Table' else tables[1]
+        spatial_ref_table = tables[0] if tables[0].name == 'SitesDatumCV_Table' else tables[1]
+
+        def parse_sites_datum_cv(sheet, spatial_reference_table):
+            result = {}
+            cells = sheet[spatial_reference_table.attr_text.split('!')[1].replace('$', '')]
+            result['elevation_datum_cv'] = cells[0][1].value
+            result['latlon_datum_cv'] = cells[1][1].value
+            return result
+
+        sites_datum = parse_sites_datum_cv(sheet, spatial_ref_table)
+        spatial_references = self.parse_spatial_reference()
+
+        sites = []
+        cells = sheet[sites_table.attr_text.split('!')[1].replace('$', '')]
+
+        elevation_datum = sites_datum['elevation_datum_cv']
+        spatial_ref_name = sites_datum['latlon_datum_cv']
+        spatial_references_obj = spatial_references[spatial_ref_name]
+
+        for row in cells:
+            site = Sites()
+            site.SamplingFeatureUUID = row[0].value
+            site.SamplingFeatureCode = row[1].value
+            site.SamplingFeatureName = row[2].value
+            site.SamplingFeatureDescription = row[3].value
+            site.FeatureGeometryWKT = row[4].value
+            site.Elevation_m = row[5].value
+            site.SamplingFeatureTypeCV = "Site"
+            site.SiteTypeCV = row[6].value
+            site.Latitude = row[7].value
+            site.Longitude = row[8].value
+            site.ElevationDatumCV = elevation_datum
+            site.SpatialReferenceObj = spatial_references_obj
+
+            sites.append(site)
+
+            self._session.add(site)
+            self._session.flush()
+
+            self.__updateGauge()
+
+        # self._session.add_all(sites)
+        # self._session.flush(sites)
+
+    def parse_spatial_reference(self):
+        SHEET_NAME = "SpatialReferences"
+        sheet, tables = self.get_sheet_and_table(SHEET_NAME)
+
+        if not len(tables):
+            return []
+
+        spatial_references = {}
         for table in tables:
             cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
-
             for row in cells:
-                sf = SamplingFeatures()
-                sf.SamplingFeatureUUID = row[0].value
-                sf.SamplingFeatureCode = row[1].value
-                sf.SamplingFeatureName = row[2].value
-                sf.SamplingFeatureDescription = row[3].value
-                sf.FeatureGeometryWKT = row[4].value
-                sf.Elevation_m = row[5].value
-                sf.SamplingFeatureTypeCV = row[6].value
-                sampling_features.append(sf)
+                sr = SpatialReferences()
+                sr.SRSCode = row[0].value
+                sr.SRSName = row[1].value
+                sr.SRSDescription = row[2].value
+                sr.SRSLink = row[3].value
 
-                self.__updateGauge()
+                spatial_references[sr.SRSName] = sr
 
-        self._session.add_all(sampling_features)
-        self._session.flush(sampling_features)
+        return spatial_references
 
     def parse_specimens(self):
         SPECIMENS = 'Specimens'
@@ -388,11 +437,11 @@ class ExcelInput(iInputs):
                 sp.SamplingFeatureCode = row[1].value
                 sp.SamplingFeatureName = row[2].value
                 sp.SamplingFeatureDescription = row[3].value
-                sp.SamplingFeatureTypeCV = row[4].value
+                sp.SamplingFeatureTypeCV = "Specimen"
                 sp.SpecimenMediumCV = row[5].value
                 sp.IsFieldSpecimen = row[6].value
                 sp.ElevationDatumCV = 'unknown'
-                sp.SpecimenTypeCV = 'grab'
+                sp.SpecimenTypeCV = row[4].value
                 sp.SpecimenMediumCV = 'liquidAqueous'
 
                 # Next is Related Features
