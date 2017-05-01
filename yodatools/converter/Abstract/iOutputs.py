@@ -3,7 +3,26 @@ from odm2api.ODM2.models import Base
 
 class iOutputs():
 
-    def parseObjects(self):
+    def parseObjects(self, session):
+        data = {}
+        for t in self.get_table_names():
+            tmplist = []
+            try:
+                if t.__tablename__ == "timeseriesresultvalues":
+                    import pandas as pd
+                    tbl = pd.read_sql("SELECT * FROM TimeSeriesResultValues", session)
+                    tmplist.append(tbl)
+                else:
+                    for o in session.query(t).all():
+                        tmplist.append(o)
+            except Exception as e:
+                # print "error: "+ e
+                pass
+            if len(tmplist)>0:
+                data[t.__tablename__] = tmplist
+        return data
+
+    def get_table_names(self):
         tables = []
         import inspect
         import sys
@@ -19,6 +38,7 @@ class iOutputs():
         return tables
 
     def save(self, session, file_path):
+
         raise NotImplementedError()
 
     def accept(self):

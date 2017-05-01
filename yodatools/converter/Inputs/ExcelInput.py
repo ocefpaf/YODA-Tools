@@ -10,7 +10,7 @@ import string
 class ExcelInput(iInputs):
     def __init__(self, input_file, **kwargs):
         super(ExcelInput, self).__init__()
-        self.create_memory_db()
+
         self.input_file = input_file
         self.output_file = "export.csv"
         self.gauge = None
@@ -50,6 +50,7 @@ class ExcelInput(iInputs):
 
         return table_name_range
 
+
     def count_number_of_rows_to_parse(self, dimensions):
         # http://stackoverflow.com/questions/1450897/python-removing-characters-except-digits-from-string
         top, bottom = dimensions.replace('$', '').split(':')
@@ -59,7 +60,8 @@ class ExcelInput(iInputs):
         bottom = int(bottom.translate(all, nodigs))
         self.total_rows_to_read += (bottom - top)
 
-    def parse(self, file_path=None):
+#     def parse(self, file_path=None):
+    def parse(self, file_path=None, db_conn = None):
         """
         If any of the methods return early, then check that they have the table ranges
         The table range should exist in the tables from get_table_name_range()

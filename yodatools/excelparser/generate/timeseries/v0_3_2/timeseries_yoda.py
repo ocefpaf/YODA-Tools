@@ -71,7 +71,7 @@ class TimeseriesYoda(object):
 
     def get_citation(self):
         ci = self.tdao.get_citation()
-        # attrs = self.get_object_attrs('Citations',"CitationID")
+        attrs = self.get_object_attrs('Citations',"CitationID")
         attrs = ['Title', 'Publisher', 'PublicationYear', 'CitationLink']
         ci_yaml = "Citations:\n - &CitationID0001 {"
         ci_yaml = self.get_odm2model_yaml(ci,attrs,ci_yaml)
@@ -456,7 +456,7 @@ class TimeseriesYoda(object):
 
     def get_timeseriesresults(self):
         tresults = self.tdao.get_all_timeseriesresults()
-        # attrs = self.get_object_attrs('TimeSeriesResults',"ID")
+        attrs = self.get_object_attrs('TimeSeriesResults',"ID")
         attrs = ['ResultObj','XLocation','XLocationUnitsObj','YLocation','YLocationUnitsObj',
                  'ZLocation','ZLocationUnitsObj','SpatialReferenceObj','IntendedTimeSpacing',
                  'IntendedTimeSpacingUnitsObj','AggregationStatisticCV']
