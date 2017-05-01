@@ -16,18 +16,13 @@ class ExcelTest(unittest.TestCase):
         file_path = os.path.join(curr_folder, 'test_files', 'YODA_TimeSeriesSpecimen_RB_2014-15_pub.xlsx')
 
         if not does_file_exit(file_path):
+            print file_path + " does not exist"
             assert False
+
         self.excel = ExcelInput(file_path)
 
-        self.session = self.excel.sendODM2Session()
-        self.workbook = openpyxl.load_workbook(file_path, data_only=True)
-        self.name_ranges = self.workbook.get_named_ranges()
-        self.sheets = self.workbook.get_sheet_names()
-
-    def test_stuff(self):
-        print 123
-        sheet = self.workbook.get_sheet_by_name('Controlled Vocabularies')
-        print sheet.get_cell_collection()[0]
+    def test_excel_parsing(self):
+        self.assertTrue(self.excel.parse())
 
 
 def does_file_exit(file_path):

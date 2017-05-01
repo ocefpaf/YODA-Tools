@@ -8,6 +8,7 @@ class WizardHomePageController(WizardHomePageView):
         self.parent = parent
         self.title = title
         self.pages_enabled = {0: True}
+        self.excel_check_box.Disable()
 
     def on_check_box(self, event):
         self.pages_enabled[event.GetId()] = event.Checked()
@@ -17,12 +18,11 @@ class WizardHomePageController(WizardHomePageView):
             self.GetTopLevelParent().next_button.Disable()
 
     def on_browse_button(self, event):
-        # wildcards = "All File (*.*) | *.*"
-
-        dialog = wx.FileDialog(self,
-                               message="Add file",
-                               # wildcard=wildcards,
-                               style=wx.FD_CHANGE_DIR)
+        dialog = wx.FileDialog(
+            self,
+            message="Add file",
+            style=wx.FD_CHANGE_DIR
+        )
 
         if dialog.ShowModal() != wx.ID_OK:
             return
