@@ -28,20 +28,3 @@ class iInputs(object):
         setSchema(self._engine)
         Base.metadata.create_all(self._engine)
 
-    def get_or_create(self, sess, obj):
-        valuedict = obj.__dict__
-
-        #does it already exist?
-        instance = sess.query(type(obj)).filter_by().first()
-        if instance:
-            #if yes, return
-            return instance
-        else:
-            # if no, add to db
-
-            instance = obj
-            # sess.merge(instance)
-            sess.add(instance)
-            sess.flush()
-            return instance
-

@@ -1,6 +1,7 @@
 from yodatools.converter.Abstract import iOutputs
 from odm2api.ODMconnection import dbconnection
 from odm2api.ODM2.services import *
+from odm2api.ODM2.models import setSchema
 import logging
 import sqlite3
 
@@ -14,7 +15,8 @@ class dbOutput(iOutputs):
     def connect_to_db(self, connection_string):
         self.session_factory_out = dbconnection.createConnectionFromString(connection_string)
         self._session_out = self.session_factory_out.getSession()
-        self._engine = self.session_factory_out.engine
+        self._engine_out = self.session_factory_out.engine
+        setSchema(self._engine_out)
         return self._session_out
 
     def save(self, session, connection_string):
@@ -85,6 +87,8 @@ class dbOutput(iOutputs):
 
     def add_to_db(self, session_out,  values):
         added = []
+        from odm2api.ODM2.models import _changeSchema
+        _changeSchema(None)
         for obj in values:
             try:
                 valuedict = obj.__dict__.copy()
@@ -101,7 +105,9 @@ class dbOutput(iOutputs):
                 for key in dir(obj):
                     if "obj" in key.lower():  # key.contains("Obj"):
                         try:
+
                             att = getattr(obj, key)
+
                             if att is not None:
                                 attdict= att.__dict__.copy()
                                 for v in attdict.keys():
@@ -111,12 +117,15 @@ class dbOutput(iOutputs):
                                     if "id" in v.lower() and "uuid" not in v.lower():
                                         del attdict[v]
                                 attdict.pop("_sa_instance_state")
+                                setSchema(self._engine_out)
                                 new_obj = session_out.query(type(att)).filter_by(**attdict).first()
                                 objkey = key.replace("Obj", "ID")
+                                newkey = objkey
                                 if objkey =="RelatedFeatureID":
-                                    newkey =
-                                else:
-                                    newkey = objkey
+                                    newkey = "SamplingFeatureID"
+                                elif objkey == "RelatedActionID":
+                                    newkey = "ActionID"
+
                                 valuedict[objkey] = getattr(new_obj, newkey)
 
                         except Exception as e:
@@ -145,6 +154,7 @@ class dbOutput(iOutputs):
 
 
     def get_or_create(self, sess, model, **kwargs):
+        setSchema(self._engine_out)
         instance = sess.query(model).filter_by(**kwargs).first()
         if instance:
             return instance

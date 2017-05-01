@@ -40,7 +40,6 @@ class iOutputs():
         return tables
 
     def save(self, session, path):
-
         raise NotImplementedError()
 
     def accept(self):
