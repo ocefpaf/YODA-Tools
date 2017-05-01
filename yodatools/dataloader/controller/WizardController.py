@@ -138,7 +138,7 @@ class WizardController(WizardView):
 
     def will_flip_to_page_before_summary(self):
         self.next_button.SetLabel("Finish")
-        self.back_button.SetLabel("Cancel")
+        self.back_button.SetLabel("Back")
         self.back_button.Show()
 
     def show_home_page(self):
@@ -165,9 +165,12 @@ class WizardController(WizardView):
             print "did not start another thread"
             return
 
+        # Must be a tuple not a list
+        summary_run_arguments = (self.selected_pages(), self.selected_pages()['yoda'].file_text_ctrl.GetValue())
+
         self.thread = threading.Thread(
             target=self.summary_page.run,
-            args=(self.selected_pages()),
+            args=summary_run_arguments,
             name='execution_thread'
         )
 

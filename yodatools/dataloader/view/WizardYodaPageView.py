@@ -11,7 +11,7 @@ class WizardYodaPageView(wx.Panel):
         self.browse_button = wx.Button(self, label="Browse")
 
         # Style components
-        self.file_text_ctrl.SetHint("Filepath...")
+        self.file_text_ctrl.SetHint("Choose a directory...")
 
         # Sizer
         sizer = wx.BoxSizer(wx.HORIZONTAL)

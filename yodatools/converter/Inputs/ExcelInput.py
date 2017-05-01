@@ -391,9 +391,6 @@ class ExcelInput(iInputs):
 
             self.__updateGauge()
 
-        # self._session.add_all(sites)
-        # self._session.flush(sites)
-
     def parse_spatial_reference(self):
         SHEET_NAME = "SpatialReferences"
         sheet, tables = self.get_sheet_and_table(SHEET_NAME)
