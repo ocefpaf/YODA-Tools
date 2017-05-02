@@ -424,32 +424,28 @@ class ExcelInput(iInputs):
             cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
 
             for row in cells:
-                sp = Specimens()
+                specimen = Specimens()
                 action = Actions()
-                rf = RelatedFeatures()
-                ft = FeatureActions()
+                related_feature = RelatedFeatures()
+                feature_action = FeatureActions()
 
                 # First the Specimen/Sampling Feature
-                sp.SamplingFeatureUUID = row[0].value
-                sp.SamplingFeatureCode = row[1].value
-                sp.SamplingFeatureName = row[2].value
-                sp.SamplingFeatureDescription = row[3].value
-                sp.SamplingFeatureTypeCV = "Specimen"
-                sp.SpecimenMediumCV = row[5].value
-                sp.IsFieldSpecimen = row[6].value
-                sp.ElevationDatumCV = 'unknown'
-                sp.SpecimenTypeCV = row[4].value
-                sp.SpecimenMediumCV = 'liquidAqueous'
+                specimen.SamplingFeatureUUID = row[0].value
+                specimen.SamplingFeatureCode = row[1].value
+                specimen.SamplingFeatureName = row[2].value
+                specimen.SamplingFeatureDescription = row[3].value
+                specimen.SamplingFeatureTypeCV = "Specimen"
+                specimen.SpecimenMediumCV = row[5].value
+                specimen.IsFieldSpecimen = row[6].value
+                specimen.ElevationDatumCV = 'unknown'
+                specimen.SpecimenTypeCV = row[4].value
+                specimen.SpecimenMediumCV = 'liquidAqueous'
 
-                # Next is Related Features
-                rf.RelationshipTypeCV = 'wasCollectedAt'
-                # rf.RelatedFeatureID is the CollectionSite.
-                # Query the site id using the collection site (which is the site code aka Sampling Feature Code)
-                # Link things together
+                # Related Features
+                related_feature.RelationshipTypeCV = 'wasCollectedAt'
                 sampling_feature = self._session.query(SamplingFeatures).filter_by(SamplingFeatureCode=row[7].value).first()
-                rf.SamplingFeatureObj = sp
-                rf.RelatedFeatureObj = sampling_feature
-                # rf.RelatedFeatureID = needs to be set...
+                related_feature.SamplingFeatureObj = sampling_feature
+                related_feature.RelatedFeatureObj = specimen
 
                 # Last is the Action/SampleCollectionAction
                 action.ActionTypeCV = 'specimenCollection'
@@ -458,13 +454,13 @@ class ExcelInput(iInputs):
                 method = self._session.query(Methods).filter_by(MethodCode=row[10].value).first()
                 action.MethodObj = method
 
-                ft.ActionObj = action
-                ft.SamplingFeatureObj = sp
+                feature_action.ActionObj = action
+                feature_action.SamplingFeatureObj = specimen
 
-                self._session.add(sp)
+                self._session.add(specimen)
                 self._session.add(action)
-                self._session.add(rf)
-                self._session.add(ft)
+                self._session.add(related_feature)
+                self._session.add(feature_action)
 
                 self.__updateGauge()
 

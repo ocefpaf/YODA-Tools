@@ -28,9 +28,6 @@ class yamlOutput(iOutputs):
 
     def save(self, session, file_path):
 
-        DEFAULT_FILE_NAME = 'yoda_exports.yaml'
-        file_path += DEFAULT_FILE_NAME
-
         data = self.parseObjects(session)
 
         yp = YamlPrinter()

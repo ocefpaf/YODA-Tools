@@ -165,8 +165,14 @@ class WizardController(WizardView):
             print "did not start another thread"
             return
 
+        input_file = self.home_page.input_file_text_ctrl.GetValue()
+
+        # Get the directory to save the yaml output
+        yoda_page = self.selected_pages()['yoda']
+        yoda_output_file_path = yoda_page.file_text_ctrl.GetValue()
+
         # Must be a tuple not a list
-        summary_run_arguments = (self.selected_pages(), self.selected_pages()['yoda'].file_text_ctrl.GetValue())
+        summary_run_arguments = (input_file, yoda_output_file_path)
 
         self.thread = threading.Thread(
             target=self.summary_page.run,
