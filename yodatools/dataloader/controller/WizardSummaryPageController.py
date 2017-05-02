@@ -12,7 +12,7 @@ class WizardSummaryPageController(WizardSummaryPageView):
         self.parent = parent
         self.title = title
 
-    def run(self, input_file, yoda_output_file_path=None):
+    def run(self, input_file, yoda_output_file_path):
 
         # Start gauge with 2% to show starting progress
         self.gauge.SetValue(2)
@@ -31,6 +31,7 @@ class WizardSummaryPageController(WizardSummaryPageView):
             session = excel.sendODM2Session()
         else:
             # Must be a yoda file
+
             yoda = yamlInput(input_file)
             yoda.parse(input_file)
             session = yoda.sendODM2Session()

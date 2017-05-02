@@ -126,7 +126,7 @@ class ExcelInput(iInputs):
                 # Action
                 method = self._session.query(Methods).filter_by(MethodCode=row[7].value).first()
                 action.MethodObj = method
-                action.ActionTypeCV = "specimenAnalysis"
+                action.ActionTypeCV = "Specimen analysis"
                 action.BeginDateTime = row[5].value
                 action.BeginDateTimeUTCOffset = row[6].value
 
@@ -147,7 +147,7 @@ class ExcelInput(iInputs):
                 act_by.IsActionLead = True
 
                 related_action.ActionObj = action
-                related_action.RelationshipTypeCV = "isChildOf"
+                related_action.RelationshipTypeCV = "Is child of"
                 collectionAction = self._session.query(FeatureActions)\
                     .filter(FeatureActions.FeatureActionID == SamplingFeatures.SamplingFeatureID)\
                     .filter(SamplingFeatures.SamplingFeatureCode == row[1].value)\
@@ -173,11 +173,11 @@ class ExcelInput(iInputs):
                 measure_result.AggregationStatisticCV = row[15].value
                 measure_result.ResultUUID = row[0].value
                 measure_result.FeatureActionObj = feat_act
-                measure_result.ResultTypeCV = "measurement"
+                measure_result.ResultTypeCV = "Measurement"
                 measure_result.VariableObj = variable
                 measure_result.UnitsObj = units_for_result
                 measure_result.ProcessingLevelObj = proc_level
-                measure_result.StatusCV = "complete"
+                measure_result.StatusCV = "Complete"
                 measure_result.SampledMediumCV = row[12].value
                 measure_result.ValueCount = 1
 
@@ -437,18 +437,18 @@ class ExcelInput(iInputs):
                 specimen.SamplingFeatureTypeCV = "Specimen"
                 specimen.SpecimenMediumCV = row[5].value
                 specimen.IsFieldSpecimen = row[6].value
-                specimen.ElevationDatumCV = 'unknown'
+                specimen.ElevationDatumCV = 'Unknown'
                 specimen.SpecimenTypeCV = row[4].value
-                specimen.SpecimenMediumCV = 'liquidAqueous'
+                specimen.SpecimenMediumCV = 'Liquid aqueous'
 
                 # Related Features
-                related_feature.RelationshipTypeCV = 'wasCollectedAt'
+                related_feature.RelationshipTypeCV = 'Was Collected at'
                 sampling_feature = self._session.query(SamplingFeatures).filter_by(SamplingFeatureCode=row[7].value).first()
-                related_feature.SamplingFeatureObj = sampling_feature
-                related_feature.RelatedFeatureObj = specimen
+                related_feature.SamplingFeatureObj = specimen
+                related_feature.RelatedFeatureObj = sampling_feature
 
                 # Last is the Action/SampleCollectionAction
-                action.ActionTypeCV = 'specimenCollection'
+                action.ActionTypeCV = 'Specimen collection'
                 action.BeginDateTime = row[8].value
                 action.BeginDateTimeUTCOffset = row[9].value
                 method = self._session.query(Methods).filter_by(MethodCode=row[10].value).first()

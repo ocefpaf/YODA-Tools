@@ -42,13 +42,13 @@ Specimens:
   - &SamplingFeatureID0007 {SamplingFeatureUUID: "E1CA62F7-56F0-4254-9F38-88C05E78BE7F", SpecimenTypeCV: "Grab", SpecimenMediumCV: "Liquid aqueous", IsFieldSpecimen: TRUE, SamplingFeatureTypeCV: "Specimen", SamplingFeatureCode: "D977", SamplingFeatureName: NULL, SamplingFeatureDescription: NULL, SamplingFeatureGeotypeCV: NULL, FeatureGeometryWKT: NULL, Elevation_m: NULL, ElevationDatumCV: NULL}
   - &SamplingFeatureID0008 {SamplingFeatureUUID: "70B87BAC-6B80-4228-A1AC-F86E07D888DF", SpecimenTypeCV: "Grab", SpecimenMediumCV: "Liquid aqueous", IsFieldSpecimen: TRUE, SamplingFeatureTypeCV: "Specimen", SamplingFeatureCode: "Z020", SamplingFeatureName: NULL, SamplingFeatureDescription: NULL, SamplingFeatureGeotypeCV: NULL, FeatureGeometryWKT: NULL, Elevation_m: NULL, ElevationDatumCV: NULL}
 RelatedFeatures:
-  - {RelatedFeatureObj: *SamplingFeatureID0002, RelationshipTypeCV: "Was collected at", SamplingFeatureObj: *SamplingFeatureID0001, SpatialOffsetID: NULL}
-  - {RelatedFeatureObj: *SamplingFeatureID0003, RelationshipTypeCV: "Was collected at", SamplingFeatureObj: *SamplingFeatureID0001, SpatialOffsetID: NULL}
-  - {RelatedFeatureObj: *SamplingFeatureID0004, RelationshipTypeCV: "Was collected at", SamplingFeatureObj: *SamplingFeatureID0001, SpatialOffsetID: NULL}
-  - {RelatedFeatureObj: *SamplingFeatureID0005, RelationshipTypeCV: "Was collected at", SamplingFeatureObj: *SamplingFeatureID0001, SpatialOffsetID: NULL}
-  - {RelatedFeatureObj: *SamplingFeatureID0006, RelationshipTypeCV: "Was collected at", SamplingFeatureObj: *SamplingFeatureID0001, SpatialOffsetID: NULL}
-  - {RelatedFeatureObj: *SamplingFeatureID0007, RelationshipTypeCV: "Was collected at", SamplingFeatureObj: *SamplingFeatureID0001, SpatialOffsetID: NULL}
-  - {RelatedFeatureObj: *SamplingFeatureID0008, RelationshipTypeCV: "Was collected at", SamplingFeatureObj: *SamplingFeatureID0001, SpatialOffsetID: NULL}
+  - {SamplingFeatureObj: *SamplingFeatureID0002, RelationshipTypeCV: "Was collected at", RelatedFeatureObj: *SamplingFeatureID0001, SpatialOffsetID: NULL}
+  - {SamplingFeatureObj: *SamplingFeatureID0003, RelationshipTypeCV: "Was collected at", RelatedFeatureObj: *SamplingFeatureID0001, SpatialOffsetID: NULL}
+  - {SamplingFeatureObj: *SamplingFeatureID0004, RelationshipTypeCV: "Was collected at", RelatedFeatureObj: *SamplingFeatureID0001, SpatialOffsetID: NULL}
+  - {SamplingFeatureObj: *SamplingFeatureID0005, RelationshipTypeCV: "Was collected at", RelatedFeatureObj: *SamplingFeatureID0001, SpatialOffsetID: NULL}
+  - {SamplingFeatureObj: *SamplingFeatureID0006, RelationshipTypeCV: "Was collected at", RelatedFeatureObj: *SamplingFeatureID0001, SpatialOffsetID: NULL}
+  - {SamplingFeatureObj: *SamplingFeatureID0007, RelationshipTypeCV: "Was collected at", RelatedFeatureObj: *SamplingFeatureID0001, SpatialOffsetID: NULL}
+  - {SamplingFeatureObj: *SamplingFeatureID0008, RelationshipTypeCV: "Was collected at", RelatedFeatureObj: *SamplingFeatureID0001, SpatialOffsetID: NULL}
 Units:
   - &UnitID0001 {UnitsTypeCV: "Concentration or density mass per volume", UnitsAbbreviation: "mg/l", UnitsName: "milligrams per liter", UnitsLink: NULL}
   - &UnitID0002 {UnitsTypeCV: "Concentration count per volume", UnitsAbbreviation: "CFU/100ml", UnitsName: "CFU per 100 milliliters", UnitsLink: NULL}

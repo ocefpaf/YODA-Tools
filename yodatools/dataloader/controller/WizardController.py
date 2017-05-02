@@ -169,7 +169,8 @@ class WizardController(WizardView):
 
         # Get the directory to save the yaml output
         yoda_page = self.selected_pages()['yoda']
-        yoda_output_file_path = yoda_page.file_text_ctrl.GetValue()
+        file_path = yoda_page.file_text_ctrl.GetValue()
+        yoda_output_file_path = None if file_path == "" else file_path
 
         # Must be a tuple not a list
         summary_run_arguments = (input_file, yoda_output_file_path)
@@ -184,4 +185,4 @@ class WizardController(WizardView):
         # When false, the thread will continue even after the ap is closed
         self.thread.setDaemon(True)
         self.thread.start()
-        # self.summary_page.run(self.selected_pages())
+        # self.summary_page.run(input_file, yoda_output_file_path)
