@@ -180,11 +180,12 @@ class ExcelInput(iInputs):
                 measure_result.StatusCV = "Complete"
                 measure_result.SampledMediumCV = row[12].value
                 measure_result.ValueCount = 1
+                measure_result.ResultDateTime = collectionAction.ActionObj.BeginDateTime
 
                 # Measurements Result Value
                 measure_result_value.DataValue = row[3].value
-                measure_result_value.ValueDateTime = row[5].value
-                measure_result_value.ValueDateTimeUTCOffset = row[6].value
+                measure_result_value.ValueDateTime = collectionAction.ActionObj.BeginDateTime
+                measure_result_value.ValueDateTimeUTCOffset = collectionAction.ActionObj.BeginDateTimeUTCOffset
                 measure_result_value.ResultObj = measure_result
 
                 self._session.add(measure_result)
