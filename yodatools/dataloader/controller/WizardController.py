@@ -185,8 +185,4 @@ class WizardController(WizardView):
         # When false, the thread will continue even after the ap is closed
         self.thread.setDaemon(True)
         self.thread.start()
-<<<<<<< HEAD
         # self.summary_page.run(input_file, yoda_output_file_path)
-=======
-        # self.summary_page.run(input_file=input_file, yoda_output_file_path=yoda_output_file_path)
->>>>>>> c4df4c949970cc0ee78fc7c145d6b0013c2ec7cd
