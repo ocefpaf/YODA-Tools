@@ -82,12 +82,12 @@ class ExcelInput(iInputs):
         self.parse_variables()
         self.parse_units()
         self.parse_processing_level()
-        # self.parse_sampling_feature()
+        self.parse_sampling_feature()
         self.parse_sites()
         self.parse_specimens()
         self.parse_analysis_results()
 
-        self._session.commit()
+        # self._session.commit()
 
         end = time.time()
         print(end - start)

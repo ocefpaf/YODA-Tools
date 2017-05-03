@@ -172,17 +172,25 @@ class WizardController(WizardView):
         file_path = yoda_page.file_text_ctrl.GetValue()
         yoda_output_file_path = None if file_path == "" else file_path
 
+        ##################################
+        # Uncomment the lines below to have it threading
+        ##################################
         # Must be a tuple not a list
-        summary_run_arguments = (input_file, yoda_output_file_path)
+        # summary_run_arguments = (input_file, yoda_output_file_path)
 
-        self.thread = threading.Thread(
-            target=self.summary_page.run,
-            args=summary_run_arguments,
-            name='execution_thread'
-        )
+        # self.thread = threading.Thread(
+        #     target=self.summary_page.run,
+        #     args=summary_run_arguments,
+        #     name='execution_thread'
+        # )
+        #
+        # # When true, the thread will terminate when app is closed
+        # # When false, the thread will continue even after the ap is closed
+        # self.thread.setDaemon(True)
+        # self.thread.start()
+        
+        ##################################
+        # If you uncomment the lines above then you need to comment out the line below
+        ##################################
 
-        # When true, the thread will terminate when app is closed
-        # When false, the thread will continue even after the ap is closed
-        self.thread.setDaemon(True)
-        self.thread.start()
-        # self.summary_page.run(input_file, yoda_output_file_path)
+        self.summary_page.run(input_file, yoda_output_file_path)
