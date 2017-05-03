@@ -138,7 +138,7 @@ class WizardController(WizardView):
 
     def will_flip_to_page_before_summary(self):
         self.next_button.SetLabel("Finish")
-        self.back_button.SetLabel("Cancel")
+        self.back_button.SetLabel("Back")
         self.back_button.Show()
 
     def show_home_page(self):
@@ -165,14 +165,32 @@ class WizardController(WizardView):
             print "did not start another thread"
             return
 
-        self.thread = threading.Thread(
-            target=self.summary_page.run,
-            args=(self.selected_pages()),
-            name='execution_thread'
-        )
+        input_file = self.home_page.input_file_text_ctrl.GetValue()
 
-        # When true, the thread will terminate when app is closed
-        # When false, the thread will continue even after the ap is closed
-        self.thread.setDaemon(True)
-        self.thread.start()
-        # self.summary_page.run(self.selected_pages())
+        # Get the directory to save the yaml output
+        yoda_page = self.selected_pages()['yoda']
+        file_path = yoda_page.file_text_ctrl.GetValue()
+        yoda_output_file_path = None if file_path == "" else file_path
+
+        ##################################
+        # Uncomment the lines below to have it threading
+        ##################################
+        # Must be a tuple not a list
+        # summary_run_arguments = (input_file, yoda_output_file_path)
+
+        # self.thread = threading.Thread(
+        #     target=self.summary_page.run,
+        #     args=summary_run_arguments,
+        #     name='execution_thread'
+        # )
+        #
+        # # When true, the thread will terminate when app is closed
+        # # When false, the thread will continue even after the ap is closed
+        # self.thread.setDaemon(True)
+        # self.thread.start()
+        
+        ##################################
+        # If you uncomment the lines above then you need to comment out the line below
+        ##################################
+
+        self.summary_page.run(input_file, yoda_output_file_path)

@@ -27,6 +27,7 @@ class yamlOutput(iOutputs):
     #     raise NotImplementedError()
 
     def save(self, session, file_path):
+
         data = self.parseObjects(session)
 
         yp = YamlPrinter()

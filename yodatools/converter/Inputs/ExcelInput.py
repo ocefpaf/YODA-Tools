@@ -82,12 +82,12 @@ class ExcelInput(iInputs):
         self.parse_variables()
         self.parse_units()
         self.parse_processing_level()
-        # self.parse_sampling_feature()
+        self.parse_sampling_feature()
         self.parse_sites()
         self.parse_specimens()
         self.parse_analysis_results()
 
-        self._session.commit()
+        # self._session.commit()
 
         end = time.time()
         print(end - start)
@@ -97,8 +97,7 @@ class ExcelInput(iInputs):
     def __updateGauge(self):
         # Objects are passed by reference in Python :)
         if not self.gauge:
-            print 'returned'
-            return
+            return  # No gauge was passed in, but that's ok :)
 
         self.rows_read += 1
         value = float(self.rows_read) / self.total_rows_to_read * 100.0
@@ -126,7 +125,7 @@ class ExcelInput(iInputs):
                 # Action
                 method = self._session.query(Methods).filter_by(MethodCode=row[7].value).first()
                 action.MethodObj = method
-                action.ActionTypeCV = "specimenAnalysis"
+                action.ActionTypeCV = "Specimen analysis"
                 action.BeginDateTime = row[5].value
                 action.BeginDateTimeUTCOffset = row[6].value
 
@@ -147,7 +146,7 @@ class ExcelInput(iInputs):
                 act_by.IsActionLead = True
 
                 related_action.ActionObj = action
-                related_action.RelationshipTypeCV = "isChildOf"
+                related_action.RelationshipTypeCV = "Is child of"
                 collectionAction = self._session.query(FeatureActions)\
                     .filter(FeatureActions.FeatureActionID == SamplingFeatures.SamplingFeatureID)\
                     .filter(SamplingFeatures.SamplingFeatureCode == row[1].value)\
@@ -173,18 +172,19 @@ class ExcelInput(iInputs):
                 measure_result.AggregationStatisticCV = row[15].value
                 measure_result.ResultUUID = row[0].value
                 measure_result.FeatureActionObj = feat_act
-                measure_result.ResultTypeCV = "measurement"
+                measure_result.ResultTypeCV = "Measurement"
                 measure_result.VariableObj = variable
                 measure_result.UnitsObj = units_for_result
                 measure_result.ProcessingLevelObj = proc_level
-                measure_result.StatusCV = "complete"
+                measure_result.StatusCV = "Complete"
                 measure_result.SampledMediumCV = row[12].value
                 measure_result.ValueCount = 1
+                measure_result.ResultDateTime = collectionAction.ActionObj.BeginDateTime
 
                 # Measurements Result Value
                 measure_result_value.DataValue = row[3].value
-                measure_result_value.ValueDateTime = row[5].value
-                measure_result_value.ValueDateTimeUTCOffset = row[6].value
+                measure_result_value.ValueDateTime = collectionAction.ActionObj.BeginDateTime
+                measure_result_value.ValueDateTimeUTCOffset = collectionAction.ActionObj.BeginDateTimeUTCOffset
                 measure_result_value.ResultObj = measure_result
 
                 self._session.add(measure_result)
@@ -391,9 +391,6 @@ class ExcelInput(iInputs):
 
             self.__updateGauge()
 
-        # self._session.add_all(sites)
-        # self._session.flush(sites)
-
     def parse_spatial_reference(self):
         SHEET_NAME = "SpatialReferences"
         sheet, tables = self.get_sheet_and_table(SHEET_NAME)
@@ -427,47 +424,43 @@ class ExcelInput(iInputs):
             cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
 
             for row in cells:
-                sp = Specimens()
+                specimen = Specimens()
                 action = Actions()
-                rf = RelatedFeatures()
-                ft = FeatureActions()
+                related_feature = RelatedFeatures()
+                feature_action = FeatureActions()
 
                 # First the Specimen/Sampling Feature
-                sp.SamplingFeatureUUID = row[0].value
-                sp.SamplingFeatureCode = row[1].value
-                sp.SamplingFeatureName = row[2].value
-                sp.SamplingFeatureDescription = row[3].value
-                sp.SamplingFeatureTypeCV = "Specimen"
-                sp.SpecimenMediumCV = row[5].value
-                sp.IsFieldSpecimen = row[6].value
-                sp.ElevationDatumCV = 'unknown'
-                sp.SpecimenTypeCV = row[4].value
-                sp.SpecimenMediumCV = 'liquidAqueous'
+                specimen.SamplingFeatureUUID = row[0].value
+                specimen.SamplingFeatureCode = row[1].value
+                specimen.SamplingFeatureName = row[2].value
+                specimen.SamplingFeatureDescription = row[3].value
+                specimen.SamplingFeatureTypeCV = "Specimen"
+                specimen.SpecimenMediumCV = row[5].value
+                specimen.IsFieldSpecimen = row[6].value
+                specimen.ElevationDatumCV = 'Unknown'
+                specimen.SpecimenTypeCV = row[4].value
+                specimen.SpecimenMediumCV = 'Liquid aqueous'
 
-                # Next is Related Features
-                rf.RelationshipTypeCV = 'wasCollectedAt'
-                # rf.RelatedFeatureID is the CollectionSite.
-                # Query the site id using the collection site (which is the site code aka Sampling Feature Code)
-                # Link things together
+                # Related Features
+                related_feature.RelationshipTypeCV = 'Was Collected at'
                 sampling_feature = self._session.query(SamplingFeatures).filter_by(SamplingFeatureCode=row[7].value).first()
-                rf.SamplingFeatureObj = sp
-                rf.RelatedFeatureObj = sampling_feature
-                # rf.RelatedFeatureID = needs to be set...
+                related_feature.SamplingFeatureObj = specimen
+                related_feature.RelatedFeatureObj = sampling_feature
 
                 # Last is the Action/SampleCollectionAction
-                action.ActionTypeCV = 'specimenCollection'
+                action.ActionTypeCV = 'Specimen collection'
                 action.BeginDateTime = row[8].value
                 action.BeginDateTimeUTCOffset = row[9].value
                 method = self._session.query(Methods).filter_by(MethodCode=row[10].value).first()
                 action.MethodObj = method
 
-                ft.ActionObj = action
-                ft.SamplingFeatureObj = sp
+                feature_action.ActionObj = action
+                feature_action.SamplingFeatureObj = specimen
 
-                self._session.add(sp)
+                self._session.add(specimen)
                 self._session.add(action)
-                self._session.add(rf)
-                self._session.add(ft)
+                self._session.add(related_feature)
+                self._session.add(feature_action)
 
                 self.__updateGauge()
 

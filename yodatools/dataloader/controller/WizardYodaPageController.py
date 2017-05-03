@@ -17,4 +17,4 @@ class WizardYodaPageViewController(WizardYodaPageView):
         if dialog.ShowModal() != wx.ID_OK:
             return
 
-        self.file_text_ctrl.SetValue(dialog.GetPath())
+        self.file_text_ctrl.SetValue(dialog.GetPath() + "\\yoda_export.yaml")
