@@ -73,8 +73,8 @@ class dbOutput(iOutputs):
         val = "timeseriesresultvalues"
         if val in self.data:
             self.save_ts(self.data[val])
-        
-        self.session_out.commit()
+
+        self._session_out.commit()
 
     def save_ts(self, values):
         pass
@@ -187,7 +187,7 @@ class dbOutput(iOutputs):
             return instance
         else:
             instance = model(**kwargs)
-            print instance
+            # print instance
             new_instance = sess.merge(instance)
             sess.flush()
             return new_instance
