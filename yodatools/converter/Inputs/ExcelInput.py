@@ -97,8 +97,7 @@ class ExcelInput(iInputs):
     def __updateGauge(self):
         # Objects are passed by reference in Python :)
         if not self.gauge:
-            print 'returned'
-            return
+            return  # No gauge was passed in, but that's ok :)
 
         self.rows_read += 1
         value = float(self.rows_read) / self.total_rows_to_read * 100.0
