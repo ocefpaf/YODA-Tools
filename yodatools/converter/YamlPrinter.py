@@ -78,7 +78,7 @@ class YamlPrinter():
                             valuedict[key] = "NULL"
                         #todo: featureaction, samplingfeatureobj not being found
                     except Exception as e:
-                        print ("cannot find {} in {}. Error:{} in YamlPrinter".format(key, obj.__class__.__name__, e))
+                        print ("cannot find {} in {}. Error:{} in YamlPrinter".format(key, obj.__class__, e))
 
             self._references[obj] = '*{}{:0>4d}'.format(primarykey, index)
             text += ' - &{}{:0>4d} '.format(primarykey, index)

@@ -7,7 +7,7 @@ import sqlite3
 
 class dbOutput(iOutputs):
 
-    def __init__(self, file_path, connection_string = None):
+    def __init__(self, file_path=None, connection_string = None):
         if connection_string:
             self.connect_to_db(connection_string)
         self.added_objs= {}
@@ -83,7 +83,7 @@ class dbOutput(iOutputs):
 
         if objname in data:
             vals = self.add_to_db( data[objname])
-        self.added_objs[objname] =vals
+            self.added_objs[objname] =vals
 
     def add_to_db(self,  values):
         added = []
@@ -130,8 +130,10 @@ class dbOutput(iOutputs):
                         # for v in attdict.keys():
                         #     if "id" in v.lower() and "uuid" not in v.lower():
                         #         del attdict[v]
+                        pk = None
                         for k in attdict.keys():
                             if k.lower() == att.__mapper__.primary_key[0].name:
+                                pk = k
                                 del attdict[k]
                             elif "obj" in k.lower():
                                 del attdict[k]
@@ -141,7 +143,10 @@ class dbOutput(iOutputs):
                         model = self.check_model(attr =att)
                         setSchema(self._engine_out)
 
-                        new_obj = self._session_out.query(model).filter_by(**attdict).first()
+                        get = getattr(model, pk)
+
+                        # new_obj = self._session_out.query(model).filter_by(**attdict).first()
+                        new_obj = self.get_inherited(self._session_out, model, **attdict)
                         # for s in self.added_objs["samplingfeatures"]:
                         #     if s == att:
                         #         new_obj = s
@@ -152,9 +157,6 @@ class dbOutput(iOutputs):
                             newkey = "SamplingFeatureID"
                         elif objkey == "RelatedActionID":
                             newkey = "ActionID"
-
-
-
                         valuedict[objkey] = getattr(new_obj, newkey)
 
                 except Exception as e:
@@ -162,12 +164,30 @@ class dbOutput(iOutputs):
         return valuedict
 
 
+    def get_inherited(self, sess, model, **kwargs):
+        uuid = {}
+        for key in kwargs.keys():
+            if "uuid" in key.lower():
+                uuid[key] = kwargs[key]
+                break
+        try:
+            if len(uuid) > 0:
+                instance = sess.query(model).filter_by(**uuid).first()
+            else:
+                instance = sess.query(model).filter_by(**kwargs).first()
+            return instance
+        except:
+            return None
+
     def get_or_create(self, sess, model, **kwargs):
-        instance = sess.query(model).filter_by(**kwargs).first()
+        # instance = sess.query(model).filter_by(**kwargs).first()
+        instance = self.get_inherited(sess, model, **kwargs)
+
         if instance:
             return instance
         else:
             instance = model(**kwargs)
+            print instance
             new_instance = sess.merge(instance)
             sess.flush()
             return new_instance
