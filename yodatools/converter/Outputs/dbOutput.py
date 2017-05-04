@@ -1,7 +1,7 @@
 from yodatools.converter.Abstract import iOutputs
 from odm2api.ODMconnection import dbconnection
 from odm2api.ODM2.services import *
-from odm2api.ODM2.models import setSchema, Sites, Results, SamplingFeatures, Specimens, MeasurementResults, TimeSeriesResults
+from odm2api.ODM2.models import setSchema, _changeSchema, Sites, Results, SamplingFeatures, Specimens, MeasurementResults, TimeSeriesResults
 import logging
 import sqlite3
 
@@ -20,6 +20,7 @@ class dbOutput(iOutputs):
         return self._session_out
 
     def save(self, session, connection_string):
+        self.session_in = session
         self.data = self.parseObjects(session)
         self.connect_to_db(connection_string)
         
@@ -74,7 +75,7 @@ class dbOutput(iOutputs):
         if val in self.data:
             self.save_ts(self.data[val])
 
-        self._session_out.commit()
+        # self._session_out.commit()
 
     def save_ts(self, values):
         pass
@@ -91,6 +92,13 @@ class dbOutput(iOutputs):
         _changeSchema(None)
         for obj in values:
             try:
+                _changeSchema(None)
+
+                try:
+                    if obj.SpecimenTypeCV or obj.SiteTypeCV or obj.XLocation:
+                        print "inherited value found"
+                except:
+                    pass
                 valuedict = obj.__dict__.copy()
                 valuedict = self.get_new_objects(obj, valuedict)
                 valuedict.pop("_sa_instance_state")
@@ -146,7 +154,7 @@ class dbOutput(iOutputs):
                         get = getattr(model, pk)
 
                         # new_obj = self._session_out.query(model).filter_by(**attdict).first()
-                        new_obj = self.get_inherited(self._session_out, model, **attdict)
+                        new_obj = self.get_or_create(self._session_out, model, **attdict)
                         # for s in self.added_objs["samplingfeatures"]:
                         #     if s == att:
                         #         new_obj = s
@@ -157,10 +165,13 @@ class dbOutput(iOutputs):
                             newkey = "SamplingFeatureID"
                         elif objkey == "RelatedActionID":
                             newkey = "ActionID"
+                        elif "units" in objkey.lower():
+                            newKey = "UnitsID"
                         valuedict[objkey] = getattr(new_obj, newkey)
 
                 except Exception as e:
                     print ("cannot find {} in {}. Error:{} in dbOutput".format(key, obj.__class__.__name__, e))
+                    self._session_out.rollback()
         return valuedict
 
 
@@ -171,6 +182,7 @@ class dbOutput(iOutputs):
                 uuid[key] = kwargs[key]
                 break
         try:
+            setSchema(self._engine_out)
             if len(uuid) > 0:
                 instance = sess.query(model).filter_by(**uuid).first()
             else:
