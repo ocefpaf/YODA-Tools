@@ -2,6 +2,10 @@
 pytest
 pytest-cov
 mock
+openpyxl
+pyyaml
+
+
 #db support
 pymysql
 pysqlite

@@ -1,0 +1,17 @@
+name: dataloader
+channels:
+  - ioos
+dependencies:
+  - python=2.7
+  - numpy
+  - pip
+  - psycopg2
+  - pymysql
+  - sqlalchemy
+  - sqlite
+  - wheel
+  - wxpython
+  - pyyaml
+  - openpyxl
+  - pip:
+    - pyodbc

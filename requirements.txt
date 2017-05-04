@@ -1,0 +1,9 @@
+odm2api
+pyodbc
+pymysql
+numpy
+sqlalchemy
+wxpython
+pyyaml
+openpyxl
+pandas
