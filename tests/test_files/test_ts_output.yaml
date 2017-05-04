@@ -1,6 +1,6 @@
 ---
 YODA:
- - {Version: "0.1.0", Profile: "TimeSeries", CreationTool: "YodaConverter", DateCreated: "2017-05-01", DateUpdated: "2017-05-01"}
+ - {Version: "0.1.0", Profile: "TimeSeries", CreationTool: "YodaConverter", DateCreated: "2017-05-04", DateUpdated: "2017-05-04"}
 DataSets:
  - &DataSetID0001 {DataSetTypeCV: "Multi-time series", DataSetCode: "TWDEF_AirTemp", DataSetAbstract: "Air temperature at the TW Daniels Experimental Forest Climate Station. The data were measured using a Campbell Scientific HC2S3 temperature and relative humidity sensor. Measurements represent the average over the 15 minute recording period.", DataSetTitle: "Air temperature at the TW Daniels Experimental Forest Climate Station", DataSetUUID: "DE207A27-AB2D-496A-BC08-B276538819FB"}
 Organizations:
@@ -14,8 +14,73 @@ People:
  - &PersonID0002 {PersonFirstName: "Amber", PersonLastName: "Spackman Jones"}
  - &PersonID0003 {PersonFirstName: "Sara", PersonLastName: "Damiano"}
 Affiliations:
- - &AffiliationID0001 {PrimaryEmail: "jeff.horsburgh@usu.edu", PersonLink: NULL, PersonObj: *PersonID0001, PrimaryAddress: "Civil and Environmental Engineering, Utah Water Research Laboratory, 8200 Old Main Hill, Logan, UT 84322-8200", OrganizationObj: *OrganizationID0001, PrimaryPhone: NULL, AffiliationEndDate: NULL, AffiliationStartDate: "2010-01-01 00:00", IsPrimaryOrganizationContact: NULL}
- - &AffiliationID0002 {PrimaryEmail: "amber.jones@usu.edu", PersonLink: NULL, PersonObj: *PersonID0002, PrimaryAddress: "Civil and Environmental Engineering, Utah Water Research Laboratory, 8200 Old Main Hill, Logan, UT 84322-8200", OrganizationObj: *OrganizationID0001, PrimaryPhone: NULL, AffiliationEndDate: NULL, AffiliationStartDate: "2010-01-01 00:00", IsPrimaryOrganizationContact: NULL}
- - &AffiliationID0003 {PrimaryEmail: "sdamiano@stroudcenter.org", PersonLink: NULL, PersonObj: *PersonID0003, PrimaryAddress: "Stroud Water Research Center, 970 Spencer Road, Avondale, PA 19311", OrganizationObj: *OrganizationID0002, PrimaryPhone: NULL, AffiliationEndDate: NULL, AffiliationStartDate: "2010-01-01 00:00", IsPrimaryOrganizationContact: NULL}
+ - &AffiliationID0001 {PrimaryEmail: "jeff.horsburgh@usu.edu", IsPrimaryOrganizationContact: NULL, PersonObj: *PersonID0001, PrimaryAddress: "Civil and Environmental Engineering, Utah Water Research Laboratory, 8200 Old Main Hill, Logan, UT 84322-8200", OrganizationObj: *OrganizationID0001, PrimaryPhone: NULL, AffiliationEndDate: NULL, PersonLink: NULL, AffiliationStartDate: "2010-01-01 00:00"}
+ - &AffiliationID0002 {PrimaryEmail: "amber.jones@usu.edu", IsPrimaryOrganizationContact: NULL, PersonObj: *PersonID0002, PrimaryAddress: "Civil and Environmental Engineering, Utah Water Research Laboratory, 8200 Old Main Hill, Logan, UT 84322-8200", OrganizationObj: *OrganizationID0001, PrimaryPhone: NULL, AffiliationEndDate: NULL, PersonLink: NULL, AffiliationStartDate: "2010-01-01 00:00"}
+ - &AffiliationID0003 {PrimaryEmail: "sdamiano@stroudcenter.org", IsPrimaryOrganizationContact: NULL, PersonObj: *PersonID0003, PrimaryAddress: "Stroud Water Research Center, 970 Spencer Road, Avondale, PA 19311", OrganizationObj: *OrganizationID0002, PrimaryPhone: NULL, AffiliationEndDate: NULL, PersonLink: NULL, AffiliationStartDate: "2010-01-01 00:00"}
 Citations:
- - &Citat
+ - &CitationID0001 {Publisher: "iUTAH Modeling and Data Federation", PublicationYear: 2015, Title: "Air temperature at the TW Daniels Experimental Forest Climate Station", CitationLink: "http://repository.iutahepscor.org/Dataset/iutah-gamut-network-raw-data-at-tw-daniels-forest-climate-site-lr-twdef-c"}
+AuthorLists:
+ - &AuthorListID0001 {CitationObj: *CitationID0001, PersonObj: *PersonID0001, AuthorOrder: 1}
+ - &AuthorListID0002 {CitationObj: *CitationID0001, PersonObj: *PersonID0002, AuthorOrder: 2}
+DataSetCitations:
+ - &DataSetCitationID0001 {CitationObj: *CitationID0001, RelationshipTypeCV: "Is identical to", DataSetObj: *DataSetID0001}
+SpatialReferences:
+ - &SpatialReferenceID0001 {SRSName: "WGS84", SRSDescription: "Horizontal component of 3D system. Used by the GPS satellite navigation system and for NATO military geodetic surveying.", SRSLink: "http://www.epsg-registry.org/export.htm?wkt=urn:ogc:def:crs:EPSG::4326", SRSCode: "EPSG:4326"}
+Specimens:
+ - &SamplingFeatureID0001 {SamplingFeatureDescription: NULL, SamplingFeatureGeotypeCV: "Not applicable", SamplingFeatureName: "Specimen D101", ElevationDatumCV: "MSL", Elevation_m: NULL, SamplingFeatureUUID: "5085CDCC-AD9C-4BB5-BD20-15CE40898DA0", SamplingFeatureTypeCV: "Specimen", SamplingFeatureCode: "D101", FeatureGeometryWKT: "POINT(30 10)"}
+ - &SamplingFeatureID0002 {SamplingFeatureDescription: NULL, SamplingFeatureGeotypeCV: "Not applicable", SamplingFeatureName: "Specimen D102", ElevationDatumCV: "MSL", Elevation_m: NULL, SamplingFeatureUUID: "49712901-31DC-42C8-93A4-4849838927FB", SamplingFeatureTypeCV: "Specimen", SamplingFeatureCode: "D102", FeatureGeometryWKT: "POINT(30 10)"}
+ - &SamplingFeatureID0003 {SamplingFeatureDescription: NULL, SamplingFeatureGeotypeCV: "Not applicable", SamplingFeatureName: "Specimen D3236", ElevationDatumCV: "MSL", Elevation_m: NULL, SamplingFeatureUUID: "B15A8754-7208-4F44-AE69-2EE6B5694E93", SamplingFeatureTypeCV: "Specimen", SamplingFeatureCode: "D3236", FeatureGeometryWKT: "POINT(30 10)"}
+ - &SamplingFeatureID0004 {SamplingFeatureDescription: NULL, SamplingFeatureGeotypeCV: "Not applicable", SamplingFeatureName: "Specimen 524", ElevationDatumCV: "MSL", Elevation_m: NULL, SamplingFeatureUUID: "A54E0DBB-80A8-4AFB-8AA9-4468B8BF39E3", SamplingFeatureTypeCV: "Specimen", SamplingFeatureCode: "524", FeatureGeometryWKT: "POINT(30 10)"}
+ - &SamplingFeatureID0005 {SamplingFeatureDescription: "Whipple Dam State Park, PA, shale rock from bottom of Tyler's pit ", SamplingFeatureGeotypeCV: "Not applicable", SamplingFeatureName: "ald-10-158", ElevationDatumCV: "MSL", Elevation_m: 297.0, SamplingFeatureUUID: "37AF7C1B-CC64-4B21-A766-9F45A7D0DE2A", SamplingFeatureTypeCV: "Specimen", SamplingFeatureCode: "ald-10-158", FeatureGeometryWKT: "POINT(30 10)"}
+Sites:
+ - &SamplingFeatureID0006 {SamplingFeatureDescription: NULL, SamplingFeatureGeotypeCV: "Point", SamplingFeatureName: "Knowlton Fork at Knowlton Fork Basic Aquatic", ElevationDatumCV: "MSL", Elevation_m: NULL, SamplingFeatureUUID: "8D67DE7E-F6F1-437A-BC77-26F2C33B3B85", SamplingFeatureTypeCV: "Site", SamplingFeatureCode: "RB_KF_BA", FeatureGeometryWKT: "POINT(30 10)", SpatialReferenceObj: *SpatialReferenceID0001}
+ - &SamplingFeatureID0007 {SamplingFeatureDescription: NULL, SamplingFeatureGeotypeCV: "Point", SamplingFeatureName: "Red Butte Creek at Red Butte Gate Basic Aquatic", ElevationDatumCV: "MSL", Elevation_m: NULL, SamplingFeatureUUID: "99E8D28C-EBA6-4FEA-A455-675D208A16BD", SamplingFeatureTypeCV: "Site", SamplingFeatureCode: "RB_RBG_BA", FeatureGeometryWKT: "POINT(30 10)", SpatialReferenceObj: *SpatialReferenceID0001}
+ - &SamplingFeatureID0008 {SamplingFeatureDescription: "This is a continuous atmospheric monitoring site that is part of the Gradients Along Mountain to Urban Transitions (GAMUT) monitoring network.", SamplingFeatureGeotypeCV: "Point", SamplingFeatureName: "Climate Station at TW Daniels Experimental Forest", ElevationDatumCV: "MSL", Elevation_m: 2629.2, SamplingFeatureUUID: "7D3B6290-960B-4F09-855A-641E8981FE13", SamplingFeatureTypeCV: "Site", SamplingFeatureCode: "LR_TWDEF_C", FeatureGeometryWKT: "POINT(30 10)", SpatialReferenceObj: *SpatialReferenceID0001}
+RelatedFeatures:
+ - &RelatedFeatureID0001 {SamplingFeatureObj: *SamplingFeatureID0001, RelationshipTypeCV: "Was collected at", RelatedFeatureObj: *SamplingFeatureID0006}
+ - &RelatedFeatureID0002 {SamplingFeatureObj: *SamplingFeatureID0002, SpatialOffsetObj: "NULL", RelationshipTypeCV: "Was collected at", RelatedFeatureObj: *SamplingFeatureID0007}
+ - &RelatedFeatureID0003 {SamplingFeatureObj: *SamplingFeatureID0003, SpatialOffsetObj: "NULL", RelationshipTypeCV: "Was collected at", RelatedFeatureObj: *SamplingFeatureID0007}
+ - &RelatedFeatureID0004 {SamplingFeatureObj: *SamplingFeatureID0004, SpatialOffsetObj: "NULL", RelationshipTypeCV: "Was collected at", RelatedFeatureObj: *SamplingFeatureID0007}
+Units:
+ - &UnitsID0001 {UnitsLink: NULL, UnitsName: "degree celsius", UnitsTypeCV: "Temperature", UnitsAbbreviation: "degC"}
+ - &UnitsID0002 {UnitsLink: NULL, UnitsName: "second", UnitsTypeCV: "Time", UnitsAbbreviation: "sec"}
+ - &UnitsID0003 {UnitsLink: NULL, UnitsName: "meters", UnitsTypeCV: "Length", UnitsAbbreviation: "m"}
+Methods:
+ - &MethodID0001 {MethodCode: "Air_Temp_HC2S3", MethodDescription: "Air temperature measured using a Campbell Scientific HC2S3 temperature and relative humidity sensor. Average over 15 minutes.", OrganizationObj: *OrganizationID0001, MethodTypeCV: "Instrument deployment", MethodName: "HC2S3 Air Temperature", MethodLink: "http://data.iutahepscor.org"}
+ - &MethodID0002 {MethodCode: "EPA353.2", MethodDescription: "Nitrate-Nitrite Colorometric Automated Cadmium Reduction", OrganizationObj: *OrganizationID0001, MethodTypeCV: "Specimen analysis", MethodName: "Nitrate-Nitrite Colorometric Automated Cadmium Reduction", MethodLink: "http://data.iutahepscor.org"}
+ - &MethodID0003 {MethodCode: "TotalNitrogen", MethodDescription: "Determination of total Nitrogen by persulphate oxidation digestion and cadmium reduction method", OrganizationObj: *OrganizationID0001, MethodTypeCV: "Specimen analysis", MethodName: "Astoria Total Nitrogen", MethodLink: "http://data.iutahepscor.org"}
+ - &MethodID0004 {MethodCode: "TotalPhosphorus", MethodDescription: "Determination of total phosphorus by persulphate oxidation digestion and ascorbic acid method", OrganizationObj: *OrganizationID0001, MethodTypeCV: "Specimen analysis", MethodName: "Astoria Total Phosphorus", MethodLink: "http://data.iutahepscor.org"}
+Variables:
+ - &VariableID0001 {SpeciationCV: "N", VariableNameCV: "Nitrogen, total", VariableTypeCV: "Chemistry", NoDataValue: -9999.0000000000, VariableDefinition: NULL, VariableCode: "TN"}
+ - &VariableID0002 {SpeciationCV: "P", VariableNameCV: "Phosphorus, total", VariableTypeCV: "Chemistry", NoDataValue: -9999.0000000000, VariableDefinition: NULL, VariableCode: "TP"}
+ - &VariableID0003 {SpeciationCV: NULL, VariableNameCV: "Nitrogen, dissolved nitrite (NO2) + nitrate (NO3)", VariableTypeCV: "Chemistry", NoDataValue: -9999.0000000000, VariableDefinition: NULL, VariableCode: "Nitrate"}
+ - &VariableID0004 {SpeciationCV: NULL, VariableNameCV: "Temperature", VariableTypeCV: "Climate", NoDataValue: -9999.0000000000, VariableDefinition: NULL, VariableCode: "AirtTemp_Avg"}
+ - &VariableID0005 {SpeciationCV: NULL, VariableNameCV: "Temperature", VariableTypeCV: "Climate", NoDataValue: -9999.0000000000, VariableDefinition: NULL, VariableCode: "AirtTemp_Min"}
+ - &VariableID0006 {SpeciationCV: NULL, VariableNameCV: "Temperature", VariableTypeCV: "Climate", NoDataValue: -9999.0000000000, VariableDefinition: NULL, VariableCode: "AirtTemp_Max"}
+ProcessingLevels:
+ - &ProcessingLevelID0001 {Definition: "Raw Data", Explanation: "Raw and unprocessed data and data products that have not undergone quality control.  Depending on the variable, data type, and data transmission system, raw data may be available within seconds or minutes after the measurements have been made. samplefiles include real time precipitation, streamflow and water quality measurements.", ProcessingLevelCode: "0"}
+ - &ProcessingLevelID0002 {Definition: "Quality controlled data", Explanation: "Quality controlled data that have passed quality assurance procedures such as routine estimation of timing and sensor calibration or visual inspection and removal of obvious errors. An example is USGS published streamflow records following parsing through USGS quality control procedures.", ProcessingLevelCode: "1"}
+ - &ProcessingLevelID0003 {Definition: "Derived products", Explanation: "Derived products that require scientific and technical interpretation and may include multiple-sensor data. An example is basin average precipitation derived from rain gages using an interpolation procedure.", ProcessingLevelCode: "2"}
+ - &ProcessingLevelID0004 {Definition: "Interpreted products", Explanation: "Interpreted products that require researcher driven analysis and interpretation, converter-based interpretation using other data and/or strong prior assumptions. An example is basin average precipitation derived from the combination of rain gages and radar return data.", ProcessingLevelCode: "3"}
+ - &ProcessingLevelID0005 {Definition: "Knowledge products", Explanation: "Knowledge products that require researcher driven scientific interpretation and multidisciplinary data integration and include converter-based interpretation using other data and/or strong prior assumptions. An example is percentages of old or new water in a hydrograph inferred from an isotope analysis.", ProcessingLevelCode: "4"}
+Actions:
+ - &ActionID0001 {ActionDescription: "Generic observation action generated by Excel Template for TimeSeries v.0.2.1-alpha", ActionFileLink: NULL, EndDateTime: NULL, BeginDateTimeUTCOffset: -7, EndDateTimeUTCOffset: NULL, ActionTypeCV: "Observation", MethodObj: *MethodID0001, BeginDateTime: "2010-01-01 00:00"}
+ - &ActionID0002 {ActionDescription: "Generic observation action generated by Excel Template for TimeSeries v.0.2.1-alpha", ActionFileLink: NULL, EndDateTime: NULL, BeginDateTimeUTCOffset: -7, EndDateTimeUTCOffset: NULL, ActionTypeCV: "Observation", MethodObj: *MethodID0001, BeginDateTime: "2010-01-01 00:00"}
+ - &ActionID0003 {ActionDescription: "Generic observation action generated by Excel Template for TimeSeries v.0.2.1-alpha", ActionFileLink: NULL, EndDateTime: NULL, BeginDateTimeUTCOffset: -7, EndDateTimeUTCOffset: NULL, ActionTypeCV: "Observation", MethodObj: *MethodID0001, BeginDateTime: "2010-01-01 00:00"}
+FeatureActions:
+ - &FeatureActionID0001 {SamplingFeatureObj: *SamplingFeatureID0008, ActionObj: *ActionID0001}
+ - &FeatureActionID0002 {SamplingFeatureObj: *SamplingFeatureID0008, ActionObj: *ActionID0002}
+ - &FeatureActionID0003 {SamplingFeatureObj: *SamplingFeatureID0008, ActionObj: *ActionID0003}
+ActionBy:
+ - &ActionByID0001 {RoleDescription: NULL, ActionObj: *ActionID0001, AffiliationObj: *AffiliationID0002, IsActionLead: True}
+ - &ActionByID0002 {RoleDescription: NULL, ActionObj: *ActionID0002, AffiliationObj: *AffiliationID0002, IsActionLead: True}
+ - &ActionByID0003 {RoleDescription: NULL, ActionObj: *ActionID0003, AffiliationObj: *AffiliationID0002, IsActionLead: True}
+TimeSeriesResults:
+ - &ResultID0001 {ResultUUID: "FDAB33BA-73C5-425B-BBEB-AB59B9B25996", SpatialReferenceObj: "NULL", XLocationUnitsObj: "NULL", StatusCV: NULL, ValueCount: 3359, TaxonomicClassifierObj: "NULL", ZLocationUnitsObj: "NULL", UnitsObj: *UnitsID0001, ResultDateTimeUTCOffset: NULL, FeatureActionObj: *FeatureActionID0001, VariableObj: *VariableID0004, IntendedTimeSpacingUnitsObj: "NULL", ResultTypeCV: "Time series coverage", SampledMediumCV: "Gas", ResultDateTime: NULL, YLocationUnitsObj: "NULL", ProcessingLevelObj: *ProcessingLevelID0001}
+ - &ResultID0002 {ResultUUID: "26074CCC-189D-450C-9E81-822DD24DCB2C", SpatialReferenceObj: "NULL", XLocationUnitsObj: "NULL", StatusCV: NULL, ValueCount: 3359, TaxonomicClassifierObj: "NULL", ZLocationUnitsObj: "NULL", UnitsObj: *UnitsID0001, ResultDateTimeUTCOffset: NULL, FeatureActionObj: *FeatureActionID0002, VariableObj: *VariableID0005, IntendedTimeSpacingUnitsObj: "NULL", ResultTypeCV: "Time series coverage", SampledMediumCV: "Gas", ResultDateTime: NULL, YLocationUnitsObj: "NULL", ProcessingLevelObj: *ProcessingLevelID0001}
+ - &ResultID0003 {ResultUUID: "94C35D2A-B3C0-412F-A850-874723C5A347", SpatialReferenceObj: "NULL", XLocationUnitsObj: "NULL", StatusCV: NULL, ValueCount: 3359, TaxonomicClassifierObj: "NULL", ZLocationUnitsObj: "NULL", UnitsObj: *UnitsID0001, ResultDateTimeUTCOffset: NULL, FeatureActionObj: *FeatureActionID0003, VariableObj: *VariableID0006, IntendedTimeSpacingUnitsObj: "NULL", ResultTypeCV: "Time series coverage", SampledMediumCV: "Gas", ResultDateTime: NULL, YLocationUnitsObj: "NULL", ProcessingLevelObj: *ProcessingLevelID0001}
+DataSetsResults:
+ - &DataSetsResultID0001 {ResultObj: *ResultID0001, DataSetObj: *DataSetID0001}
+ - &DataSetsResultID0002 {ResultObj: *ResultID0002, DataSetObj: *DataSetID0001}
+ - &DataSetsResultID0003 {ResultObj: *ResultID0003, DataSetObj: *DataSetID0001}
+...

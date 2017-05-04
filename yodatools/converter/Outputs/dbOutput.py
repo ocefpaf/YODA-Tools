@@ -75,7 +75,7 @@ class dbOutput(iOutputs):
         if val in self.data:
             self.save_ts(self.data[val])
 
-        # self._session_out.commit()
+        self._session_out.commit()
 
     def save_ts(self, values):
         pass
@@ -88,14 +88,13 @@ class dbOutput(iOutputs):
 
     def add_to_db(self,  values):
         added = []
-        from odm2api.ODM2.models import _changeSchema
-        _changeSchema(None)
+
+
         for obj in values:
             try:
                 _changeSchema(None)
-
                 try:
-                    if obj.SpecimenTypeCV or obj.SiteTypeCV or obj.XLocation:
+                    if obj.SpecimenTypeCV or obj.SiteTypeCV or obj.CensorCodeCV:
                         print "inherited value found"
                 except:
                     pass
@@ -109,8 +108,8 @@ class dbOutput(iOutputs):
                         del valuedict[v]
                     elif "obj" in v.lower():
                         del valuedict[v]
-                setSchema(self._engine_out)
-                model = self.check_model(attr=obj)
+
+                model = type(obj)
                 added.append(self.get_or_create(self._session_out, model, **valuedict))
 
             except Exception as e:
@@ -119,54 +118,55 @@ class dbOutput(iOutputs):
                 # raise e
         return added
 
-    def check_model(self, attr):
-        model = type(attr)
-        # if isinstance(attr, Sites) or isinstance(attr, Specimens):
-        #     model = SamplingFeatures
-        # elif isinstance(attr, MeasurementResults) or isinstance(attr, TimeSeriesResults):
-        #     return Results
-
-        return model
+    # def check_model(self, attr):
+    #     model = type(attr)
+    #     # if isinstance(attr, Sites) or isinstance(attr, Specimens):
+    #     #     model = SamplingFeatures
+    #     # elif isinstance(attr, MeasurementResults) or isinstance(attr, TimeSeriesResults):
+    #     #     return Results
+    #
+    #     return model
 
     def get_new_objects(self, obj, valuedict):
         for key in dir(obj):
             if "obj" in key.lower():  # key.contains("Obj"):
                 try:
+                    _changeSchema(None)
                     att = getattr(obj, key)
                     if att is not None:
+                        try:
+                            if att.SpecimenTypeCV or att.SiteTypeCV or att.CensorCodeCV:
+                                print "inherited value found as attribute"
+                        except:
+                            pass
                         attdict = att.__dict__.copy()
-                        # for v in attdict.keys():
-                        #     if "id" in v.lower() and "uuid" not in v.lower():
-                        #         del attdict[v]
-                        pk = None
+                        #
+                        #
+                        #
+
                         for k in attdict.keys():
                             if k.lower() == att.__mapper__.primary_key[0].name:
-                                pk = k
+
                                 del attdict[k]
                             elif "obj" in k.lower():
                                 del attdict[k]
                         attdict.pop("_sa_instance_state")
                         attdict = self.get_new_objects(att, attdict)
 
-                        model = self.check_model(attr =att)
-                        setSchema(self._engine_out)
-
-                        get = getattr(model, pk)
-
+                        # model = self.check_model(attr =att)
+                        model= type(att)
                         # new_obj = self._session_out.query(model).filter_by(**attdict).first()
                         new_obj = self.get_or_create(self._session_out, model, **attdict)
-                        # for s in self.added_objs["samplingfeatures"]:
-                        #     if s == att:
-                        #         new_obj = s
 
                         objkey = key.replace("Obj", "ID")
-                        newkey = objkey
                         if objkey == "RelatedFeatureID":
                             newkey = "SamplingFeatureID"
                         elif objkey == "RelatedActionID":
                             newkey = "ActionID"
                         elif "units" in objkey.lower():
-                            newKey = "UnitsID"
+                            newkey = "UnitsID"
+                        else:
+                            newkey = objkey
                         valuedict[objkey] = getattr(new_obj, newkey)
 
                 except Exception as e:

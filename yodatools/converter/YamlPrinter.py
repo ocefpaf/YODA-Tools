@@ -45,6 +45,12 @@ class YamlPrinter():
         for obj in apiobjs:
 
             primarykey = obj.__mapper__.primary_key[0].name
+            #add this try/except block to make sure the inherited objects' dictionaries have all the metadata
+            try:
+                if obj.SpecimenTypeCV or obj.SiteTypeCV or obj.XLocation:
+                    print "inherited value found"
+            except:
+                pass
             valuedict = obj.__dict__.copy()
 
             #find the attribute name of the primary key
