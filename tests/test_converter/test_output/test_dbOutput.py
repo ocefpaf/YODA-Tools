@@ -24,4 +24,4 @@ class TestDb:
 
     def test_create_ts(self):
         session = build_ts_session()
-        # self.do.save(session, self.connection_string)
+        self.do.save(session, self.connection_string)

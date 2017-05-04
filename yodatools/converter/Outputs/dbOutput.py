@@ -83,8 +83,8 @@ class dbOutput(iOutputs):
     def check(self, objname, data):
 
         if objname in data:
-            vals = self.add_to_db( data[objname])
-            self.added_objs[objname] =vals
+            vals = self.add_to_db(data[objname])
+            self.added_objs[objname] = vals
 
     def add_to_db(self,  values):
         added = []
@@ -93,11 +93,7 @@ class dbOutput(iOutputs):
         for obj in values:
             try:
                 _changeSchema(None)
-                try:
-                    if obj.SpecimenTypeCV or obj.SiteTypeCV or obj.CensorCodeCV:
-                        print "inherited value found"
-                except:
-                    pass
+                self.fill_dict(obj)
                 valuedict = obj.__dict__.copy()
                 valuedict = self.get_new_objects(obj, valuedict)
                 valuedict.pop("_sa_instance_state")
@@ -113,7 +109,7 @@ class dbOutput(iOutputs):
                 added.append(self.get_or_create(self._session_out, model, **valuedict))
 
             except Exception as e:
-                print e
+                # print e
                 self._session_out.rollback()
                 # raise e
         return added
@@ -127,6 +123,14 @@ class dbOutput(iOutputs):
     #
     #     return model
 
+    def fill_dict(self, obj):
+        for val in ["SpecimenTypeCV", "SiteTypeCV", "CensorCodeCV"]:
+            try:
+                getattr(obj, val)
+            except:
+                pass
+
+
     def get_new_objects(self, obj, valuedict):
         for key in dir(obj):
             if "obj" in key.lower():  # key.contains("Obj"):
@@ -134,16 +138,8 @@ class dbOutput(iOutputs):
                     _changeSchema(None)
                     att = getattr(obj, key)
                     if att is not None:
-                        try:
-                            if att.SpecimenTypeCV or att.SiteTypeCV or att.CensorCodeCV:
-                                print "inherited value found as attribute"
-                        except:
-                            pass
+                        self.fill_dict(obj)
                         attdict = att.__dict__.copy()
-                        #
-                        #
-                        #
-
                         for k in attdict.keys():
                             if k.lower() == att.__mapper__.primary_key[0].name:
 
@@ -165,12 +161,14 @@ class dbOutput(iOutputs):
                             newkey = "ActionID"
                         elif "units" in objkey.lower():
                             newkey = "UnitsID"
+                        elif "resultvalue" in objkey.lower():
+                            newkey = "ValueID"
                         else:
                             newkey = objkey
                         valuedict[objkey] = getattr(new_obj, newkey)
 
                 except Exception as e:
-                    print ("cannot find {} in {}. Error:{} in dbOutput".format(key, obj.__class__.__name__, e))
+                    # print ("cannot find {} in {}. Error:{} in dbOutput".format(key, obj.__class__.__name__, e))
                     self._session_out.rollback()
         return valuedict
 

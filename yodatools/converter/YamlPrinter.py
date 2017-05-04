@@ -35,7 +35,14 @@ class YamlPrinter():
             index += len(objlist[k])
         return text
 
-    def print_objects(self, apiobjs, ind = 0 ):
+    def fill_dict(self, obj):
+        for val in ["SpecimenTypeCV", "SiteTypeCV", "CensorCodeCV"]:
+            try:
+                getattr(obj, val)
+            except:
+                pass
+
+    def print_objects(self, apiobjs, ind=0):
         # TODO handle inheritance objects
         objname = apiobjs[0].__class__.__name__
 
@@ -46,11 +53,7 @@ class YamlPrinter():
 
             primarykey = obj.__mapper__.primary_key[0].name
             #add this try/except block to make sure the inherited objects' dictionaries have all the metadata
-            try:
-                if obj.SpecimenTypeCV or obj.SiteTypeCV or obj.XLocation:
-                    print "inherited value found"
-            except:
-                pass
+            self.fill_dict(obj)
             valuedict = obj.__dict__.copy()
 
             #find the attribute name of the primary key
@@ -84,7 +87,8 @@ class YamlPrinter():
                             valuedict[key] = "NULL"
                         #todo: featureaction, samplingfeatureobj not being found
                     except Exception as e:
-                        print ("cannot find {} in {}. Error:{} in YamlPrinter".format(key, obj.__class__, e))
+                        # print ("cannot find {} in {}. Error:{} in YamlPrinter".format(key, obj.__class__, e))
+                        pass
 
             self._references[obj] = '*{}{:0>4d}'.format(primarykey, index)
             text += ' - &{}{:0>4d} '.format(primarykey, index)
@@ -124,8 +128,6 @@ class YamlPrinter():
                 file.write(self.print_objects(data[objname]))
 
     def generate_ts_objects(self, data):
-
-
         return data.to_csv()
 
     def print_yoda(self, out_file, data):
