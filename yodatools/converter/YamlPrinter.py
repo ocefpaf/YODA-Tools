@@ -138,7 +138,7 @@ class YamlPrinter():
             filetype = "TimeSeries"
 
         with open(out_file, 'w') as yaml_schema_file:
-            print data.keys()
+            # print data.keys()
             #header
             yaml_schema_file.write(self.get_header(filetype))
             #dataset

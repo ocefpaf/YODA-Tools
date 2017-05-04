@@ -89,7 +89,6 @@ class dbOutput(iOutputs):
     def add_to_db(self,  values):
         added = []
 
-
         for obj in values:
             try:
                 _changeSchema(None)
