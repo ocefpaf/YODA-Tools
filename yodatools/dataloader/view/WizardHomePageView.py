@@ -11,7 +11,7 @@ class WizardHomePageView(wx.Panel):
         self.input_file_text_ctrl = wx.TextCtrl(self)
         self.browse_button = wx.Button(self, label="Browse")
         self.yoda_check_box = wx.CheckBox(self, id=1, label="YODA")
-        self.excel_check_box = wx.CheckBox(self, id=2, label="Excel Template")
+        self.excel_check_box = wx.CheckBox(self, id=2, label="Excel Template (Not implemented yet)")
         self.odm2_check_box = wx.CheckBox(self, id=3, label="ODM2 Database")
 
         # Style components

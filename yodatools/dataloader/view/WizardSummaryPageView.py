@@ -13,7 +13,6 @@ class WizardSummaryPageView(wx.Panel):
 
         # Add components to sizer
         sizer.Add(self.gauge, 0, wx.EXPAND | wx.ALL, 5)
-        self.gauge.SetValue(10)
 
         self.SetSizer(sizer)
         self.Hide()
