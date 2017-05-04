@@ -9,12 +9,12 @@ Organizations:
  - &OrganizationID0003 {OrganizationLink: "http://www.usu.edu", OrganizationName: "USU Aquatic Biogeochemistry Lab", OrganizationCode: "USUABL", OrganizationTypeCV: "University", OrganizationObj: "NULL", OrganizationDescription: NULL}
  - &OrganizationID0004 {OrganizationLink: "http://www.sirfer.utah.edu", OrganizationName: "Stable Isotope Ratio Facility for Environmental Research", OrganizationCode: "SIRFER", OrganizationTypeCV: "Research organization", OrganizationObj: "NULL", OrganizationDescription: NULL}
 People:
- - &PersonID0001 {PersonFirstName: "Erin", PersonLastName: "Jones"}
- - &PersonID0002 {PersonFirstName: "Janet", PersonLastName: "Barnette"}
- - &PersonID0003 {PersonFirstName: "Jason", PersonLastName: "Bahr"}
- - &PersonID0004 {PersonFirstName: "Chris", PersonLastName: "Cox"}
- - &PersonID0005 {PersonFirstName: "Unknown", PersonLastName: "Person"}
- - &PersonID0006 {PersonFirstName: "Lisa", PersonLastName: "Ward"}
+ - &PersonID0001 {PersonLastName: "Jones", PersonFirstName: "Erin"}
+ - &PersonID0002 {PersonLastName: "Barnette", PersonFirstName: "Janet"}
+ - &PersonID0003 {PersonLastName: "Bahr", PersonFirstName: "Jason"}
+ - &PersonID0004 {PersonLastName: "Cox", PersonFirstName: "Chris"}
+ - &PersonID0005 {PersonLastName: "Person", PersonFirstName: "Unknown"}
+ - &PersonID0006 {PersonLastName: "Ward", PersonFirstName: "Lisa"}
 Affiliations:
  - &AffiliationID0001 {PrimaryEmail: "erinfjones@gmail.com", IsPrimaryOrganizationContact: NULL, PersonObj: *PersonID0001, PrimaryAddress: NULL, OrganizationObj: *OrganizationID0002, PrimaryPhone: NULL, AffiliationEndDate: NULL, PersonLink: NULL, AffiliationStartDate: "2015-01-01 00:00"}
  - &AffiliationID0002 {PrimaryEmail: "janet.barnette@utah.edu", IsPrimaryOrganizationContact: NULL, PersonObj: *PersonID0002, PrimaryAddress: NULL, OrganizationObj: *OrganizationID0004, PrimaryPhone: NULL, AffiliationEndDate: NULL, PersonLink: NULL, AffiliationStartDate: "2015-01-01 00:00"}
@@ -31,15 +31,15 @@ DataSetCitations:
 SpatialReferences:
  - &SpatialReferenceID0001 {SRSName: "WGS84", SRSDescription: "Horizontal component of 3D system. Used by the GPS satellite navigation system and for NATO military geodetic surveying.", SRSLink: "http://www.epsg-registry.org/export.htm?wkt=urn:ogc:def:crs:EPSG::4326", SRSCode: "EPSG:4326"}
 Specimens:
- - &SamplingFeatureID0001 {SamplingFeatureDescription: NULL, SamplingFeatureGeotypeCV: NULL, SpecimenTypeCV: "Grab", SamplingFeatureName: NULL, ElevationDatumCV: NULL, Elevation_m: NULL, SamplingFeatureUUID: "2D7EB86E-408C-4CD2-AFEB-D13CAA9AEB09", IsFieldSpecimen: True, SamplingFeatureCode: "D3236", SamplingFeatureTypeCV: "Specimen", FeatureGeometryWKT: NULL, SpecimenMediumCV: "Liquid aqueous"}
- - &SamplingFeatureID0002 {SamplingFeatureDescription: NULL, SamplingFeatureGeotypeCV: NULL, SpecimenTypeCV: "Grab", SamplingFeatureName: NULL, ElevationDatumCV: NULL, Elevation_m: NULL, SamplingFeatureUUID: "F1604024-FC2A-4F6F-A34F-A346DA00EDF1", IsFieldSpecimen: True, SamplingFeatureCode: "524", SamplingFeatureTypeCV: "Specimen", FeatureGeometryWKT: NULL, SpecimenMediumCV: "Liquid aqueous"}
- - &SamplingFeatureID0003 {SamplingFeatureDescription: NULL, SamplingFeatureGeotypeCV: NULL, SpecimenTypeCV: "Grab", SamplingFeatureName: NULL, ElevationDatumCV: NULL, Elevation_m: NULL, SamplingFeatureUUID: "09F03895-57A1-41E3-B0C7-4C63CC012E62", IsFieldSpecimen: True, SamplingFeatureCode: "D1147_ISO", SamplingFeatureTypeCV: "Specimen", FeatureGeometryWKT: NULL, SpecimenMediumCV: "Liquid aqueous"}
- - &SamplingFeatureID0004 {SamplingFeatureDescription: NULL, SamplingFeatureGeotypeCV: NULL, SpecimenTypeCV: "Grab", SamplingFeatureName: NULL, ElevationDatumCV: NULL, Elevation_m: NULL, SamplingFeatureUUID: "32DE7BDE-19FA-44DB-BF56-424AF6EF31B0", IsFieldSpecimen: True, SamplingFeatureCode: "D1147", SamplingFeatureTypeCV: "Specimen", FeatureGeometryWKT: NULL, SpecimenMediumCV: "Liquid aqueous"}
- - &SamplingFeatureID0005 {SamplingFeatureDescription: NULL, SamplingFeatureGeotypeCV: NULL, SpecimenTypeCV: "Grab", SamplingFeatureName: NULL, ElevationDatumCV: NULL, Elevation_m: NULL, SamplingFeatureUUID: "0862A096-8756-418F-8E06-5BE9DB36BF36", IsFieldSpecimen: True, SamplingFeatureCode: "Z052", SamplingFeatureTypeCV: "Specimen", FeatureGeometryWKT: NULL, SpecimenMediumCV: "Liquid aqueous"}
- - &SamplingFeatureID0006 {SamplingFeatureDescription: NULL, SamplingFeatureGeotypeCV: NULL, SpecimenTypeCV: "Grab", SamplingFeatureName: NULL, ElevationDatumCV: NULL, Elevation_m: NULL, SamplingFeatureUUID: "E1CA62F7-56F0-4254-9F38-88C05E78BE7F", IsFieldSpecimen: True, SamplingFeatureCode: "D977", SamplingFeatureTypeCV: "Specimen", FeatureGeometryWKT: NULL, SpecimenMediumCV: "Liquid aqueous"}
- - &SamplingFeatureID0007 {SamplingFeatureDescription: NULL, SamplingFeatureGeotypeCV: NULL, SpecimenTypeCV: "Grab", SamplingFeatureName: NULL, ElevationDatumCV: NULL, Elevation_m: NULL, SamplingFeatureUUID: "70B87BAC-6B80-4228-A1AC-F86E07D888DF", IsFieldSpecimen: True, SamplingFeatureCode: "Z020", SamplingFeatureTypeCV: "Specimen", FeatureGeometryWKT: NULL, SpecimenMediumCV: "Liquid aqueous"}
+ - &SamplingFeatureID0001 {SamplingFeatureDescription: NULL, SamplingFeatureGeotypeCV: NULL, SpecimenTypeCV: "Grab", SamplingFeatureName: NULL, SamplingFeatureUUID: "2D7EB86E-408C-4CD2-AFEB-D13CAA9AEB09", Elevation_m: NULL, ElevationDatumCV: NULL, IsFieldSpecimen: True, SamplingFeatureCode: "D3236", SamplingFeatureTypeCV: "Specimen", FeatureGeometryWKT: NULL, SpecimenMediumCV: "Liquid aqueous"}
+ - &SamplingFeatureID0002 {SamplingFeatureDescription: NULL, SamplingFeatureGeotypeCV: NULL, SpecimenTypeCV: "Grab", SamplingFeatureName: NULL, SamplingFeatureUUID: "F1604024-FC2A-4F6F-A34F-A346DA00EDF1", Elevation_m: NULL, ElevationDatumCV: NULL, IsFieldSpecimen: True, SamplingFeatureCode: "524", SamplingFeatureTypeCV: "Specimen", FeatureGeometryWKT: NULL, SpecimenMediumCV: "Liquid aqueous"}
+ - &SamplingFeatureID0003 {SamplingFeatureDescription: NULL, SamplingFeatureGeotypeCV: NULL, SpecimenTypeCV: "Grab", SamplingFeatureName: NULL, SamplingFeatureUUID: "09F03895-57A1-41E3-B0C7-4C63CC012E62", Elevation_m: NULL, ElevationDatumCV: NULL, IsFieldSpecimen: True, SamplingFeatureCode: "D1147_ISO", SamplingFeatureTypeCV: "Specimen", FeatureGeometryWKT: NULL, SpecimenMediumCV: "Liquid aqueous"}
+ - &SamplingFeatureID0004 {SamplingFeatureDescription: NULL, SamplingFeatureGeotypeCV: NULL, SpecimenTypeCV: "Grab", SamplingFeatureName: NULL, SamplingFeatureUUID: "32DE7BDE-19FA-44DB-BF56-424AF6EF31B0", Elevation_m: NULL, ElevationDatumCV: NULL, IsFieldSpecimen: True, SamplingFeatureCode: "D1147", SamplingFeatureTypeCV: "Specimen", FeatureGeometryWKT: NULL, SpecimenMediumCV: "Liquid aqueous"}
+ - &SamplingFeatureID0005 {SamplingFeatureDescription: NULL, SamplingFeatureGeotypeCV: NULL, SpecimenTypeCV: "Grab", SamplingFeatureName: NULL, SamplingFeatureUUID: "0862A096-8756-418F-8E06-5BE9DB36BF36", Elevation_m: NULL, ElevationDatumCV: NULL, IsFieldSpecimen: True, SamplingFeatureCode: "Z052", SamplingFeatureTypeCV: "Specimen", FeatureGeometryWKT: NULL, SpecimenMediumCV: "Liquid aqueous"}
+ - &SamplingFeatureID0006 {SamplingFeatureDescription: NULL, SamplingFeatureGeotypeCV: NULL, SpecimenTypeCV: "Grab", SamplingFeatureName: NULL, SamplingFeatureUUID: "E1CA62F7-56F0-4254-9F38-88C05E78BE7F", Elevation_m: NULL, ElevationDatumCV: NULL, IsFieldSpecimen: True, SamplingFeatureCode: "D977", SamplingFeatureTypeCV: "Specimen", FeatureGeometryWKT: NULL, SpecimenMediumCV: "Liquid aqueous"}
+ - &SamplingFeatureID0007 {SamplingFeatureDescription: NULL, SamplingFeatureGeotypeCV: NULL, SpecimenTypeCV: "Grab", SamplingFeatureName: NULL, SamplingFeatureUUID: "70B87BAC-6B80-4228-A1AC-F86E07D888DF", Elevation_m: NULL, ElevationDatumCV: NULL, IsFieldSpecimen: True, SamplingFeatureCode: "Z020", SamplingFeatureTypeCV: "Specimen", FeatureGeometryWKT: NULL, SpecimenMediumCV: "Liquid aqueous"}
 Sites:
- - &SamplingFeatureID0008 {SamplingFeatureDescription: NULL, SamplingFeatureGeotypeCV: "Point", SamplingFeatureName: "Blacksmith Fork River upstream of confluence with Logan River near 800 West 1600 South", ElevationDatumCV: "EGM96", Elevation_m: 1357.352661, SamplingFeatureUUID: "1135DBC9-5F91-4F9F-A8C9-F70B6703691F", SamplingFeatureTypeCV: "Site", Longitude: -111.852324, SamplingFeatureCode: "LR_BSFork", Latitude: 41.705385, FeatureGeometryWKT: NULL, SiteTypeCV: "Stream", SpatialReferenceObj: *SpatialReferenceID0001}
+ - &SamplingFeatureID0008 {SamplingFeatureDescription: NULL, SamplingFeatureGeotypeCV: "Point", SamplingFeatureName: "Blacksmith Fork River upstream of confluence with Logan River near 800 West 1600 South", SamplingFeatureUUID: "1135DBC9-5F91-4F9F-A8C9-F70B6703691F", Elevation_m: 1357.352661, ElevationDatumCV: "EGM96", SamplingFeatureTypeCV: "Site", Longitude: -111.852324, SamplingFeatureCode: "LR_BSFork", Latitude: 41.705385, FeatureGeometryWKT: NULL, SiteTypeCV: "Stream", SpatialReferenceObj: *SpatialReferenceID0001}
 RelatedFeatures:
  - &RelatedFeatureID0001 {SamplingFeatureObj: *SamplingFeatureID0008, SpatialOffsetObj: "NULL", RelationshipTypeCV: "Was collected at", RelatedFeatureObj: *SamplingFeatureID0001}
  - &RelatedFeatureID0002 {SamplingFeatureObj: *SamplingFeatureID0008, SpatialOffsetObj: "NULL", RelationshipTypeCV: "Was collected at", RelatedFeatureObj: *SamplingFeatureID0002}
@@ -49,24 +49,24 @@ RelatedFeatures:
  - &RelatedFeatureID0006 {SamplingFeatureObj: *SamplingFeatureID0008, SpatialOffsetObj: "NULL", RelationshipTypeCV: "Was collected at", RelatedFeatureObj: *SamplingFeatureID0006}
  - &RelatedFeatureID0007 {SamplingFeatureObj: *SamplingFeatureID0008, SpatialOffsetObj: "NULL", RelationshipTypeCV: "Was collected at", RelatedFeatureObj: *SamplingFeatureID0007}
 Units:
- - &UnitsID0001 {UnitsLink: NULL, UnitsName: "milligrams per liter", UnitsTypeCV: "Concentration or density mass per volume", UnitsAbbreviation: "mg/l"}
- - &UnitsID0002 {UnitsLink: NULL, UnitsName: "CFU per 100 milliliters", UnitsTypeCV: "Concentration count per volume", UnitsAbbreviation: "CFU/100ml"}
- - &UnitsID0003 {UnitsLink: NULL, UnitsName: "percent", UnitsTypeCV: "Dimensionless", UnitsAbbreviation: "%"}
- - &UnitsID0004 {UnitsLink: NULL, UnitsName: "second", UnitsTypeCV: "Time", UnitsAbbreviation: "s"}
- - &UnitsID0005 {UnitsLink: NULL, UnitsName: "minute", UnitsTypeCV: "Time", UnitsAbbreviation: "min"}
- - &UnitsID0006 {UnitsLink: NULL, UnitsName: "hour minute", UnitsTypeCV: "Time", UnitsAbbreviation: "hhmm"}
+ - &UnitsID0001 {UnitsLink: NULL, UnitsName: "milligrams per liter", UnitsAbbreviation: "mg/l", UnitsTypeCV: "Concentration or density mass per volume"}
+ - &UnitsID0002 {UnitsLink: NULL, UnitsName: "CFU per 100 milliliters", UnitsAbbreviation: "CFU/100ml", UnitsTypeCV: "Concentration count per volume"}
+ - &UnitsID0003 {UnitsLink: NULL, UnitsName: "percent", UnitsAbbreviation: "%", UnitsTypeCV: "Dimensionless"}
+ - &UnitsID0004 {UnitsLink: NULL, UnitsName: "second", UnitsAbbreviation: "s", UnitsTypeCV: "Time"}
+ - &UnitsID0005 {UnitsLink: NULL, UnitsName: "minute", UnitsAbbreviation: "min", UnitsTypeCV: "Time"}
+ - &UnitsID0006 {UnitsLink: NULL, UnitsName: "hour minute", UnitsAbbreviation: "hhmm", UnitsTypeCV: "Time"}
 Annotations:
  - &AnnotationID0001 {AnnotationDateTime: NULL, AnnotationTypeCV: "Measurement result value annotation", AnnotationLink: NULL, CitationObj: "NULL", AnnotationCode: "R", AnnotationText: "Laboratory replicate", AnnotationUTCOffset: NULL, PersonObj: "NULL"}
  - &AnnotationID0002 {AnnotationDateTime: NULL, AnnotationTypeCV: "Measurement result value annotation", AnnotationLink: NULL, CitationObj: "NULL", AnnotationCode: "HT", AnnotationText: "Holding time exceeded", AnnotationUTCOffset: NULL, PersonObj: "NULL"}
  - &AnnotationID0003 {AnnotationDateTime: NULL, AnnotationTypeCV: "Measurement result value annotation", AnnotationLink: NULL, CitationObj: "NULL", AnnotationCode: "CAL", AnnotationText: "Questionable instrument calibration", AnnotationUTCOffset: NULL, PersonObj: "NULL"}
 Methods:
- - &MethodID0001 {MethodCode: "GRB_TN_TP", MethodDescription: "Grab samples collected in the field with acid-washed bottles for TN and TP analysis.", OrganizationObj: *OrganizationID0001, MethodTypeCV: "Specimen collection", MethodName: "Grab TN TP", MethodLink: NULL}
- - &MethodID0002 {MethodCode: "GRB_Auto", MethodDescription: "Grab samples collected in the field in autoclaved bottles.", OrganizationObj: *OrganizationID0001, MethodTypeCV: "Specimen collection", MethodName: "Grab Autoclaved Bottles", MethodLink: NULL}
- - &MethodID0003 {MethodCode: "GRB_glassISO", MethodDescription: "Grab sample collected in glass vial for isotope analysis.", OrganizationObj: *OrganizationID0001, MethodTypeCV: "Specimen collection", MethodName: "Grab glass isotope", MethodLink: NULL}
- - &MethodID0004 {MethodCode: "Ast_TN", MethodDescription: "Determination of total Nitrogen by persulphate oxidation digestion and cadmium reduction method", OrganizationObj: *OrganizationID0003, MethodTypeCV: "Specimen analysis", MethodName: "Astoria Total Nitrogen", MethodLink: NULL}
- - &MethodID0005 {MethodCode: "Ast_TP", MethodDescription: "Determination of total phosphorus by persulphate oxidation digestion and ascorbic acid method", OrganizationObj: *OrganizationID0003, MethodTypeCV: "Specimen analysis", MethodName: "Astoria Total Phosphorus", MethodLink: NULL}
- - &MethodID0006 {MethodCode: "Pic_WaterISO", MethodDescription: "Hydrogen and oxygen water isotopes by isotope ratio infrared spectroscopy (IRIS)", OrganizationObj: *OrganizationID0004, MethodTypeCV: "Specimen analysis", MethodName: "Picarro Water Isotopes", MethodLink: NULL}
- - &MethodID0007 {MethodCode: "IDEXX_EC&TC", MethodDescription: "State of Utah DWQ protocol for E.Coli and Total Coliform quantification using the IDEXX Quanti-tray/2000 system", OrganizationObj: *OrganizationID0002, MethodTypeCV: "Specimen analysis", MethodName: "IDEXX Ecoli & Total Coliform", MethodLink: NULL}
+ - &MethodID0001 {MethodCode: "GRB_TN_TP", MethodName: "Grab TN TP", MethodDescription: "Grab samples collected in the field with acid-washed bottles for TN and TP analysis.", OrganizationObj: *OrganizationID0001, MethodTypeCV: "Specimen collection", MethodLink: NULL}
+ - &MethodID0002 {MethodCode: "GRB_Auto", MethodName: "Grab Autoclaved Bottles", MethodDescription: "Grab samples collected in the field in autoclaved bottles.", OrganizationObj: *OrganizationID0001, MethodTypeCV: "Specimen collection", MethodLink: NULL}
+ - &MethodID0003 {MethodCode: "GRB_glassISO", MethodName: "Grab glass isotope", MethodDescription: "Grab sample collected in glass vial for isotope analysis.", OrganizationObj: *OrganizationID0001, MethodTypeCV: "Specimen collection", MethodLink: NULL}
+ - &MethodID0004 {MethodCode: "Ast_TN", MethodName: "Astoria Total Nitrogen", MethodDescription: "Determination of total Nitrogen by persulphate oxidation digestion and cadmium reduction method", OrganizationObj: *OrganizationID0003, MethodTypeCV: "Specimen analysis", MethodLink: NULL}
+ - &MethodID0005 {MethodCode: "Ast_TP", MethodName: "Astoria Total Phosphorus", MethodDescription: "Determination of total phosphorus by persulphate oxidation digestion and ascorbic acid method", OrganizationObj: *OrganizationID0003, MethodTypeCV: "Specimen analysis", MethodLink: NULL}
+ - &MethodID0006 {MethodCode: "Pic_WaterISO", MethodName: "Picarro Water Isotopes", MethodDescription: "Hydrogen and oxygen water isotopes by isotope ratio infrared spectroscopy (IRIS)", OrganizationObj: *OrganizationID0004, MethodTypeCV: "Specimen analysis", MethodLink: NULL}
+ - &MethodID0007 {MethodCode: "IDEXX_EC&TC", MethodName: "IDEXX Ecoli & Total Coliform", MethodDescription: "State of Utah DWQ protocol for E.Coli and Total Coliform quantification using the IDEXX Quanti-tray/2000 system", OrganizationObj: *OrganizationID0002, MethodTypeCV: "Specimen analysis", MethodLink: NULL}
 Variables:
  - &VariableID0001 {SpeciationCV: "N", VariableNameCV: "Nitrogen, total", VariableTypeCV: "Water quality", NoDataValue: -9999.0000000000, VariableDefinition: NULL, VariableCode: "TN"}
  - &VariableID0002 {SpeciationCV: "P", VariableNameCV: "Phosphorus, total", VariableTypeCV: "Water quality", NoDataValue: -9999.0000000000, VariableDefinition: NULL, VariableCode: "TP"}
@@ -191,20 +191,20 @@ DataSetsResults:
  - &DataSetsResultID0013 {ResultObj: *ResultID0013, DataSetObj: *DataSetID0001}
  - &DataSetsResultID0014 {ResultObj: *ResultID0014, DataSetObj: *DataSetID0001}
 MeasurementResultValues:
- - &ValueID0001 {ResultObj: *ResultID0001, ValueDateTimeUTCOffset: -7, ValueDateTime: "2013-05-16 12:00", DataValue: 0.0289}
- - &ValueID0002 {ResultObj: *ResultID0002, ValueDateTimeUTCOffset: -7, ValueDateTime: "2013-05-16 12:00", DataValue: 0.073}
- - &ValueID0003 {ResultObj: *ResultID0003, ValueDateTimeUTCOffset: -7, ValueDateTime: "2013-05-16 12:00", DataValue: 5.2}
- - &ValueID0004 {ResultObj: *ResultID0004, ValueDateTimeUTCOffset: -7, ValueDateTime: "2013-05-16 12:00", DataValue: 35.5}
- - &ValueID0005 {ResultObj: *ResultID0005, ValueDateTimeUTCOffset: -7, ValueDateTime: "2013-06-24 11:55", DataValue: -124.64051}
- - &ValueID0006 {ResultObj: *ResultID0006, ValueDateTimeUTCOffset: -7, ValueDateTime: "2013-06-24 11:55", DataValue: -15.960522}
- - &ValueID0007 {ResultObj: *ResultID0007, ValueDateTimeUTCOffset: -7, ValueDateTime: "2013-06-24 11:55", DataValue: 0.1329}
- - &ValueID0008 {ResultObj: *ResultID0008, ValueDateTimeUTCOffset: -7, ValueDateTime: "2013-06-24 11:55", DataValue: 1.392}
- - &ValueID0009 {ResultObj: *ResultID0009, ValueDateTimeUTCOffset: -7, ValueDateTime: "2013-06-24 11:55", DataValue: 613.1}
- - &ValueID0010 {ResultObj: *ResultID0010, ValueDateTimeUTCOffset: -7, ValueDateTime: "2013-06-24 11:55", DataValue: 2419.6}
- - &ValueID0011 {ResultObj: *ResultID0011, ValueDateTimeUTCOffset: -7, ValueDateTime: "2013-07-29 14:30", DataValue: 0.0755}
- - &ValueID0012 {ResultObj: *ResultID0012, ValueDateTimeUTCOffset: -7, ValueDateTime: "2013-07-29 14:30", DataValue: 0.5761}
- - &ValueID0013 {ResultObj: *ResultID0013, ValueDateTimeUTCOffset: -7, ValueDateTime: "2013-07-29 14:30", DataValue: 25.9}
- - &ValueID0014 {ResultObj: *ResultID0014, ValueDateTimeUTCOffset: -7, ValueDateTime: "2013-07-29 14:30", DataValue: 2419.6}
+ - &ValueID0001 {ResultObj: *ResultID0001, ValueDateTime: "2013-05-16 12:00", ValueDateTimeUTCOffset: -7, DataValue: 0.0289}
+ - &ValueID0002 {ResultObj: *ResultID0002, ValueDateTime: "2013-05-16 12:00", ValueDateTimeUTCOffset: -7, DataValue: 0.073}
+ - &ValueID0003 {ResultObj: *ResultID0003, ValueDateTime: "2013-05-16 12:00", ValueDateTimeUTCOffset: -7, DataValue: 5.2}
+ - &ValueID0004 {ResultObj: *ResultID0004, ValueDateTime: "2013-05-16 12:00", ValueDateTimeUTCOffset: -7, DataValue: 35.5}
+ - &ValueID0005 {ResultObj: *ResultID0005, ValueDateTime: "2013-06-24 11:55", ValueDateTimeUTCOffset: -7, DataValue: -124.64051}
+ - &ValueID0006 {ResultObj: *ResultID0006, ValueDateTime: "2013-06-24 11:55", ValueDateTimeUTCOffset: -7, DataValue: -15.960522}
+ - &ValueID0007 {ResultObj: *ResultID0007, ValueDateTime: "2013-06-24 11:55", ValueDateTimeUTCOffset: -7, DataValue: 0.1329}
+ - &ValueID0008 {ResultObj: *ResultID0008, ValueDateTime: "2013-06-24 11:55", ValueDateTimeUTCOffset: -7, DataValue: 1.392}
+ - &ValueID0009 {ResultObj: *ResultID0009, ValueDateTime: "2013-06-24 11:55", ValueDateTimeUTCOffset: -7, DataValue: 613.1}
+ - &ValueID0010 {ResultObj: *ResultID0010, ValueDateTime: "2013-06-24 11:55", ValueDateTimeUTCOffset: -7, DataValue: 2419.6}
+ - &ValueID0011 {ResultObj: *ResultID0011, ValueDateTime: "2013-07-29 14:30", ValueDateTimeUTCOffset: -7, DataValue: 0.0755}
+ - &ValueID0012 {ResultObj: *ResultID0012, ValueDateTime: "2013-07-29 14:30", ValueDateTimeUTCOffset: -7, DataValue: 0.5761}
+ - &ValueID0013 {ResultObj: *ResultID0013, ValueDateTime: "2013-07-29 14:30", ValueDateTimeUTCOffset: -7, DataValue: 25.9}
+ - &ValueID0014 {ResultObj: *ResultID0014, ValueDateTime: "2013-07-29 14:30", ValueDateTimeUTCOffset: -7, DataValue: 2419.6}
 MeasurementResultValueAnnotations:
  - &MeasurementResultValueAnnotationID0001 {AnnotationObj: *AnnotationID0001, ValueObj: *ValueID0001}
  - &MeasurementResultValueAnnotationID0002 {AnnotationObj: *AnnotationID0002, ValueObj: *ValueID0001}

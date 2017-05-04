@@ -10,11 +10,12 @@ class yamlInput(iInputs):
         pass
 
     def parse(self, file_path, db_conn=None):
+
         yaml_load = YamlFunctions(self._session, self._engine)
 
         yaml_load.loadFromFile(file_path)
 
-        self.odm2session = self._session
+
         #dont close the session, you wont be able to access it :-)
         #_session.close()
 
