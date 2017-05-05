@@ -85,7 +85,6 @@ class YamlPrinter():
                             valuedict[key] = self._references[att]
                         else:
                             valuedict[key] = "NULL"
-                        #todo: featureaction, samplingfeatureobj not being found
                     except Exception as e:
                         # print ("cannot find {} in {}. Error:{} in YamlPrinter".format(key, obj.__class__, e))
                         pass

@@ -84,10 +84,10 @@ class dbOutput(iOutputs):
 
         if objname in data:
             vals = self.add_to_db(data[objname])
-            self.added_objs[objname] = vals
+            # self.added_objs[objname] = vals
 
     def add_to_db(self,  values):
-        added = []
+        # added = []
 
         for obj in values:
             try:
@@ -105,22 +105,28 @@ class dbOutput(iOutputs):
                         del valuedict[v]
 
                 model = type(obj)
-                added.append(self.get_or_create(self._session_out, model, **valuedict))
+                new_obj = self.get_or_create(self._session_out, model, **valuedict)
+
+                ## save the new Primary key to the dictionary
+
+                # find the primary key
+                for k in new_obj.__dict__.keys():
+                    if k.lower() == new_obj.__mapper__.primary_key[0].name:
+                        new_pk = new_obj.__dict__[k]
+                        # pk = k
+                        break
+                # new_pk = getattr(new_obj, pk)
+
+                # save pk to dictionary
+                self.added_objs[obj] = new_pk
+
 
             except Exception as e:
                 # print e
                 self._session_out.rollback()
                 # raise e
-        return added
+        # return added
 
-    # def check_model(self, attr):
-    #     model = type(attr)
-    #     # if isinstance(attr, Sites) or isinstance(attr, Specimens):
-    #     #     model = SamplingFeatures
-    #     # elif isinstance(attr, MeasurementResults) or isinstance(attr, TimeSeriesResults):
-    #     #     return Results
-    #
-    #     return model
 
     def fill_dict(self, obj):
         for val in ["SpecimenTypeCV", "SiteTypeCV", "CensorCodeCV"]:
@@ -131,46 +137,66 @@ class dbOutput(iOutputs):
 
 
     def get_new_objects(self, obj, valuedict):
+
         for key in dir(obj):
             if "obj" in key.lower():  # key.contains("Obj"):
                 try:
-                    _changeSchema(None)
                     att = getattr(obj, key)
+
+                    objkey = key.replace("Obj", "ID")
                     if att is not None:
-                        self.fill_dict(obj)
-                        attdict = att.__dict__.copy()
-                        for k in attdict.keys():
-                            if k.lower() == att.__mapper__.primary_key[0].name:
-
-                                del attdict[k]
-                            elif "obj" in k.lower():
-                                del attdict[k]
-                        attdict.pop("_sa_instance_state")
-                        attdict = self.get_new_objects(att, attdict)
-
-                        # model = self.check_model(attr =att)
-                        model= type(att)
-                        # new_obj = self._session_out.query(model).filter_by(**attdict).first()
-                        new_obj = self.get_or_create(self._session_out, model, **attdict)
-
-                        objkey = key.replace("Obj", "ID")
-                        if objkey == "RelatedFeatureID":
-                            newkey = "SamplingFeatureID"
-                        elif objkey == "RelatedActionID":
-                            newkey = "ActionID"
-                        elif "units" in objkey.lower():
-                            newkey = "UnitsID"
-                        elif "resultvalue" in objkey.lower():
-                            newkey = "ValueID"
-                        else:
-                            newkey = objkey
-                        valuedict[objkey] = getattr(new_obj, newkey)
+                        valuedict[objkey] = self.added_objs[att]
+                    else:
+                        valuedict[objkey] = None
 
                 except Exception as e:
-                    # print ("cannot find {} in {}. Error:{} in dbOutput".format(key, obj.__class__.__name__, e))
+                    print ("cannot find {} in {}. Error:{} in YamlPrinter".format(key, obj.__class__, e))
+
+                except Exception as e:
+                    print e
                     self._session_out.rollback()
         return valuedict
 
+    # def get_new_objects(self, obj, valuedict):
+    #     for key in dir(obj):
+    #         if "obj" in key.lower():  # key.contains("Obj"):
+    #             try:
+    #                 _changeSchema(None)
+    #                 att = getattr(obj, key)
+    #                 if att is not None:
+    #                     self.fill_dict(obj)
+    #                     attdict = att.__dict__.copy()
+    #                     for k in attdict.keys():
+    #                         if k.lower() == att.__mapper__.primary_key[0].name:
+    #
+    #                             del attdict[k]
+    #                         elif "obj" in k.lower():
+    #                             del attdict[k]
+    #                     attdict.pop("_sa_instance_state")
+    #                     attdict = self.get_new_objects(att, attdict)
+    #
+    #                     # model = self.check_model(attr =att)
+    #                     model= type(att)
+    #                     # new_obj = self._session_out.query(model).filter_by(**attdict).first()
+    #                     new_obj = self.get_or_create(self._session_out, model, **attdict)
+    #
+    #                     objkey = key.replace("Obj", "ID")
+    #                     if objkey == "RelatedFeatureID":
+    #                         newkey = "SamplingFeatureID"
+    #                     elif objkey == "RelatedActionID":
+    #                         newkey = "ActionID"
+    #                     elif "units" in objkey.lower():
+    #                         newkey = "UnitsID"
+    #                     elif "resultvalue" in objkey.lower():
+    #                         newkey = "ValueID"
+    #                     else:
+    #                         newkey = objkey
+    #                     valuedict[objkey] = getattr(new_obj, newkey)
+    #
+    #             except Exception as e:
+    #                 # print ("cannot find {} in {}. Error:{} in dbOutput".format(key, obj.__class__.__name__, e))
+    #                 self._session_out.rollback()
+    #     return valuedict
 
     def get_inherited(self, sess, model, **kwargs):
         uuid = {}
@@ -196,7 +222,6 @@ class dbOutput(iOutputs):
             return instance
         else:
             instance = model(**kwargs)
-            # print instance
             new_instance = sess.merge(instance)
             sess.flush()
             return new_instance
