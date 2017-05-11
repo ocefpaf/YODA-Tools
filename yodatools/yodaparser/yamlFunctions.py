@@ -70,24 +70,23 @@ class YamlFunctions(object):
                   "else it'll crash the program as sqlalchemy doesn't know what to do with it"
             s.pop('YODA')
 
+        yl = YamlLoader(models)
+
+
         timeSeries = None
         if "TimeSeriesResultValues" in s:
             print "Found TimeSeriesResults"
             timeSeries = s.pop('TimeSeriesResultValues')
+            yl.loadTimeSeriesResults(self._session, self._engine, timeSeries)
 
 
-
-        # debugging information
-        # self.printValues(s)
-
-        yl = YamlLoader(models)
         yl.from_list(self._session, [s])
 
 
         # load the Time Series Result information
         # self._session.flush()
-        #yl.loadTimeSeriesResults(self._session, self._engine, timeSeries)
-        #self._session.flush()
+        yl.loadTimeSeriesResults(self._session, self._engine, timeSeries)
+        self._session.flush()
 
     def loadFromFiles(self, files):
         """
