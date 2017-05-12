@@ -15,9 +15,10 @@ import time
 
 
 
-def run_converter(input_file, yoda_file=None, db_conn = None):
+def run_converter(input_file, yoda_file=None, db_conn = None, excel_file=None):
     yoda_output_file_path = yoda_file
     db_output_connection = db_conn
+    excel_output_file_path = excel_file
 
     # Check if it is a yaml, or excel file
     file_type = verify_file_type(input_file)
@@ -39,7 +40,7 @@ def run_converter(input_file, yoda_file=None, db_conn = None):
 
 
 
-        # Go through each checkbox
+        # Go through each type
         if yoda_output_file_path is not None:
             yaml = yamlOutput()
             yaml.save(session=session, file_path=yoda_output_file_path)
@@ -47,6 +48,9 @@ def run_converter(input_file, yoda_file=None, db_conn = None):
         if db_output_connection is not None:
             db = dbOutput()
             db.save(session=session, file_path=db_output_connection)
+
+        if excel_output_file_path is not None:
+            print "excel output is not yet supported."
 
         # if 'odm2' in selections:
         #     print 'export to odm2'
