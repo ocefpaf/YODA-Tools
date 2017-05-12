@@ -4,7 +4,7 @@
 __author__ = 'Stephanie'
 
 
-from yodatools.converter.Inputs.ExcelInput import ExcelInput
+from yodatools.converter.Inputs.excelInput import ExcelInput
 from yodatools.converter.Inputs.yamlInput import yamlInput
 from yodatools.converter.Outputs.yamlOutput import yamlOutput
 from yodatools.converter.Outputs.dbOutput import dbOutput
@@ -47,7 +47,7 @@ def run_converter(input_file, yoda_file=None, db_conn = None, excel_file=None):
 
         if db_output_connection is not None:
             db = dbOutput()
-            db.save(session=session, file_path=db_output_connection)
+            db.save(session=session, connection_string=db_output_connection)
 
         if excel_output_file_path is not None:
             print "excel output is not yet supported."
@@ -60,8 +60,10 @@ def run_converter(input_file, yoda_file=None, db_conn = None, excel_file=None):
         #     """
 
         session.close_all()
+        print "Conversion of the datafile has completed"
+        return True
     except Exception as e:
-        print "error parsing values, " + e
+        print "error parsing values, " + e.message
         raise e
 
 

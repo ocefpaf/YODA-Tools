@@ -3,7 +3,7 @@ import unittest
 
 import openpyxl
 
-from yodatools.converter.Inputs.ExcelInput import ExcelInput
+from yodatools.converter.Inputs.excelInput import ExcelInput
 
 
 class ExcelTest(unittest.TestCase):

@@ -1,6 +1,6 @@
 
 from yodatools.converter.Abstract import iOutputs
-from yodatools.yodaparser.YamlPrinter import YamlPrinter
+from yodatools.yodaparser.yamlPrinter import YamlPrinter
 
 
 

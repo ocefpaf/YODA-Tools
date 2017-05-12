@@ -1,5 +1,5 @@
 from yodatools.dataloader.view.WizardSummaryPageView import WizardSummaryPageView
-from yodatools.converter.Inputs.ExcelInput import ExcelInput
+from yodatools.converter.Inputs.excelInput import ExcelInput
 from yodatools.converter.Inputs.yamlInput import yamlInput
 from yodatools.converter.Outputs.yamlOutput import yamlOutput
 from yodatools.converter.Outputs.dbOutput import dbOutput

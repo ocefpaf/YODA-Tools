@@ -150,7 +150,8 @@ class dbOutput(iOutputs):
                         valuedict[objkey] = None
 
                 except Exception as e:
-                    print ("cannot find {} in {}. Error:{} in YamlPrinter".format(key, obj.__class__, e))
+                    # print ("cannot find {} in {}. Error:{} in YamlPrinter".format(key, obj.__class__, e))
+                    pass
 
                 except Exception as e:
                     print e
