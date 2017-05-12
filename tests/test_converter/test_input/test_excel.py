@@ -4,7 +4,7 @@ import unittest
 import openpyxl
 
 from yodatools.converter.Inputs.excelInput import ExcelInput
-
+from odm2api.ODM2.models import People, SamplingFeatures
 
 class ExcelTest(unittest.TestCase):
 
@@ -12,20 +12,35 @@ class ExcelTest(unittest.TestCase):
         self.before_each_do()
 
     def before_each_do(self):
-        curr_folder = os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-        file_path = os.path.join(curr_folder, 'test_files', 'YODA_TimeSeriesSpecimen_RB_2014-15_pub.xlsx')
+        self.curr_folder = os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
-        if not does_file_exit(file_path):
-            print file_path + " does not exist"
-            assert False
-
-        self.excel = ExcelInput(file_path)
-
-    def test_excel_parsing(self):
-        self.assertTrue(self.excel.parse())
+        self.excel = ExcelInput()
 
 
-def does_file_exit(file_path):
-    if os.path.isfile(file_path):
-        return True
-    return False
+    def test_parse_specimen(self):
+        # D:\DEV\YODA - Tools\tests\test_files\test_ts_specimen_output.yaml
+        file_path = os.path.join(self.curr_folder, 'test_files', 'YODA_TimeSeriesSpecimen_RB_2014-15_pub.xlsx')
+        # file_path = os.path.join(curr_folder, 'test_files', 'test_ts_specimen_output.yaml')
+
+        self.excel.parse(file_path)
+        session = self.excel.sendODM2Session()
+
+        assert session != None
+        assert len(session.query(People).all()) > 0
+        assert len(session.query(SamplingFeatures).all()) > 0
+        session.close()
+
+
+    # def test_parse_ts(self):
+    #     file_path = os.path.join(self.curr_folder, 'test_files', 'YODA_v0.3.3_TS_climate(wHeaders).xlsm')
+    #     # file_path = os.path.join(curr_folder, 'test_files', 'test_ts_output.yaml')
+    #     self.excel.parse(file_path)
+    #
+    #     session = self.excel.sendODM2Session()
+    #
+    #     assert session != None
+    #
+    #     assert len(session.query(People).all()) > 0
+    #     assert len(session.query(SamplingFeatures).all()) > 0
+    #     session.close()
+

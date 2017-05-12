@@ -12,7 +12,8 @@ curr_folder = os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(__
 class TestDb:
     def setup(self):
 
-        self.connection_string = 'mysql+pymysql://ODM:odm@localhost/odm2'
+        # self.connection_string = 'mysql+pymysql://ODM:odm@localhost/odm2'
+        self.connection_string = 'sqlite://'
         self.do = dbOutput(self.connection_string)
 
 

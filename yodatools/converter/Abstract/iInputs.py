@@ -2,7 +2,7 @@ from odm2api.ODMconnection import dbconnection
 from odm2api.ODM2.models import Base, setSchema
 
 class iInputs(object):
-    def __init__(self, file_path):
+    def __init__(self):
         self.create_memory_db()
 
     def parse(self, file_path):

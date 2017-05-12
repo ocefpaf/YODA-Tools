@@ -4,16 +4,16 @@ from yodatools.converter.Abstract import iInputs
 
 class yamlInput(iInputs):
 
-    def __init__(self, file_path, db_conn=None):
-        super(yamlInput, self).__init__(file_path)
+    def __init__(self):
+        super(yamlInput, self).__init__()
         self.odm2session = None
 
 
-    def parse(self, file_path, db_conn=None):
+    def parse(self, file_path):
 
-        type = self.get_type(file_path)
+
         yaml_load = YamlFunctions(self._session, self._engine)
-
+        type = self.get_type(yaml_load, file_path )
         yaml_load.loadFromFile(file_path)
 
 
@@ -23,9 +23,9 @@ class yamlInput(iInputs):
     def verify(self):
         pass
 
-    def get_type(self, filename):
-        s= YamlFunctions.extractYaml(self, filename)
-        type = s["YODA"]["Profile"]
+    def get_type(self, yaml_load, file_path):
+        s= yaml_load.extractYaml(file_path)
+        type = s["YODA"][0]["Profile"]
         if "specimen" in type.lower():
             pass
         else:
