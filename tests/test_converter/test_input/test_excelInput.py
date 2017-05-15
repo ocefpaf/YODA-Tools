@@ -31,16 +31,15 @@ class ExcelTest(unittest.TestCase):
         session.close()
 
 
-    # def test_parse_ts(self):
-    #     file_path = os.path.join(self.curr_folder, 'test_files', 'YODA_v0.3.3_TS_climate(wHeaders).xlsm')
-    #     # file_path = os.path.join(curr_folder, 'test_files', 'test_ts_output.yaml')
-    #     self.excel.parse(file_path)
-    #
-    #     session = self.excel.sendODM2Session()
-    #
-    #     assert session != None
-    #
-    #     assert len(session.query(People).all()) > 0
-    #     assert len(session.query(SamplingFeatures).all()) > 0
-    #     session.close()
+    def test_parse_ts(self):
+        file_path = os.path.join(self.curr_folder, 'test_files', 'YODA_v0.3.3_TS_climate(wHeaders).xlsm')
+        self.excel.parse(file_path)
+
+        session = self.excel.sendODM2Session()
+
+        assert session != None
+
+        assert len(session.query(People).all()) > 0
+        assert len(session.query(SamplingFeatures).all()) > 0
+        session.close()
 

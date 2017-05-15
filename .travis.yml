@@ -85,6 +85,4 @@ script:
 # just the connection part
   - py.test
 
-#  - py.test yodatool/tests
-#  - py.test dataloader/tests
 

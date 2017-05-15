@@ -1,6 +1,7 @@
 name: dataloader
 channels:
   - ioos
+  - odm2
 dependencies:
   - python=2.7
   - numpy
@@ -13,5 +14,6 @@ dependencies:
   - wxpython
   - pyyaml
   - openpyxl
+  - odm2api
   - pip:
     - pyodbc
