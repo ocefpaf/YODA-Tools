@@ -7,10 +7,8 @@ import sqlite3
 
 class dbOutput(iOutputs):
 
-    def __init__(self, file_path=None, connection_string = None):
-        if connection_string:
-            self.connect_to_db(connection_string)
-        self.added_objs= {}
+    def __init__(self):
+        self.added_objs = {}
 
     def connect_to_db(self, connection_string):
         self.session_factory_out = dbconnection.createConnectionFromString(connection_string)

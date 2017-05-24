@@ -13,7 +13,7 @@ class yamlInput(iInputs):
 
 
         yaml_load = YamlFunctions(self._session, self._engine)
-        type = self.get_type(yaml_load, file_path )
+        type = self.get_type(yaml_load, file_path)
         yaml_load.loadFromFile(file_path)
 
 
@@ -26,10 +26,11 @@ class yamlInput(iInputs):
     def get_type(self, yaml_load, file_path):
         s= yaml_load.extractYaml(file_path)
         type = s["YODA"][0]["Profile"]
-        if "specimen" in type.lower():
-            pass
+        if "timeseriesspecimen" in type.lower():
+            return "timeseriesspecimen"
         else:
-            raise Exception("TimeSeries Not yet implemented")
+            return "timeseries"
+            # raise Exception("TimeSeries Not yet implemented")
 
 
     def sendODM2Session(self):

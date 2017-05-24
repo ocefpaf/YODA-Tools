@@ -15,10 +15,8 @@ class iInputs(object):
         raise NotImplementedError()
 
     def create_memory_db(self):
-
         # create connection to temp sqlite db
         self.session_factory = dbconnection.createConnection('sqlite', ':memory:', 2.0)
-        # self.session_factory = dbconnection.createConnection('sqlite', 'ODM2_ts_specimen.sqlite', 2.0)
         self._session = self.session_factory.getSession()
         self._engine = self.session_factory.engine
         setSchema(self._engine)

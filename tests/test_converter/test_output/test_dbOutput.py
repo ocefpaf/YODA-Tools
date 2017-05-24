@@ -14,7 +14,7 @@ class TestDb:
 
         # self.connection_string = 'mysql+pymysql://ODM:odm@localhost/odm2'
         self.connection_string = 'sqlite://'
-        self.do = dbOutput(self.connection_string)
+        self.do = dbOutput()
 
 
 

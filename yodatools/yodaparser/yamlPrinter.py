@@ -129,6 +129,7 @@ class YamlPrinter():
     def generate_ts_objects(self, data):
         return data.to_csv()
 
+
     def print_yoda(self, out_file, data):
 
         if "measurementresultvalues" in data:

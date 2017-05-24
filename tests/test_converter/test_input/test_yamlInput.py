@@ -9,11 +9,11 @@ class TestYaml:
         self.yi = yamlInput()
 
 
-    def test_parse_specimen(self):
-
-        file_path = os.path.join(curr_folder, 'test_files', 'test_specimen_ts.yaml')
-
+    def test_parse_ts(self):
+        file_path = os.path.join(curr_folder, 'test_files', 'test_ts.yaml')
+        # file_path = os.path.join(curr_folder, 'test_files', 'test_ts_output.yaml')
         self.yi.parse(file_path)
+
         session = self.yi.sendODM2Session()
 
         assert session != None
@@ -22,11 +22,11 @@ class TestYaml:
         assert len(session.query(SamplingFeatures).all()) > 0
         session.close()
 
-    def test_parse_ts(self):
-        file_path = os.path.join(curr_folder, 'test_files', 'test_ts.yaml')
-        # file_path = os.path.join(curr_folder, 'test_files', 'test_ts_output.yaml')
-        self.yi.parse(file_path)
+    def test_parse_specimen(self):
 
+        file_path = os.path.join(curr_folder, 'test_files', 'test_specimen_ts.yaml')
+
+        self.yi.parse(file_path)
         session = self.yi.sendODM2Session()
 
         assert session != None

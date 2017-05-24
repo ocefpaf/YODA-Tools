@@ -3,6 +3,7 @@ from odm2api.ODM2.models import Base
 
 class iOutputs():
 
+
     def parseObjects(self, session):
         data = {}
         for t in self.get_table_names():

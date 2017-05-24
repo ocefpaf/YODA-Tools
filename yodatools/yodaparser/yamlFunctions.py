@@ -16,7 +16,6 @@ import pprint
 
 pp = pprint.PrettyPrinter(indent=8)
 
-
 class YamlFunctions(object):
     _mapping_tag = yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG
 
@@ -84,7 +83,10 @@ class YamlFunctions(object):
         # load the Time Series Result information
         # self._session.flush()
         if timeSeries:
-            yl.loadTimeSeriesResults(self._session, self._engine, timeSeries)
+            from odm2api.ODM2.services.createService import CreateODM2
+            cr = CreateODM2(self._session)
+            ts_values = yl.loadTimeSeriesResults(self._session, self._engine, timeSeries)
+            cr.createTimeSeriesResultValues(ts_values)
 
         self._session.flush()
 

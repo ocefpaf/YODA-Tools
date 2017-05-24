@@ -12,6 +12,13 @@ except ImportError:
     from sqlalchemy.exceptions import IntegrityError
 from functools import partial
 
+
+from yodatools.timeseries import convertTimeSeries
+import pandas as pd
+# removes the warning message for pandas chained_assignment
+pd.options.mode.chained_assignment = None
+
+
 log = logging.Logger('bootalchemy', level=logging.INFO)
 ch = logging.StreamHandler()
 ch.setLevel(logging.DEBUG)
@@ -392,7 +399,6 @@ class Loader(object):
 
             for i in columnValues:
                 values = []
-                # print "I: ", i
                 for k, v in i.iteritems():
                     newValue = self.resolve_value(v)
                     if "Result" in k:#k == "ResultID":
@@ -401,9 +407,7 @@ class Loader(object):
                         newValue = newValue.UnitsID
 
                     values.append(newValue)
-                    # print "K: ", k, " Value: ", newValue
                 dictOfValues[i['Label']] = values
-                print
 
         return dictOfValues
 
@@ -430,85 +434,136 @@ class Loader(object):
 
         return data
 
+
+    def parse_meta(self, meta):
+
+        col_dict= {}
+        for col in meta:
+            if "ValueDateTime" not in col["Label"]:
+                # print col["Label"]
+                value_list = {}
+
+                # dfUnstacked["Label" == col["ODM2Field"]]= col
+
+                for key, value in col.iteritems():
+                    if key not in ["ColumnNumber", "ODM2Field"]:
+                        if value and isinstance(value, basestring) and value.startswith('*'):
+                            if value[1:] in self._references:
+                                #TODO need to set this to the ID
+                                value_list[key] = self._references[value[1:]]
+                            else:
+                                raise Exception(
+                                    'The pointer %(val)s could not be found. Make sure that %(val)s is declared before it is used.' % {
+                                        'val': value})
+
+                            # col_dict[key] = self._references[value[1:]]
+                        else:
+                            value_list[key] = value
+
+
+                col_dict[col["Label"]] = value_list
+
+                # col_dict[col["ODM2Field"]]= col
+        return col_dict
+
+
     def loadTimeSeriesResults(self, session, engine, timeSeries):
         """
         Loads TimeSeriesResultsValues into pandas DataFrame
         """
-        self.session = session
-        self.engine = engine
         try:
-            data_values = timeSeries.pop('Data')
-        except:
+            column_labels = timeSeries["Data"][0][0]
+            # data_values = timeSeries["Data"][0][1:]
+            meta = timeSeries['ColumnDefinitions']
+            date_column = meta[0]["Label"]
+            utc_column = meta[1]["Label"]
+            cross_tab = pd.DataFrame(timeSeries["Data"][0][1:], columns=column_labels)  #, index=date_column)
+
+        except Exception as ex:
             return
-        data = self.obtain_time_series(timeSeries)
 
-        import pandas as pd
-        # removes the warning message for pandas chained_assignment
-        pd.options.mode.chained_assignment = None
+        cross_tab.set_index([date_column, utc_column], inplace=True)
 
-        column_labels = data_values[0][0]
-        data_values = data_values[0][1:]
-        df = pd.DataFrame(data_values, columns=column_labels)
-        df.set_index(['ValueDateTime', 'ValueDateTimeUTCOffset'], inplace=True)
-        dfUnstacked = df.unstack(level=['ValueDateTime', 'ValueDateTimeUTCOffset'])
+        serial = cross_tab.unstack(level=[date_column, utc_column])
+        meta_dict = self.parse_meta(meta=meta)
 
-        df2 = pd.DataFrame(data, columns=['Label',  'ODM2Field', 'ResultID', 'CensorCodeCV', 'QualityCodeCV', 'TimeAggregationInterval',
-                                          'TimeAggregationIntervalUnitsID'])
-        dfUnstacked = dfUnstacked.reset_index()
-        df3 = pd.merge(df2, dfUnstacked, left_on="Label", right_on="level_0")
+        serial= serial.append(pd.DataFrame(columns=['ResultID', 'CensorCodeCV', 'QualityCodeCV', 'TimeAggregationInterval',
+                                          'TimeAggregationIntervalUnitsID'])).fillna(0).reset_index().rename(columns={0: 'DataValue'})
 
-        # Remove unnecessary column
-        colval= df3['ODM2Field'][0]
-        del df3['ODM2Field']
-        del df3['level_0']
+        # print serial.columns
 
+        for k, v in meta_dict.iteritems():
+            serial.ix[serial.level_0 == k, 'ResultID'] = v["Result"].ResultID
+            serial.ix[serial.level_0 == k, 'CensorCodeCV'] = v["CensorCodeCV"]
+            serial.ix[serial.level_0 == k, 'QualityCodeCV'] = v["QualityCodeCV"]
+            serial.ix[serial.level_0 == k, 'TimeAggregationInterval'] = v["TimeAggregationInterval"]
+            serial.ix[serial.level_0 == k, 'TimeAggregationIntervalUnitsID'] = v["TimeAggregationIntervalUnitsObj"].UnitsID
+
+        return serial
+        # print serial
+
+        # print dfUnstacked["AirTemp_Avg"]
+        # data = self.obtain_time_series(timeSeries)
+        # df2 = pd.DataFrame(data, columns=['Label',  'ODM2Field', 'ResultID', 'CensorCodeCV', 'QualityCodeCV', 'TimeAggregationInterval',
+        #                                   'TimeAggregationIntervalUnitsID'])
+        #
+        # dfUnstacked = dfUnstacked.reset_index()
+        # df3 = pd.merge(df2, dfUnstacked, left_on="Label", right_on="level_0")
+        #
         # print df3
-
-        # Construct the sql queries
-        AVGDataFrame = df3[df3['Label'] == 'AirTemp_Avg']
-        MaxDataFrame = df3[df3['Label'] == 'AirTemp_Max']
-        MinDataFrame = df3[df3['Label'] == 'AirTemp_Min']
-
-        # Remove unnecessary column
-        del AVGDataFrame['Label']
-        del MaxDataFrame['Label']
-        del MinDataFrame['Label']
-        del df3
-        del dfUnstacked
-        del df2
-        del df
-
-        # set column names for the last element
-        AVGDataFrame.columns.values[-1] = colval
-        MinDataFrame.columns.values[-1] = colval
-        MaxDataFrame.columns.values[-1] = colval
-
-        # add missing values
-        # AVGDataFrame['QualityCodeCV'] = 'Unknown'
-        # MinDataFrame['QualityCodeCV'] = 'Unknown'
-        # MaxDataFrame['QualityCodeCV'] = 'Unknown'
-
-        klass = self.get_klass("TimeSeriesResultValues")
-
-        AVGValues = AVGDataFrame.to_dict('records')
-        MinValues = MinDataFrame.to_dict('records')
-        MaxValues = MaxDataFrame.to_dict('records')
-
-        merged_dicts = self.merge_dicts(AVGValues, MinValues, MaxValues)
-        AVGValues = None
-        MinValues = None
-        MaxValues = None
-
-        self.session.flush()
-        for value in merged_dicts:
-            resolved_values = self._check_types(klass, value)
-            obj = self.create_obj(klass, resolved_values)
-            try:
-                self.session.add(obj)
-                self.session.flush()
-            except  Exception as e :
-                print "error adding obj: %s. %s" % (obj, e)
-                self.session.rollback()
+        #
+        # # Remove unnecessary column
+        # colval= df3['ODM2Field'][0]
+        # del df3['ODM2Field']
+        # del df3['level_0']
+        #
+        # # print df3
+        #
+        # # Construct the sql queries
+        # AVGDataFrame = df3[df3['Label'] == 'AirTemp_Avg']
+        # MaxDataFrame = df3[df3['Label'] == 'AirTemp_Max']
+        # MinDataFrame = df3[df3['Label'] == 'AirTemp_Min']
+        #
+        # # Remove unnecessary column
+        # del AVGDataFrame['Label']
+        # del MaxDataFrame['Label']
+        # del MinDataFrame['Label']
+        # del df3
+        # del dfUnstacked
+        # del df2
+        # del df
+        #
+        # # set column names for the last element
+        # AVGDataFrame.columns.values[-1] = colval
+        # MinDataFrame.columns.values[-1] = colval
+        # MaxDataFrame.columns.values[-1] = colval
+        #
+        # # add missing values
+        # # AVGDataFrame['QualityCodeCV'] = 'Unknown'
+        # # MinDataFrame['QualityCodeCV'] = 'Unknown'
+        # # MaxDataFrame['QualityCodeCV'] = 'Unknown'
+        #
+        # klass = self.get_klass("TimeSeriesResultValues")
+        #
+        # AVGValues = AVGDataFrame.to_dict('records')
+        # MinValues = MinDataFrame.to_dict('records')
+        # MaxValues = MaxDataFrame.to_dict('records')
+        #
+        # merged_dicts = self.merge_dicts(AVGValues, MinValues, MaxValues)
+        # AVGValues = None
+        # MinValues = None
+        # MaxValues = None
+        #
+        # self.session.flush()
+        # for value in merged_dicts:
+        #     resolved_values = self._check_types(klass, value)
+        #     obj = self.create_obj(klass, resolved_values)
+        #     try:
+        #         self.session.add(obj)
+        #         self.session.flush()
+        #     except  Exception as e :
+        #         print "error adding obj: %s. %s" % (obj, e)
+        #         self.session.rollback()
 
     def add_klasses(self, klass, items):
         """
@@ -593,14 +648,9 @@ class Loader(object):
         skip_keys = ['flush', 'commit', 'clear']
         try:
             for group in data:
-                # print "Group: ", group
                 for name, items in group.iteritems():
                     if name not in skip_keys:
-                        # print "Name: ", name
-                        # print "Items: ", items
-
                         klass = self.get_klass(name)
-                        # print klass, '\n'
                         self.add_klasses(klass, items)
 
                 # session.flush()
