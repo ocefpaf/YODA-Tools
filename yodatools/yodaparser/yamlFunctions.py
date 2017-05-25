@@ -77,16 +77,25 @@ class YamlFunctions(object):
             print "Found TimeSeriesResults"
             timeSeries = s.pop('TimeSeriesResultValues')
 
-
         yl.from_list(self._session, [s])
 
         # load the Time Series Result information
         # self._session.flush()
         if timeSeries:
-            from odm2api.ODM2.services.createService import CreateODM2
-            cr = CreateODM2(self._session)
+            from odm2api.ODM2.models import TimeSeriesResultValues
+            # from odm2api.ODM2.services.createService import CreateODM2
+            # cr = CreateODM2(self._session)
             ts_values = yl.loadTimeSeriesResults(self._session, self._engine, timeSeries)
-            cr.createTimeSeriesResultValues(ts_values)
+            # cr.createTimeSeriesResultValues(ts_values)
+            tablename = TimeSeriesResultValues.__tablename__
+            # print ("I am TS saving name the table name", tablename)
+            ts_values.to_sql(name=tablename,
+                             schema=TimeSeriesResultValues.__table_args__['schema'],
+                             if_exists='append',
+                             chunksize=1000,
+                             con=self._engine,
+                             index=False)
+            self._session.commit()
 
         self._session.flush()
 

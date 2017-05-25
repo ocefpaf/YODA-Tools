@@ -487,8 +487,14 @@ class Loader(object):
         serial = cross_tab.unstack(level=[date_column, utc_column])
         meta_dict = self.parse_meta(meta=meta)
 
-        serial= serial.append(pd.DataFrame(columns=['ResultID', 'CensorCodeCV', 'QualityCodeCV', 'TimeAggregationInterval',
-                                          'TimeAggregationIntervalUnitsID'])).fillna(0).reset_index().rename(columns={0: 'DataValue'})
+        serial = serial.append(pd.DataFrame(columns=['ResultID', 'CensorCodeCV', 'QualityCodeCV', 'TimeAggregationInterval',
+                                            'TimeAggregationIntervalUnitsID']))\
+                                            .fillna(0)\
+                                            .reset_index()\
+                                            .rename(columns={0: 'DataValue'})\
+                                            .dropna()
+
+        print len(serial)
 
         # print serial.columns
 
@@ -499,6 +505,7 @@ class Loader(object):
             serial.ix[serial.level_0 == k, 'TimeAggregationInterval'] = v["TimeAggregationInterval"]
             serial.ix[serial.level_0 == k, 'TimeAggregationIntervalUnitsID'] = v["TimeAggregationIntervalUnitsObj"].UnitsID
 
+        del serial['level_0']
         return serial
         # print serial
 
