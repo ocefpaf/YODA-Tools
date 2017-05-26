@@ -115,7 +115,7 @@ class ExcelSpecimen():
         for table in tables:
             cells = sheet[self.get_range_address(table)]
             for row in cells:
-
+                
                 action = Actions()
                 feat_act = FeatureActions()
                 act_by = ActionBy()
