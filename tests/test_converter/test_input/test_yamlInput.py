@@ -17,9 +17,10 @@ class TestYaml:
         session = self.yi.sendODM2Session()
 
         assert session != None
-        from odm2api.ODM2.models import People, SamplingFeatures
+        from odm2api.ODM2.models import People, SamplingFeatures, TimeSeriesResultValues
         assert len(session.query(People).all()) > 0
         assert len(session.query(SamplingFeatures).all()) > 0
+        assert session.query(TimeSeriesResultValues).first() is not None
         session.close()
 
     def test_parse_specimen(self):
@@ -30,9 +31,10 @@ class TestYaml:
         session = self.yi.sendODM2Session()
 
         assert session != None
-        from odm2api.ODM2.models import People, SamplingFeatures
+        from odm2api.ODM2.models import People, SamplingFeatures, MeasurementResultValues
         assert len(session.query(People).all()) > 0
         assert len(session.query(SamplingFeatures).all()) > 0
+        assert session.query(MeasurementResultValues).first() is not None
         session.close()
 
 

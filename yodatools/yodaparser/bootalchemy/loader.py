@@ -494,8 +494,6 @@ class Loader(object):
                                             .rename(columns={0: 'DataValue'})\
                                             .dropna()
 
-        print len(serial)
-
         # print serial.columns
 
         for k, v in meta_dict.iteritems():
@@ -506,6 +504,18 @@ class Loader(object):
             serial.ix[serial.level_0 == k, 'TimeAggregationIntervalUnitsID'] = v["TimeAggregationIntervalUnitsObj"].UnitsID
 
         del serial['level_0']
+
+        # TODO does this fail for sqlite in memory
+        # self._session.close()
+        from odm2api.ODM2.models import TimeSeriesResultValues
+        tablename = TimeSeriesResultValues.__tablename__
+        serial.to_sql(name=tablename,
+                         schema=TimeSeriesResultValues.__table_args__['schema'],
+                         if_exists='append',
+                         chunksize=1000,
+                         con=self._engine,
+                         index=False)
+        self._session.commit()
         return serial
         # print serial
 

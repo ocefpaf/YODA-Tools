@@ -538,3 +538,83 @@ class ExcelTimeseries():
 
         return True
 
+
+    def parse_meta(self, meta):
+        col_dict = {}
+        for col in meta:
+            if "ValueDateTime" not in col["Label"]:
+                # print col["Label"]
+                value_list = {}
+
+                # dfUnstacked["Label" == col["ODM2Field"]]= col
+
+                for key, value in col.iteritems():
+                    if key not in ["ColumnNumber", "ODM2Field"]:
+                        if value and isinstance(value, basestring) and value.startswith('*'):
+                            if value[1:] in self._references:
+                                # TODO need to set this to the ID
+                                value_list[key] = self._references[value[1:]]
+                            else:
+                                raise Exception(
+                                    'The pointer %(val)s could not be found. Make sure that %(val)s is declared before it is used.' % {
+                                        'val': value})
+
+                                # col_dict[key] = self._references[value[1:]]
+                        else:
+                            value_list[key] = value
+
+                col_dict[col["Label"]] = value_list
+
+                # col_dict[col["ODM2Field"]]= col
+        return col_dict
+
+    def loadTimeSeriesResults(self, session, engine, timeSeries):
+        """
+        Loads TimeSeriesResultsValues into pandas DataFrame
+        """
+        try:
+            column_labels = timeSeries["Data"][0][0]
+            # data_values = timeSeries["Data"][0][1:]
+            meta = timeSeries['ColumnDefinitions']
+            date_column = meta[0]["Label"]
+            utc_column = meta[1]["Label"]
+            cross_tab = pd.DataFrame(timeSeries["Data"][0][1:], columns=column_labels)  # , index=date_column)
+
+        except Exception as ex:
+            return
+
+        cross_tab.set_index([date_column, utc_column], inplace=True)
+
+        serial = cross_tab.unstack(level=[date_column, utc_column])
+        meta_dict = self.parse_meta(meta=meta)
+
+        serial = serial.append(pd.DataFrame(columns=['ResultID', 'CensorCodeCV', 'QualityCodeCV', 'TimeAggregationInterval',
+                                                     'TimeAggregationIntervalUnitsID'])) \
+            .fillna(0) \
+            .reset_index() \
+            .rename(columns={0: 'DataValue'}) \
+            .dropna()
+
+        # print serial.columns
+
+        for k, v in meta_dict.iteritems():
+            serial.ix[serial.level_0 == k, 'ResultID'] = v["Result"].ResultID
+            serial.ix[serial.level_0 == k, 'CensorCodeCV'] = v["CensorCodeCV"]
+            serial.ix[serial.level_0 == k, 'QualityCodeCV'] = v["QualityCodeCV"]
+            serial.ix[serial.level_0 == k, 'TimeAggregationInterval'] = v["TimeAggregationInterval"]
+            serial.ix[serial.level_0 == k, 'TimeAggregationIntervalUnitsID'] = v["TimeAggregationIntervalUnitsObj"].UnitsID
+
+        del serial['level_0']
+
+        # TODO does this fail for sqlite in memory
+        # self._session.close()
+        from odm2api.ODM2.models import TimeSeriesResultValues
+        tablename = TimeSeriesResultValues.__tablename__
+        serial.to_sql(name=tablename,
+                      schema=TimeSeriesResultValues.__table_args__['schema'],
+                      if_exists='append',
+                      chunksize=1000,
+                      con=self._engine,
+                      index=False)
+        self._session.commit()
+        return serial
