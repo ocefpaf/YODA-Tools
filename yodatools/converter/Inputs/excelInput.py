@@ -42,12 +42,12 @@ class ExcelInput(iInputs):
         start = time.time()
 
         if type == "TimeSeries":
-            raise Exception("TimeSeries Parsing is not currently supported")
-            et = ExcelTimeseries(self.file_path, gauge=self.gauge)
-            et.parse(self._session)
+            # raise Exception("TimeSeries Parsing is not currently supported")
+            parsed = ExcelTimeseries(self.file_path, gauge=self.gauge)
+            # et.parse(self._session)
         else:
-            es = ExcelSpecimen(self.file_path, gauge=self.gauge)
-            es.parse(self._session)
+            parsed = ExcelSpecimen(self.file_path, gauge=self.gauge)
+        parsed.parse(self._session)
 
 
         # self._session.commit()
@@ -59,16 +59,18 @@ class ExcelInput(iInputs):
 
     def get_type(self, file_path):
 
-        self.workbook = openpyxl.load_workbook(file_path, read_only=True)
-        self.name_ranges = self.workbook.get_named_ranges()
-        self.sheets = self.workbook.get_sheet_names()
-        # cells = self.sheets[0][org_table.attr_text.split('!')[1].replace('$', '')]
-        if "Instructions" in self.sheets:
-            named_range = "TemplateProfile"
-            sheet = "Instructions"
-            return "TimeSeries"
-        else:
-            return "SpecimenTimeSeries"
+        workbook = openpyxl.load_workbook(file_path, read_only=True)
+        # self.name_ranges = self.workbook.get_named_ranges()
+        # self.sheets = self.workbook.get_sheet_names()
+
+
+        named_range = "TemplateProfile"
+        range = self.workbook.get_named_range(named_range)
+        sheet_name = "Instructions"
+        sheet= self.workbook.get_sheet_by_name(sheet_name)
+        cell = sheet[range.attr_text.split('!')[1].replace('$', '')]
+        return cell.value
+
 
 
     def verify(self, file_path=None):

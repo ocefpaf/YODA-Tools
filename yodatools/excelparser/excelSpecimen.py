@@ -338,24 +338,30 @@ class ExcelSpecimen():
         sheet = self.workbook.get_sheet_by_name(SHEET_NAME)
         tables = self.tables[SHEET_NAME]
 
-        sites_table = tables[0] if tables[0].name == 'Sites_Table' else tables[1]
-        spatial_ref_table = tables[0] if tables[0].name == 'SitesDatumCV_Table' else tables[1]
+        sites_table = tables[0] if tables[0].name == 'Sites_Table' else None
+        elevation_datum_range = self.workbook.get_named_range("ElevationDatum")
+        spatial_ref_name_range = self.workbook.get_named_range("LatLonDatum")
 
-        def parse_sites_datum_cv(sheet, spatial_reference_table):
-            result = {}
-            cells = sheet[spatial_reference_table.attr_text.split('!')[1].replace('$', '')]
-            result['elevation_datum_cv'] = cells[0][1].value
-            result['latlon_datum_cv'] = cells[1][1].value
-            return result
+        # spatial_ref_table = tables[0] if tables[0].name == 'SitesDatumCV_Table' else tables[1]
 
-        sites_datum = parse_sites_datum_cv(sheet, spatial_ref_table)
+        # def parse_sites_datum_cv(sheet, spatial_reference_table):
+        #     result = {}
+        #     cells = sheet[spatial_reference_table.attr_text.split('!')[1].replace('$', '')]
+        #     result['elevation_datum_cv'] = cells[0][1].value
+        #     result['latlon_datum_cv'] = cells[1][1].value
+        #     return result
+
+        # sites_datum = parse_sites_datum_cv(sheet, spatial_ref_table)
         spatial_references = self.parse_spatial_reference()
 
         sites = []
         cells = sheet[sites_table.attr_text.split('!')[1].replace('$', '')]
 
-        elevation_datum = sites_datum['elevation_datum_cv']
-        spatial_ref_name = sites_datum['latlon_datum_cv']
+
+        elevation_datum = sheet[elevation_datum_range.attr_text.split('!')[1].replace('$', '')].value
+        # elevation_datum = sites_datum['elevation_datum_cv']
+        spatial_ref_name = sheet[spatial_ref_name_range.attr_text.split('!')[1].replace('$', '')].value.encode('utf-8')
+        # spatial_ref_name = sites_datum['latlon_datum_cv']
         spatial_references_obj = spatial_references[spatial_ref_name]
 
         for row in cells:
