@@ -56,6 +56,8 @@ class ExcelSpecimen():
         bottom = int(bottom.translate(all, nodigs))
         self.total_rows_to_read += (bottom - top)
 
+    def get_range_address(self, named_range):
+        return named_range.attr_text.split('!')[1].replace('$', '')
 
     # def parse(self, file_path=None):
     def parse(self, session):
@@ -110,7 +112,7 @@ class ExcelSpecimen():
             return
 
         for table in tables:
-            cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
+            cells = sheet[self.get_range_address(table)]
             for row in cells:
 
                 action = Actions()
@@ -205,7 +207,7 @@ class ExcelSpecimen():
 
         units = []
         for table in tables:
-            cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
+            cells = sheet[self.get_range_address(table)]
 
             for row in cells:
                 unit = Units()
@@ -233,7 +235,7 @@ class ExcelSpecimen():
         def parse_organizations(org_table, session):
             organizations = {}
 
-            cells = sheet[org_table.attr_text.split('!')[1].replace('$', '')]
+            cells = sheet[self.get_range_address(org_table)]
             for row in cells:
                 org = Organizations()
                 org.OrganizationTypeCV = row[0].value
@@ -249,7 +251,7 @@ class ExcelSpecimen():
 
         def parse_authors(author_table):
             authors = []
-            cells = sheet[author_table.attr_text.split('!')[1].replace('$', '')]
+            cells = sheet[self.get_range_address(author_table)]
             for row in cells:
                 ppl = People()
                 org = Organizations()
@@ -310,7 +312,7 @@ class ExcelSpecimen():
 
         processing_levels = []
         for table in tables:
-            cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
+            cells = sheet[self.get_range_address(table)]
 
             for row in cells:
                 proc_lvl = ProcessingLevels()
@@ -355,12 +357,12 @@ class ExcelSpecimen():
         spatial_references = self.parse_spatial_reference()
 
         sites = []
-        cells = sheet[sites_table.attr_text.split('!')[1].replace('$', '')]
+        cells = sheet[self.get_range_address(sites_table)]
 
 
-        elevation_datum = sheet[elevation_datum_range.attr_text.split('!')[1].replace('$', '')].value
+        elevation_datum = sheet[self.get_range_address(elevation_datum_range)].value
         # elevation_datum = sites_datum['elevation_datum_cv']
-        spatial_ref_name = sheet[spatial_ref_name_range.attr_text.split('!')[1].replace('$', '')].value.encode('utf-8')
+        spatial_ref_name = sheet[self.get_range_address(spatial_ref_name_range)].value.encode('utf-8')
         # spatial_ref_name = sites_datum['latlon_datum_cv']
         spatial_references_obj = spatial_references[spatial_ref_name]
 
@@ -395,7 +397,7 @@ class ExcelSpecimen():
 
         spatial_references = {}
         for table in tables:
-            cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
+            cells = sheet[self.get_range_address(table)]
             for row in cells:
                 sr = SpatialReferences()
                 sr.SRSCode = row[0].value
@@ -416,7 +418,7 @@ class ExcelSpecimen():
             return []
 
         for table in tables:
-            cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
+            cells = sheet[self.get_range_address(table)]
 
             for row in cells:
                 specimen = Specimens()
@@ -470,7 +472,7 @@ class ExcelSpecimen():
             return []
 
         for table in tables:
-            cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
+            cells = sheet[self.get_range_address(table)]
 
             for row in cells:
                 method = Methods()
@@ -503,7 +505,7 @@ class ExcelSpecimen():
         tables = self.tables[CONST_VARIABLES]
 
         for table in tables:
-            cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
+            cells = sheet[self.get_range_address(table)]
             for row in cells:
                 var = Variables()
                 var.VariableTypeCV = row[0].value
