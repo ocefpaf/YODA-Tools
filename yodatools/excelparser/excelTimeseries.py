@@ -27,6 +27,7 @@ class ExcelTimeseries():
         self.sheets = []
         self.name_ranges = None
         self.tables = {}
+        self._init_data(input_file)
 
     def get_table_name_ranges(self):
         """
@@ -48,10 +49,14 @@ class ExcelTimeseries():
 
         return table_name_range
 
+    def _init_data(self, file_path):
+        self.workbook = openpyxl.load_workbook(file_path, read_only=True)
+        self.name_ranges = self.workbook.get_named_ranges()
+        self.sheets = self.workbook.get_sheet_names()
+
+
     def parse(self, file_path=None):
-        if not self.verify(file_path):
-            print "Something is wrong with the file but what?"
-            return
+
 
         self.tables = self.get_table_name_ranges()
         methods = self.parse_methods()
@@ -311,24 +316,7 @@ class ExcelTimeseries():
 
         return data
 
-    def verify(self, file_path=None):
 
-        if file_path is not None:
-            self.input_file = file_path
-
-        if not os.path.isfile(self.input_file):
-            print "File does not exist"
-            return False
-
-        self.workbook = openpyxl.load_workbook(self.input_file, read_only=True)
-        self.name_ranges = self.workbook.get_named_ranges()
-        self.sheets = self.workbook.get_sheet_names()
-
-        # self.name_ranges[0].destinations.next()
-        # self.name_ranges[1].attr_text
-        # 'INDEX(ControlledVocabularies[actiontype],1,1):INDEX(ControlledVocabularies[actiontype],COUNTA(ControlledVocabularies[actiontype]))'
-
-        return True
 
 # import os
 # import openpyxl

@@ -23,6 +23,7 @@ class ExcelSpecimen():
         self.sheets = []
         self.name_ranges = None
         self.tables = {}
+        self._init_data(input_file)
 
     def get_table_name_ranges(self):
         """
@@ -46,6 +47,10 @@ class ExcelSpecimen():
 
         return table_name_range
 
+    def _init_data(self, file_path):
+        self.workbook = openpyxl.load_workbook(file_path, read_only=True)
+        self.name_ranges = self.workbook.get_named_ranges()
+        self.sheets = self.workbook.get_sheet_names()
 
     def count_number_of_rows_to_parse(self, dimensions):
         # http://stackoverflow.com/questions/1450897/python-removing-characters-except-digits-from-string
@@ -68,10 +73,6 @@ class ExcelSpecimen():
         :return:
         """
         self._session = session
-
-        if not self.verify(self.input_file):
-            print "Something is wrong with the file but what?"
-            return False
 
         self.tables = self.get_table_name_ranges()
 
@@ -188,6 +189,7 @@ class ExcelSpecimen():
                 measure_result_value.ResultObj = measure_result
 
                 self._session.add(measure_result)
+                self._session.flush()
                 self._session.add(measure_result_value)
                 self._session.flush()
 
@@ -280,7 +282,7 @@ class ExcelSpecimen():
         orgs = {}
         affiliations = []
         for table in tables:
-            if 'Authors_Table' == table.name:
+            if 'People_Table' == table.name:
                 affiliations = parse_authors(table)
             else:
                 orgs = parse_organizations(table, self._session)
@@ -515,7 +517,12 @@ class ExcelSpecimen():
                 var.SpeciationCV = row[4].value
 
                 if row[5].value is not None:
-                    var.NoDataValue = None if row[5].value == 'NULL' else row[5].value
+                    if row[5].value == 'NULL':
+                        #TODO break somehow because not all required data is not filled out
+                        print "All Variables must contain a valid No Data Value!"
+                        var.NoDataValue = None
+                    else:
+                        var.NoDataValue = row[5].value
 
                 if var.NoDataValue is not None:  # NoDataValue cannot be None
                     self._session.add(var)
@@ -524,18 +531,5 @@ class ExcelSpecimen():
 
         self._session.flush()
 
-    def verify(self, file_path=None):
 
-        if file_path is not None:
-            self.input_file = file_path
-
-        if not os.path.isfile(self.input_file):
-            print "File does not exist"
-            return False
-
-        self.workbook = openpyxl.load_workbook(self.input_file, read_only=True)
-        self.name_ranges = self.workbook.get_named_ranges()
-        self.sheets = self.workbook.get_sheet_names()
-
-        return True
 

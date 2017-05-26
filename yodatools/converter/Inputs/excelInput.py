@@ -59,7 +59,7 @@ class ExcelInput(iInputs):
 
     def get_type(self, file_path):
 
-        workbook = openpyxl.load_workbook(file_path, read_only=True)
+        self.workbook = openpyxl.load_workbook(file_path, read_only=True)
         # self.name_ranges = self.workbook.get_named_ranges()
         # self.sheets = self.workbook.get_sheet_names()
 
@@ -82,9 +82,7 @@ class ExcelInput(iInputs):
             print "File does not exist"
             return False
 
-        self.workbook = openpyxl.load_workbook(file_path, read_only=True)
-        self.name_ranges = self.workbook.get_named_ranges()
-        self.sheets = self.workbook.get_sheet_names()
+
 
         return True
 
