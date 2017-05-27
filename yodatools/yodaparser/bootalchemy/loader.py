@@ -467,7 +467,7 @@ class Loader(object):
         return col_dict
 
 
-    def loadTimeSeriesResults(self, session, engine, timeSeries):
+    def loadTimeSeriesResults(self, timeSeries):
         """
         Loads TimeSeriesResultsValues into pandas DataFrame
         """
