@@ -671,6 +671,7 @@ class ExcelTimeseries():
 
 
     def parse_data_values(self):
+        print "working on datavalues"
         CONST_COLUMNS = "Data Columns"
         if CONST_COLUMNS not in self.tables:
             print "No Variables found"
@@ -679,28 +680,104 @@ class ExcelTimeseries():
         sheet = self.workbook.get_sheet_by_name(CONST_COLUMNS)
         tables = self.tables[CONST_COLUMNS]
 
+        data_values = pd.read_excel(io=self.input_file, sheetname='Data Values')
 
         for table in tables:
             cells = sheet[self.get_range_address(table)]
             metadata = {}
             for row in cells:
-                my_meta = {}
-                
-                self.metadata[row[1]]=my_meta
+
+
                 action = Actions()
                 feat_act = FeatureActions()
                 act_by = ActionBy()
-                measure_result = MeasurementResults()
-                measure_result_value = MeasurementResultValues()
-                related_action = RelatedActions()
-
-                #TODO create metadata entry
-                #TODO create TimeSeriesResult
-                #TODO create Action
+                series_result = TimeSeriesResults()
+                # measure_result_value = TimeSeriesResultValues()
+                # related_action = RelatedActions()
 
 
+                # Action
+                method = self._session.query(Methods).filter_by(MethodCode=row[4].value).first()
+                action.MethodObj = method
+                #TODO ActionType
+                action.ActionTypeCV = "Observation"
+                action.BeginDateTime = data_values["LocalDateTime"][0]
+                action.BeginDateTimeUTCOffset = data_values["UTCOffset"][0]
 
-        data_values = pd.read_excel(io=self.input_file, sheetname='Data Values')
+                # Feature Actions
+                sampling_feature = self._session.query(SamplingFeatures)\
+                    .filter_by(SamplingFeatureCode=row[3].value)\
+                    .first()
+
+                feat_act.SamplingFeatureObj = sampling_feature
+                feat_act.ActionObj = action
+
+                # Action By
+                #TODO what if middle name
+                first_name, last_name = row[5].value.split(' ')
+                person = self._session.query(People).filter_by(PersonLastName=last_name).first()
+                affiliations = self._session.query(Affiliations).filter_by(PersonID=person.PersonID).first()
+                act_by.AffiliationObj = affiliations
+                act_by.ActionObj = action
+                act_by.IsActionLead = True
+
+                # related_action.ActionObj = action
+                # related_action.RelationshipTypeCV = "Is child of"
+                # collectionAction = self._session.query(FeatureActions)\
+                #     .filter(FeatureActions.FeatureActionID == SamplingFeatures.SamplingFeatureID)\
+                #     .filter(SamplingFeatures.SamplingFeatureCode == row[1].value)\
+                #     .first()
+                #
+                # related_action.RelatedActionObj = collectionAction.ActionObj
+
+                self._session.add(action)
+                self._session.add(feat_act)
+                self._session.add(act_by)
+                # self._session.add(related_action)
+
+                # Measurement Result (Different from Measurement Result Value) also creates a Result
+                variable = self._session.query(Variables).filter_by(VariableCode=row[6].value).first()
+                units_for_result = self._session.query(Units).filter_by(UnitsName=row[7].value).first()
+                proc_level = self._session.query(ProcessingLevels).filter_by(ProcessingLevelCode=row[8].value).first()
+
+                units_for_agg = self._session.query(Units).filter_by(UnitsName=row[12].value).first()
+                series_result.CensorCodeCV = row[14].value
+                series_result.QualityCodeCV = row[15].value
+                series_result.TimeAggregationInterval = row[11].value
+                series_result.TimeAggregationIntervalUnitsObj = units_for_agg
+                series_result.AggregationStatisticCV = row[13].value
+                series_result.ResultUUID = row[2].value
+                series_result.FeatureActionObj = feat_act
+                series_result.ResultTypeCV = row[6].value
+                series_result.VariableObj = variable
+                series_result.UnitsObj = units_for_result
+                series_result.ProcessingLevelObj = proc_level
+                #TODO
+                series_result.StatusCV = "Complete"
+                series_result.SampledMediumCV = row[11].value
+                series_result.ValueCount = 1
+                #TODO
+                series_result.ResultDateTime = data_values["LocalDateTime"][0]
+
+                self._session.add(series_result)
+                self._session.flush()
+
+                # Timeseries Result Value Metadata
+
+                my_meta = {}
+                my_meta["Result"] = series_result
+                my_meta["CensorCodeCV"] = series_result.CensorCodeCV
+                my_meta["QualityCodeCV"] = series_result.QualityCodeCV
+                my_meta["TimeAggregationInterval"] = series_result.TimeAggregationInterval
+                my_meta["TimeAggregationIntervalUnitsObj"] = series_result.TimeAggregationIntervalUnitsObj
+
+                self.metadata[row[1]] = my_meta
+
+                # self._session.add(measure_result_value)
+                self._session.flush()
+
+                self.__updateGauge()
+
 
 
 
@@ -751,8 +828,6 @@ class ExcelTimeseries():
         return data
 
 
-
-
     def parse_meta(self, meta):
         col_dict = {}
         for col in meta:
@@ -787,12 +862,12 @@ class ExcelTimeseries():
         Loads TimeSeriesResultsValues into pandas DataFrame
         """
         try:
-            column_labels = timeSeries["Data"][0][0]
-            # data_values = timeSeries["Data"][0][1:]
-            meta = timeSeries['ColumnDefinitions']
-            date_column = meta[0]["Label"]
-            utc_column = meta[1]["Label"]
-            cross_tab = pd.DataFrame(timeSeries["Data"][0][1:], columns=column_labels)  # , index=date_column)
+            column_labels = timeSeries[0]
+            # data_values = timeSeries[1:]
+            # meta = timeSeries['ColumnDefinitions']
+            date_column = "LocalDateTime"
+            utc_column = "UTCOffset"
+            cross_tab = pd.DataFrame(timeSeries[1:], columns=column_labels)  # , index=date_column)
 
         except Exception as ex:
             return
@@ -800,7 +875,7 @@ class ExcelTimeseries():
         cross_tab.set_index([date_column, utc_column], inplace=True)
 
         serial = cross_tab.unstack(level=[date_column, utc_column])
-        meta_dict = self.parse_meta(meta=meta)
+        # meta_dict = self.parse_meta(meta=meta)
 
         serial = serial.append(pd.DataFrame(columns=['ResultID', 'CensorCodeCV', 'QualityCodeCV', 'TimeAggregationInterval',
                                                      'TimeAggregationIntervalUnitsID'])) \
@@ -822,7 +897,6 @@ class ExcelTimeseries():
 
         # TODO does this fail for sqlite in memory
         # self._session.close()
-        from odm2api.ODM2.models import TimeSeriesResultValues
         tablename = TimeSeriesResultValues.__tablename__
         serial.to_sql(name=tablename,
                       schema=TimeSeriesResultValues.__table_args__['schema'],
