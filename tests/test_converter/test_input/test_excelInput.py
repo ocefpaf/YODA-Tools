@@ -6,14 +6,10 @@ import openpyxl
 from yodatools.converter.Inputs.excelInput import ExcelInput
 from odm2api.ODM2.models import People, SamplingFeatures, MeasurementResultValues, TimeSeriesResultValues
 
-class ExcelTest(unittest.TestCase):
+class TestExcel:
 
-    def setUp(self):
-        self.before_each_do()
-
-    def before_each_do(self):
+    def setup(self):
         self.curr_folder = os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-
         self.excel = ExcelInput()
 
     def test_parse_ts(self):

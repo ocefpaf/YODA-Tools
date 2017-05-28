@@ -62,13 +62,18 @@ class ExcelTimeseries():
 
         self.tables = self.get_table_name_ranges()
 
+        self.parse_affiliations()
         self.parse_methods()
         self.parse_variables()
-        self.parse_specimens()
         self.parse_units()
         self.parse_processing_level()
         self.parse_sampling_feature()
-        self.read_data_values()
+
+        # self.parse_specimens()
+        # self.parse_analysis_results()
+        self.parse_data_values()
+
+
     #
     # def parse_units(self):
     #
@@ -342,8 +347,9 @@ class ExcelTimeseries():
         self.total_rows_to_read += (bottom - top)
 
     def get_range_address(self, named_range):
-        return named_range.attr_text.split('!')[1].replace('$', '')
-
+        if named_range is not None:
+            return named_range.attr_text.split('!')[1].replace('$', '')
+        return None
     # # def parse(self, file_path=None):
     # def parse(self, session):
     #     """
@@ -451,12 +457,12 @@ class ExcelTimeseries():
                 ppl.PersonLastName = row[2].value
 
                 org.OrganizationName = row[3].value
-                aff.AffiliationStartDate = row[5].value
-                aff.AffiliationEndDate = row[6].value
-                aff.PrimaryPhone = row[7].value
-                aff.PrimaryEmail = row[8].value
-                aff.PrimaryAddress = row[9].value
-                aff.PersonLink = row[10].value
+                aff.AffiliationStartDate = row[4].value
+                # aff.AffiliationEndDate = row[6].value
+                # aff.PrimaryPhone = row[7].value
+                aff.PrimaryEmail = row[5].value
+                aff.PrimaryAddress = row[6].value
+                # aff.PersonLink = row[10].value
 
                 aff.OrganizationObj = org
                 aff.PersonObj = ppl
@@ -504,11 +510,12 @@ class ExcelTimeseries():
             cells = sheet[self.get_range_address(table)]
 
             for row in cells:
-                proc_lvl = ProcessingLevels()
-                proc_lvl.ProcessingLevelCode = row[0].value
-                proc_lvl.Definition = row[1].value
-                proc_lvl.Explanation = row[2].value
-                processing_levels.append(proc_lvl)
+                if row[0].value is not None:
+                    proc_lvl = ProcessingLevels()
+                    proc_lvl.ProcessingLevelCode = row[0].value
+                    proc_lvl.Definition = row[1].value
+                    proc_lvl.Explanation = row[2].value
+                    processing_levels.append(proc_lvl)
 
                 self.__updateGauge()
 
@@ -518,25 +525,28 @@ class ExcelTimeseries():
 
     def parse_sampling_feature(self):
         SHEET_NAME = 'Sampling Features'
+        sheet, tables = self.get_sheet_and_table(SHEET_NAME)
 
-        if SHEET_NAME not in self.tables:
-            if 'Sites' in self.tables:
-                SHEET_NAME = 'Sites'
-            else:
-                print "No sampling features/sites found"
-                return []
+        # if SHEET_NAME not in self.tables:
+        #     if 'Sites' in self.tables:
+        #         SHEET_NAME = 'Sites'
+        #     else:
+        #         print "No sampling features/sites found"
+        #         return []
 
-        sheet = self.workbook.get_sheet_by_name(SHEET_NAME)
-        tables = self.tables[SHEET_NAME]
+        # sheet = self.workbook.get_sheet_by_name(SHEET_NAME)
+        # tables = self.tables[SHEET_NAME]
 
-        sites_table = tables[0] if tables[0].name == 'Sites_Table' else None
+        # sites_table = tables[0] if tables[0].name == 'Sites_Table' else None
         elevation_datum_range = self.workbook.get_named_range("ElevationDatum")
         spatial_ref_name_range = self.workbook.get_named_range("LatLonDatum")
 
         spatial_references = self.parse_spatial_reference()
 
         sites = []
-        cells = sheet[self.get_range_address(sites_table)]
+        for table in tables:
+            cells = sheet[self.get_range_address(table)]
+        # cells = sheet[self.get_range_address(sites_table)]
 
 
         elevation_datum = sheet[self.get_range_address(elevation_datum_range)].value
@@ -544,26 +554,31 @@ class ExcelTimeseries():
         spatial_references_obj = spatial_references[spatial_ref_name]
 
         for row in cells:
-            site = Sites()
-            site.SamplingFeatureUUID = row[0].value
-            site.SamplingFeatureCode = row[1].value
-            site.SamplingFeatureName = row[2].value
-            site.SamplingFeatureDescription = row[3].value
-            site.FeatureGeometryWKT = row[4].value
-            site.Elevation_m = row[5].value
-            site.SamplingFeatureTypeCV = "Site"
-            site.SiteTypeCV = row[6].value
-            site.Latitude = row[7].value
-            site.Longitude = row[8].value
-            site.ElevationDatumCV = elevation_datum
-            site.SpatialReferenceObj = spatial_references_obj
+            if all([row[1].value, row[2].value, row[3].value]):# are all of the required elements present
+                site = Sites()
+                site.SamplingFeatureUUID = row[0].value
+                site.SamplingFeatureTypeCV = row[1].value
+                site.SamplingFeatureGeotypeCV= row[2].value
+                site.SamplingFeatureCode = row[3].value
+                site.SamplingFeatureName = row[4].value
+                site.SamplingFeatureDescription = row[5].value
+                site.FeatureGeometryWKT = row[6].value
 
-            sites.append(site)
+                site.Elevation_m = row[7].value
 
-            self._session.add(site)
+                site.SiteTypeCV = row[10].value
+                site.Latitude = row[11].value
+                site.Longitude = row[12].value
+                site.ElevationDatumCV = elevation_datum
+                site.SpatialReferenceObj = spatial_references_obj
+
+                sites.append(site)
+                self.__updateGauge()
+
+            self._session.add_all(sites)
             self._session.flush()
 
-            self.__updateGauge()
+
 
     def parse_spatial_reference(self):
         SHEET_NAME = "SpatialReferences"
@@ -655,18 +670,47 @@ class ExcelTimeseries():
 
 
 
-    def read_data_values(self):
-        dataframes = pd.read_excel(io=self.input_file, sheetname='Data Values')
+    def parse_data_values(self):
         CONST_COLUMNS = "Data Columns"
-        sheet, tables = self.get_sheet_and_table(CONST_COLUMNS)
-        # metadata =
-        # dataframes.transpose()
-        # dataframes = dataframes.set_index(['LocalDateTime'])
-        # unstacked_dataframes = dataframes.unstack()
+        if CONST_COLUMNS not in self.tables:
+            print "No Variables found"
+            return []
+
+        sheet = self.workbook.get_sheet_by_name(CONST_COLUMNS)
+        tables = self.tables[CONST_COLUMNS]
+
+
+        for table in tables:
+            cells = sheet[self.get_range_address(table)]
+            metadata = {}
+            for row in cells:
+                my_meta = {}
+                
+                self.metadata[row[1]]=my_meta
+                action = Actions()
+                feat_act = FeatureActions()
+                act_by = ActionBy()
+                measure_result = MeasurementResults()
+                measure_result_value = MeasurementResultValues()
+                related_action = RelatedActions()
+
+                #TODO create metadata entry
+                #TODO create TimeSeriesResult
+                #TODO create Action
+
+
+
+        data_values = pd.read_excel(io=self.input_file, sheetname='Data Values')
+
+
+
+        # data_values.transpose()
+        # data_values = data_values.set_index(['LocalDateTime'])
+        # unstacked_dataframes = data_values.unstack()
         # avg = unstacked_dataframes['AirTemp_Avg']
         # avg.values
-        # print dataframes
-        self.loadTimeSeriesResults(dataframes)
+        # print data_values
+        self.load_time_series_values(data_values, metadata)
 
 
     def __extract_data_values(self):
@@ -712,33 +756,33 @@ class ExcelTimeseries():
     def parse_meta(self, meta):
         col_dict = {}
         for col in meta:
-            if "ValueDateTime" not in col["Label"]:
-                # print col["Label"]
-                value_list = {}
 
-                # dfUnstacked["Label" == col["ODM2Field"]]= col
+            # print col["Label"]
+            value_list = {}
 
-                for key, value in col.iteritems():
-                    if key not in ["ColumnNumber", "ODM2Field"]:
-                        if value and isinstance(value, basestring) and value.startswith('*'):
-                            if value[1:] in self._references:
-                                # TODO need to set this to the ID
-                                value_list[key] = self._references[value[1:]]
-                            else:
-                                raise Exception(
-                                    'The pointer %(val)s could not be found. Make sure that %(val)s is declared before it is used.' % {
-                                        'val': value})
+            # dfUnstacked["Label" == col["ODM2Field"]]= col
 
-                                # col_dict[key] = self._references[value[1:]]
+            for key, value in col.iteritems():
+                if key not in ["ColumnNumber", "ODM2Field"]:
+                    if value and isinstance(value, basestring) and value.startswith('*'):
+                        if value[1:] in self._references:
+                            # TODO need to set this to the ID
+                            value_list[key] = self._references[value[1:]]
                         else:
-                            value_list[key] = value
+                            raise Exception(
+                                'The pointer %(val)s could not be found. Make sure that %(val)s is declared before it is used.' % {
+                                    'val': value})
 
-                col_dict[col["Label"]] = value_list
+                            # col_dict[key] = self._references[value[1:]]
+                    else:
+                        value_list[key] = value
+
+            col_dict[col["Label"]] = value_list
 
                 # col_dict[col["ODM2Field"]]= col
         return col_dict
 
-    def loadTimeSeriesResults(self, timeSeries):
+    def load_time_series_values(self, timeSeries, meta_dict):
         """
         Loads TimeSeriesResultsValues into pandas DataFrame
         """
