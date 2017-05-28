@@ -685,7 +685,9 @@ class ExcelTimeseries():
         for table in tables:
             cells = sheet[self.get_range_address(table)]
             metadata = {}
+            print "looping through datavalues"
             for row in cells:
+
 
 
                 action = Actions()
@@ -713,9 +715,14 @@ class ExcelTimeseries():
                 feat_act.ActionObj = action
 
                 # Action By
-                #TODO what if middle name
-                first_name, last_name = row[5].value.split(' ')
-                person = self._session.query(People).filter_by(PersonLastName=last_name).first()
+                names = row[5].value.split(' ')
+                if len(names)>2:
+                    last_name = names[2]
+                else:
+                    last_name = names[1]
+                first_name = names[0]
+
+                person = self._session.query(People).filter_by(PersonLastName=last_name, PersonFirstName=first_name).first()
                 affiliations = self._session.query(Affiliations).filter_by(PersonID=person.PersonID).first()
                 act_by.AffiliationObj = affiliations
                 act_by.ActionObj = action
@@ -730,21 +737,22 @@ class ExcelTimeseries():
                 #
                 # related_action.RelatedActionObj = collectionAction.ActionObj
 
+                # self._session.no_autoflush
                 self._session.add(action)
                 self._session.add(feat_act)
                 self._session.add(act_by)
                 # self._session.add(related_action)
-
+                self._session.flush()
                 # Measurement Result (Different from Measurement Result Value) also creates a Result
                 variable = self._session.query(Variables).filter_by(VariableCode=row[6].value).first()
                 units_for_result = self._session.query(Units).filter_by(UnitsName=row[7].value).first()
                 proc_level = self._session.query(ProcessingLevels).filter_by(ProcessingLevelCode=row[8].value).first()
 
                 units_for_agg = self._session.query(Units).filter_by(UnitsName=row[12].value).first()
-                series_result.CensorCodeCV = row[14].value
-                series_result.QualityCodeCV = row[15].value
-                series_result.TimeAggregationInterval = row[11].value
-                series_result.TimeAggregationIntervalUnitsObj = units_for_agg
+                # series_result.CensorCodeCV = row[14].value
+                # series_result.QualityCodeCV = row[15].value
+                series_result.IntendedTimeSpacing = row[11].value
+                series_result.IntendedTimeSpacingUnitsObj = units_for_agg
                 series_result.AggregationStatisticCV = row[13].value
                 series_result.ResultUUID = row[2].value
                 series_result.FeatureActionObj = feat_act
@@ -766,10 +774,10 @@ class ExcelTimeseries():
 
                 my_meta = {}
                 my_meta["Result"] = series_result
-                my_meta["CensorCodeCV"] = series_result.CensorCodeCV
-                my_meta["QualityCodeCV"] = series_result.QualityCodeCV
-                my_meta["TimeAggregationInterval"] = series_result.TimeAggregationInterval
-                my_meta["TimeAggregationIntervalUnitsObj"] = series_result.TimeAggregationIntervalUnitsObj
+                my_meta["CensorCodeCV"] = row[14].value
+                my_meta["QualityCodeCV"] = row[15].value
+                my_meta["TimeAggregationInterval"] = series_result.IntendedTimeSpacing
+                my_meta["TimeAggregationIntervalUnitsObj"] = series_result.IntendedTimeSpacingUnitsObj
 
                 self.metadata[row[1]] = my_meta
 
@@ -787,6 +795,7 @@ class ExcelTimeseries():
         # avg = unstacked_dataframes['AirTemp_Avg']
         # avg.values
         # print data_values
+        print "convert from cross tab to serial"
         self.load_time_series_values(data_values, metadata)
 
 
