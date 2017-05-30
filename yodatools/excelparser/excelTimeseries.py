@@ -56,9 +56,10 @@ class ExcelTimeseries():
         self.sheets = self.workbook.get_sheet_names()
 
 
-    def parse(self, session):
+    def parse(self, session_factory):
 
-        self._session = session
+        self._session = session_factory.getSession()
+        self._engine = session_factory.engine
 
         self.tables = self.get_table_name_ranges()
 
@@ -74,268 +75,6 @@ class ExcelTimeseries():
         self.parse_data_values()
 
 
-    #
-    # def parse_units(self):
-    #
-    #     CONST_UNITS = 'Units'
-    #
-    #     if CONST_UNITS not in self.tables:
-    #         return []
-    #
-    #     sheet = self.workbook.get_sheet_by_name(CONST_UNITS)
-    #     tables = self.tables[CONST_UNITS]
-    #
-    #     units = []
-    #     for table in tables:
-    #         cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
-    #         cells = cells[1:]  # Remove the column names
-    #
-    #         for row in cells:
-    #             unit = Units()
-    #             unit.UnitsTypeCV = row[0].value
-    #             unit.UnitsAbbreviation = row[1].value
-    #             unit.UnitsName = row[2].value
-    #             unit.UnitsLink = row[3].value
-    #             units.append(unit)
-    #
-    #     return units
-    #
-    #
-    # def parse_processing_level(self):
-    #     CONST_PROC_LEVEL = 'Processing Levels'
-    #
-    #     if CONST_PROC_LEVEL not in self.tables:
-    #         return []
-    #
-    #     sheet = self.workbook.get_sheet_by_name(CONST_PROC_LEVEL)
-    #     tables = self.tables[CONST_PROC_LEVEL]
-    #
-    #     processing_levels = []
-    #     for table in tables:
-    #         cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
-    #         cells = cells[1:]  # Remove the column names
-    #
-    #         for row in cells:
-    #             proc_lvl = ProcessingLevels()
-    #             proc_lvl.ProcessingLevelCode = row[0].value
-    #             proc_lvl.Definition = row[1].value
-    #             proc_lvl.Explanation = row[2].value
-    #             processing_levels.append(proc_lvl)
-    #
-    #     return processing_levels
-    #
-    # def parse_sampling_feature(self):
-    #     CONST_SAMP_FEAT = 'Sampling Features'
-    #
-    #     if CONST_SAMP_FEAT not in self.tables:
-    #         return []
-    #
-    #     sheet = self.workbook.get_sheet_by_name(CONST_SAMP_FEAT)
-    #     tables = self.tables[CONST_SAMP_FEAT]
-    #
-    #     sampling_features = []
-    #     for table in tables:
-    #         cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
-    #         cells = cells[1:]  # Remove the column names
-    #
-    #         for row in cells:
-    #             sf = SamplingFeatures()
-    #             sampling_features.append(sf)
-    #
-    #     return sampling_features
-    #
-    # def parse_specimens(self):
-    #     CONST_SPECIMENS = 'Specimens'
-    #
-    #     if CONST_SPECIMENS not in self.tables:
-    #         return []
-    #
-    #     sheet = self.workbook.get_sheet_by_name(CONST_SPECIMENS)
-    #     tables = self.tables[CONST_SPECIMENS]
-    #
-    #     specimens = []
-    #     for table in tables:
-    #         cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
-    #         cells = cells[1:]  # Remove the column names
-    #
-    #         for row in cells:
-    #             sp = Specimens()
-    #             sp.SamplingFeatureUUID = row[0].value
-    #             sp.SamplingFeatureCode = row[1].value
-    #             sp.SamplingFeatureName = row[2].value
-    #             sp.SamplingFeatureDescription = row[3].value
-    #             sp.SamplingFeatureTypeCV = row[4].value
-    #             sp.SpecimenMediumCV = row[5].value
-    #             sp.IsFieldSpecimen = row[6].value
-    #             specimens.append(sp)
-    #
-    #     return specimens
-    #
-    # def parse_methods(self):
-    #     # tables = self.get_tables_in_sheet('Methods')
-    #
-    #     CONST_METHODS = "Methods"
-    #
-    #     if CONST_METHODS not in self.tables:
-    #         return []
-    #
-    #     sheet = self.workbook.get_sheet_by_name(CONST_METHODS)
-    #     tables = self.tables[CONST_METHODS]
-    #
-    #     methods = []
-    #     for table in tables:
-    #         cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
-    #         cells = cells[1:]  # Remove the column names
-    #
-    #         for row in cells:
-    #             method = Methods()
-    #             method.MethodTypeCV = row[0].value
-    #             method.MethodCode = row[1].value
-    #             method.MethodName = row[2].value
-    #             method.MethodDescription = row[3].value
-    #             method.MethodLink = row[4].value
-    #
-    #             org = Organizations()
-    #             org.OrganizationName = row[5].value
-    #             method.OrganizationObj = org
-    #
-    #             methods.append(method)
-    #
-    #     return methods
-    #
-    # def get_tables_in_sheet(self, sheet_name):
-    #     """
-    #     :param sheet_name:
-    #     :rtype: list
-    #     :return:
-    #     """
-    #
-    #     if sheet_name not in self.sheets:
-    #         print "%s not in excel sheet" % sheet_name
-    #         return IndexError
-    #
-    #     sheet = self.workbook.get_sheet_by_name(sheet_name)
-    #     tables = []
-    #     # sheet['A1:B3']
-    #     for table in sheet._tables:
-    #         top_left_cell, bottom_right_cell = table.ref.split(':')
-    #         tables.append(sheet[top_left_cell: bottom_right_cell])
-    #     return tables
-    #
-    # def parse_variables(self):
-    #
-    #     CONST_VARIABLES = "Variables"
-    #
-    #     if CONST_VARIABLES not in self.tables:
-    #         return []
-    #
-    #     sheet = self.workbook.get_sheet_by_name(CONST_VARIABLES)
-    #     tables = self.tables[CONST_VARIABLES]
-    #
-    #     variables = []
-    #     for table in tables:
-    #         cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
-    #         cells = cells[1:]  # Remove the column names
-    #         for row in cells:
-    #             var = Variables()
-    #             var.VariableTypeCV = row[0].value
-    #             var.VariableCode = row[1].value
-    #             var.VariableNameCV = row[2].value
-    #             var.VariableDefinition = row[3].value
-    #             var.SpeciationCV = row[4].value
-    #             var.NoDataValue = row[5].value
-    #             variables.append(var)
-    #
-    #     return variables
-    #
-    # def __extract_method(self):
-    #
-    #     if 'Methods' not in self.sheets:
-    #         return
-    #
-    #     method_sheet = self.workbook.get_sheet_by_name('Methods')
-    #
-    #     # Find 'Method Information'
-    #     row = 1
-    #     found = False
-    #     while not found and row < method_sheet.max_row:
-    #         cell = method_sheet.cell(row=row, column=1)
-    #         if cell.value is not None and 'Method Information' in cell.value:
-    #             found = True
-    #         row += 1
-    #
-    #     # Find the last column that has the data
-    #     col = 1
-    #     while col < method_sheet.max_column:
-    #         cell = method_sheet.cell(row=row, column=col)
-    #         if not cell.value:
-    #             col -= 1
-    #             break
-    #         col += 1
-    #
-    #     top_left_coordinate = 'A' + str(row + 1)
-    #     bottom_right_coordinate = get_column_letter(col) + str(method_sheet.max_row)
-    #     method_information = method_sheet[top_left_coordinate: bottom_right_coordinate]
-    #
-    #     return method_information
-    #
-    #
-
-
-#
-# import os
-# import openpyxl
-# from odm2api.ODM2.models import *
-# from yodatools.converter.Abstract import iInputs
-# import pandas
-# import time
-# import string
-#
-#
-# class ExcelSpecimen():
-#     def __init__(self, input_file, **kwargs):
-#
-#         self.input_file = input_file
-#
-#         self.gauge = None
-#         self.total_rows_to_read = 0
-#         self.rows_read = 0
-#
-#         if 'gauge' in kwargs:
-#             self.gauge = kwargs['gauge']
-#
-#         self.workbook = None
-#         self.sheets = []
-#         self.name_ranges = None
-#         self.tables = {}
-#         self._init_data(input_file)
-#
-#     def get_table_name_ranges(self):
-#         """
-#         Returns a list of the name range that have a table.
-#         The name range should contain the cells locations of the data.
-#         :rtype: list
-#         """
-#         CONST_NAME = "_Table"
-#         table_name_range = {}
-#         for name_range in self.name_ranges:
-#             if CONST_NAME in name_range.name:
-#                 sheet, dimensions = name_range.attr_text.split('!')
-#                 sheet = sheet.replace('\'', '')
-#
-#                 if sheet in table_name_range:
-#                     table_name_range[sheet].append(name_range)
-#                 else:
-#                     table_name_range[sheet] = [name_range]
-#
-#                 self.count_number_of_rows_to_parse(dimensions=dimensions)
-#
-#         return table_name_range
-#
-#     def _init_data(self, file_path):
-#         self.workbook = openpyxl.load_workbook(file_path, read_only=True)
-#         self.name_ranges = self.workbook.get_named_ranges()
-#         self.sheets = self.workbook.get_sheet_names()
 #
     def count_number_of_rows_to_parse(self, dimensions):
         # http://stackoverflow.com/questions/1450897/python-removing-characters-except-digits-from-string
@@ -350,36 +89,6 @@ class ExcelTimeseries():
         if named_range is not None:
             return named_range.attr_text.split('!')[1].replace('$', '')
         return None
-    # # def parse(self, file_path=None):
-    # def parse(self, session):
-    #     """
-    #     If any of the methods return early, then check that they have the table ranges
-    #     The table range should exist in the tables from get_table_name_range()
-    #     :param :
-    #     :return:
-    #     """
-    #     self._session = session
-    #
-    #     self.tables = self.get_table_name_ranges()
-    #
-    #     start = time.time()
-    #
-    #     self.parse_affiliations()
-    #     self.parse_methods()
-    #     self.parse_variables()
-    #     self.parse_units()
-    #     self.parse_processing_level()
-    #     self.parse_sampling_feature()
-    #     self.parse_sites()
-    #     self.parse_specimens()
-    #     self.parse_analysis_results()
-    #
-    #     # self._session.commit()
-    #
-    #     end = time.time()
-    #     print(end - start)
-    #
-    #     return True
 
     def __updateGauge(self):
         # Objects are passed by reference in Python :)
@@ -685,7 +394,7 @@ class ExcelTimeseries():
         tables = self.tables[CONST_COLUMNS]
 
         data_values = pd.read_excel(io=self.input_file, sheetname='Data Values')
-        start_date = data_values["LocalDateTime"][0].to_datetime()
+        start_date = data_values["LocalDateTime"][0].to_pydatetime()
         utc_offset = int(data_values["UTCOffset"][0])
         value_count = len(data_values.index)
 
@@ -705,7 +414,6 @@ class ExcelTimeseries():
                     # measure_result_value = TimeSeriesResultValues()
                     # related_action = RelatedActions()
 
-
                     # Action
                     method = self._session.query(Methods).filter_by(MethodCode=row[4].value).first()
                     action.MethodObj = method
@@ -724,7 +432,7 @@ class ExcelTimeseries():
 
                     # Action By
                     names = row[5].value.split(' ')
-                    if len(names)>2:
+                    if len(names) > 2:
                         last_name = names[2]
                     else:
                         last_name = names[1]
@@ -747,7 +455,6 @@ class ExcelTimeseries():
 
                     # self._session.no_autoflush
                     self._session.flush()
-                    print action
 
                     self._session.add(action)
                     self._session.flush()
@@ -757,8 +464,7 @@ class ExcelTimeseries():
                     self._session.flush()
                     # Measurement Result (Different from Measurement Result Value) also creates a Result
                     variable = self._session.query(Variables).filter_by(VariableCode=row[7].value).first()
-                    print row[7].value
-                    print variable
+
 
                     units_for_result = self._session.query(Units).filter_by(UnitsName=row[8].value).first()
                     proc_level = self._session.query(ProcessingLevels).filter_by(ProcessingLevelCode=row[9].value).first()
@@ -794,7 +500,7 @@ class ExcelTimeseries():
                     my_meta["TimeAggregationInterval"] = series_result.IntendedTimeSpacing
                     my_meta["TimeAggregationIntervalUnitsObj"] = series_result.IntendedTimeSpacingUnitsObj
 
-                    metadata[row[1]] = my_meta
+                    metadata[row[1].value] = my_meta
 
                     # self._session.add(measure_result_value)
                     self._session.flush()
@@ -804,32 +510,25 @@ class ExcelTimeseries():
         print "convert from cross tab to serial"
         self.load_time_series_values(data_values, metadata)
 
-
-    def load_time_series_values(self, timeSeries, meta_dict):
+    def load_time_series_values(self, cross_tab, meta_dict):
         """
         Loads TimeSeriesResultsValues into pandas DataFrame
         """
-        try:
-            column_labels = timeSeries[0]
-            date_column = "LocalDateTime"
-            utc_column = "UTCOffset"
-            cross_tab = pd.DataFrame(timeSeries[1:], columns=column_labels)  # , index=date_column)
 
-        except Exception as ex:
-            return
+        date_column = "LocalDateTime"
+        utc_column = "UTCOffset"
 
         cross_tab.set_index([date_column, utc_column], inplace=True)
 
         serial = cross_tab.unstack(level=[date_column, utc_column])
 
-        serial = serial.append(pd.DataFrame(columns=['ResultID', 'CensorCodeCV', 'QualityCodeCV', 'TimeAggregationInterval',
+        serial = serial.append(pd.DataFrame(
+            columns=['ResultID', 'CensorCodeCV', 'QualityCodeCV', 'TimeAggregationInterval',
                                                      'TimeAggregationIntervalUnitsID'])) \
             .fillna(0) \
             .reset_index() \
             .rename(columns={0: 'DataValue'}) \
             .dropna()
-
-        print serial.columns
 
         for k, v in meta_dict.iteritems():
             serial.ix[serial.level_0 == k, 'ResultID'] = v["Result"].ResultID

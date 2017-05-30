@@ -44,10 +44,10 @@ class ExcelInput(iInputs):
         if type == "TimeSeries":
             # raise Exception("TimeSeries Parsing is not currently supported")
             et = ExcelTimeseries(self.file_path, gauge=self.gauge)
-            et.parse(self._session)
+            et.parse(self._session_factory)
         else:
             es = ExcelSpecimen(self.file_path, gauge=self.gauge)
-            es.parse(self._session)
+            es.parse(self.session_factory)
 
 
         # self._session.commit()
@@ -62,7 +62,6 @@ class ExcelInput(iInputs):
         self.workbook = openpyxl.load_workbook(file_path, read_only=True)
         # self.name_ranges = self.workbook.get_named_ranges()
         # self.sheets = self.workbook.get_sheet_names()
-
 
         named_range = "TemplateProfile"
         range = self.workbook.get_named_range(named_range)

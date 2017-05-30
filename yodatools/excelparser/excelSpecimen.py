@@ -64,15 +64,17 @@ class ExcelSpecimen():
     def get_range_address(self, named_range):
         return named_range.attr_text.split('!')[1].replace('$', '')
 
-    # def parse(self, file_path=None):
-    def parse(self, session):
+
+    def parse(self, session_factory):
         """
         If any of the methods return early, then check that they have the table ranges
         The table range should exist in the tables from get_table_name_range()
         :param :
         :return:
         """
-        self._session = session
+
+        self._session = session_factory.getSession()
+        self._engine = session_factory.engine
 
         self.tables = self.get_table_name_ranges()
 
