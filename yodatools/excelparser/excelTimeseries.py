@@ -667,7 +667,11 @@ class ExcelTimeseries():
 
         self._session.flush()
 
-
+    def is_valid(self, iterable):
+        for element in iterable:
+            if not element.value:
+                return False
+        return True
 
 
     def parse_data_values(self):
@@ -692,109 +696,110 @@ class ExcelTimeseries():
 
             print "looping through datavalues"
             for row in cells:
+                if self.is_valid(row):
 
-                action = Actions()
-                feat_act = FeatureActions()
-                act_by = ActionBy()
-                series_result = TimeSeriesResults()
-                # measure_result_value = TimeSeriesResultValues()
-                # related_action = RelatedActions()
+                    action = Actions()
+                    feat_act = FeatureActions()
+                    act_by = ActionBy()
+                    series_result = TimeSeriesResults()
+                    # measure_result_value = TimeSeriesResultValues()
+                    # related_action = RelatedActions()
 
 
-                # Action
-                method = self._session.query(Methods).filter_by(MethodCode=row[4].value).first()
-                action.MethodObj = method
-                #TODO ActionType
-                action.ActionTypeCV = "Observation"
-                action.BeginDateTime = start_date
-                action.BeginDateTimeUTCOffset = utc_offset
+                    # Action
+                    method = self._session.query(Methods).filter_by(MethodCode=row[4].value).first()
+                    action.MethodObj = method
+                    #TODO ActionType
+                    action.ActionTypeCV = "Observation"
+                    action.BeginDateTime = start_date
+                    action.BeginDateTimeUTCOffset = utc_offset
 
-                # Feature Actions
-                sampling_feature = self._session.query(SamplingFeatures)\
-                    .filter_by(SamplingFeatureCode=row[3].value)\
-                    .first()
+                    # Feature Actions
+                    sampling_feature = self._session.query(SamplingFeatures)\
+                        .filter_by(SamplingFeatureCode=row[3].value)\
+                        .first()
 
-                feat_act.SamplingFeatureObj = sampling_feature
-                feat_act.ActionObj = action
+                    feat_act.SamplingFeatureObj = sampling_feature
+                    feat_act.ActionObj = action
 
-                # Action By
-                names = row[5].value.split(' ')
-                if len(names)>2:
-                    last_name = names[2]
-                else:
-                    last_name = names[1]
-                first_name = names[0]
+                    # Action By
+                    names = row[5].value.split(' ')
+                    if len(names)>2:
+                        last_name = names[2]
+                    else:
+                        last_name = names[1]
+                    first_name = names[0]
 
-                person = self._session.query(People).filter_by(PersonLastName=last_name, PersonFirstName=first_name).first()
-                affiliations = self._session.query(Affiliations).filter_by(PersonID=person.PersonID).first()
-                act_by.AffiliationObj = affiliations
-                act_by.ActionObj = action
-                act_by.IsActionLead = True
+                    person = self._session.query(People).filter_by(PersonLastName=last_name, PersonFirstName=first_name).first()
+                    affiliations = self._session.query(Affiliations).filter_by(PersonID=person.PersonID).first()
+                    act_by.AffiliationObj = affiliations
+                    act_by.ActionObj = action
+                    act_by.IsActionLead = True
 
-                # related_action.ActionObj = action
-                # related_action.RelationshipTypeCV = "Is child of"
-                # collectionAction = self._session.query(FeatureActions)\
-                #     .filter(FeatureActions.FeatureActionID == SamplingFeatures.SamplingFeatureID)\
-                #     .filter(SamplingFeatures.SamplingFeatureCode == row[1].value)\
-                #     .first()
-                #
-                # related_action.RelatedActionObj = collectionAction.ActionObj
+                    # related_action.ActionObj = action
+                    # related_action.RelationshipTypeCV = "Is child of"
+                    # collectionAction = self._session.query(FeatureActions)\
+                    #     .filter(FeatureActions.FeatureActionID == SamplingFeatures.SamplingFeatureID)\
+                    #     .filter(SamplingFeatures.SamplingFeatureCode == row[1].value)\
+                    #     .first()
+                    #
+                    # related_action.RelatedActionObj = collectionAction.ActionObj
 
-                # self._session.no_autoflush
-                self._session.flush()
-                print action
+                    # self._session.no_autoflush
+                    self._session.flush()
+                    print action
 
-                self._session.add(action)
-                self._session.flush()
-                self._session.add(feat_act)
-                self._session.add(act_by)
-                # self._session.add(related_action)
-                self._session.flush()
-                # Measurement Result (Different from Measurement Result Value) also creates a Result
-                variable = self._session.query(Variables).filter_by(VariableCode=row[7].value).first()
-                print row[7].value
-                print variable
+                    self._session.add(action)
+                    self._session.flush()
+                    self._session.add(feat_act)
+                    self._session.add(act_by)
+                    # self._session.add(related_action)
+                    self._session.flush()
+                    # Measurement Result (Different from Measurement Result Value) also creates a Result
+                    variable = self._session.query(Variables).filter_by(VariableCode=row[7].value).first()
+                    print row[7].value
+                    print variable
 
-                units_for_result = self._session.query(Units).filter_by(UnitsName=row[8].value).first()
-                proc_level = self._session.query(ProcessingLevels).filter_by(ProcessingLevelCode=row[9].value).first()
+                    units_for_result = self._session.query(Units).filter_by(UnitsName=row[8].value).first()
+                    proc_level = self._session.query(ProcessingLevels).filter_by(ProcessingLevelCode=row[9].value).first()
 
-                units_for_agg = self._session.query(Units).filter_by(UnitsName=row[12].value).first()
+                    units_for_agg = self._session.query(Units).filter_by(UnitsName=row[12].value).first()
 
-                series_result.IntendedTimeSpacing = row[11].value
-                series_result.IntendedTimeSpacingUnitsObj = units_for_agg
-                series_result.AggregationStatisticCV = row[13].value
-                series_result.ResultUUID = row[2].value
-                series_result.FeatureActionObj = feat_act
-                series_result.ResultTypeCV = row[6].value
-                series_result.VariableObj = variable
-                series_result.UnitsObj = units_for_result
-                series_result.ProcessingLevelObj = proc_level
-                #TODO
-                series_result.StatusCV = "Complete"
-                series_result.SampledMediumCV = row[11].value
-                series_result.ValueCount = value_count
-                #TODO
-                series_result.ResultDateTime = start_date
+                    series_result.IntendedTimeSpacing = row[11].value
+                    series_result.IntendedTimeSpacingUnitsObj = units_for_agg
+                    series_result.AggregationStatisticCV = row[13].value
+                    series_result.ResultUUID = row[2].value
+                    series_result.FeatureActionObj = feat_act
+                    series_result.ResultTypeCV = row[6].value
+                    series_result.VariableObj = variable
+                    series_result.UnitsObj = units_for_result
+                    series_result.ProcessingLevelObj = proc_level
+                    #TODO
+                    series_result.StatusCV = "Complete"
+                    series_result.SampledMediumCV = row[11].value
+                    series_result.ValueCount = value_count
+                    #TODO
+                    series_result.ResultDateTime = start_date
 
-                self._session.add(series_result)
-                self._session.flush()
+                    self._session.add(series_result)
+                    self._session.flush()
 
-                # Timeseries Result Value Metadata
+                    # Timeseries Result Value Metadata
 
-                my_meta = {}
-                my_meta["Result"] = series_result
-                my_meta["CensorCodeCV"] = row[14].value
-                my_meta["QualityCodeCV"] = row[15].value
-                #TODO
-                my_meta["TimeAggregationInterval"] = series_result.IntendedTimeSpacing
-                my_meta["TimeAggregationIntervalUnitsObj"] = series_result.IntendedTimeSpacingUnitsObj
+                    my_meta = {}
+                    my_meta["Result"] = series_result
+                    my_meta["CensorCodeCV"] = row[14].value
+                    my_meta["QualityCodeCV"] = row[15].value
+                    #TODO
+                    my_meta["TimeAggregationInterval"] = series_result.IntendedTimeSpacing
+                    my_meta["TimeAggregationIntervalUnitsObj"] = series_result.IntendedTimeSpacingUnitsObj
 
-                metadata[row[1]] = my_meta
+                    metadata[row[1]] = my_meta
 
-                # self._session.add(measure_result_value)
-                self._session.flush()
+                    # self._session.add(measure_result_value)
+                    self._session.flush()
 
-                self.__updateGauge()
+                    self.__updateGauge()
 
         print "convert from cross tab to serial"
         self.load_time_series_values(data_values, metadata)
