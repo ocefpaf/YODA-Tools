@@ -47,7 +47,7 @@ class ExcelInput(iInputs):
             et.parse(self._session_factory)
         else:
             es = ExcelSpecimen(self.file_path, gauge=self.gauge)
-            es.parse(self.session_factory)
+            es.parse(self._session_factory)
 
 
         # self._session.commit()
@@ -71,7 +71,6 @@ class ExcelInput(iInputs):
         return cell.value
 
 
-
     def verify(self, file_path=None):
 
         if file_path is not None:
@@ -80,8 +79,6 @@ class ExcelInput(iInputs):
         if not os.path.isfile(self.input_file):
             print "File does not exist"
             return False
-
-
 
         return True
 

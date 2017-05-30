@@ -522,12 +522,14 @@ class ExcelTimeseries():
 
         serial = cross_tab.unstack(level=[date_column, utc_column])
 
-        serial = serial.append(pd.DataFrame(
-            columns=['ResultID', 'CensorCodeCV', 'QualityCodeCV', 'TimeAggregationInterval',
+        #add all the columns we need and clean up the dataframe
+        serial = serial.append(
+            pd.DataFrame(columns=['ResultID', 'CensorCodeCV', 'QualityCodeCV', 'TimeAggregationInterval',
                                                      'TimeAggregationIntervalUnitsID'])) \
             .fillna(0) \
             .reset_index() \
             .rename(columns={0: 'DataValue'}) \
+            .rename(columns={'LocalDateTime': 'ValueDateTime'}) \
             .dropna()
 
         for k, v in meta_dict.iteritems():
