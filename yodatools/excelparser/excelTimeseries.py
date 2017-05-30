@@ -654,7 +654,7 @@ class ExcelTimeseries():
 
                 if row[5].value is not None:
                     if row[5].value == 'NULL':
-                        #TODO break somehow because not all required data is not filled out
+                        #TODO break somehow because not all required data is filled out
                         print "All Variables must contain a valid No Data Value!"
                         var.NoDataValue = None
                     else:
@@ -681,14 +681,17 @@ class ExcelTimeseries():
         tables = self.tables[CONST_COLUMNS]
 
         data_values = pd.read_excel(io=self.input_file, sheetname='Data Values')
+        start_date = data_values["LocalDateTime"][0].to_datetime()
+        utc_offset = int(data_values["UTCOffset"][0])
+        value_count = len(data_values.index)
+
+        metadata = {}
 
         for table in tables:
             cells = sheet[self.get_range_address(table)]
-            metadata = {}
+
             print "looping through datavalues"
             for row in cells:
-
-
 
                 action = Actions()
                 feat_act = FeatureActions()
@@ -703,8 +706,8 @@ class ExcelTimeseries():
                 action.MethodObj = method
                 #TODO ActionType
                 action.ActionTypeCV = "Observation"
-                action.BeginDateTime = data_values["LocalDateTime"][0]
-                action.BeginDateTimeUTCOffset = data_values["UTCOffset"][0]
+                action.BeginDateTime = start_date
+                action.BeginDateTimeUTCOffset = utc_offset
 
                 # Feature Actions
                 sampling_feature = self._session.query(SamplingFeatures)\
@@ -738,19 +741,25 @@ class ExcelTimeseries():
                 # related_action.RelatedActionObj = collectionAction.ActionObj
 
                 # self._session.no_autoflush
+                self._session.flush()
+                print action
+
                 self._session.add(action)
+                self._session.flush()
                 self._session.add(feat_act)
                 self._session.add(act_by)
                 # self._session.add(related_action)
                 self._session.flush()
                 # Measurement Result (Different from Measurement Result Value) also creates a Result
-                variable = self._session.query(Variables).filter_by(VariableCode=row[6].value).first()
-                units_for_result = self._session.query(Units).filter_by(UnitsName=row[7].value).first()
-                proc_level = self._session.query(ProcessingLevels).filter_by(ProcessingLevelCode=row[8].value).first()
+                variable = self._session.query(Variables).filter_by(VariableCode=row[7].value).first()
+                print row[7].value
+                print variable
+
+                units_for_result = self._session.query(Units).filter_by(UnitsName=row[8].value).first()
+                proc_level = self._session.query(ProcessingLevels).filter_by(ProcessingLevelCode=row[9].value).first()
 
                 units_for_agg = self._session.query(Units).filter_by(UnitsName=row[12].value).first()
-                # series_result.CensorCodeCV = row[14].value
-                # series_result.QualityCodeCV = row[15].value
+
                 series_result.IntendedTimeSpacing = row[11].value
                 series_result.IntendedTimeSpacingUnitsObj = units_for_agg
                 series_result.AggregationStatisticCV = row[13].value
@@ -763,9 +772,9 @@ class ExcelTimeseries():
                 #TODO
                 series_result.StatusCV = "Complete"
                 series_result.SampledMediumCV = row[11].value
-                series_result.ValueCount = 1
+                series_result.ValueCount = value_count
                 #TODO
-                series_result.ResultDateTime = data_values["LocalDateTime"][0]
+                series_result.ResultDateTime = start_date
 
                 self._session.add(series_result)
                 self._session.flush()
@@ -776,25 +785,17 @@ class ExcelTimeseries():
                 my_meta["Result"] = series_result
                 my_meta["CensorCodeCV"] = row[14].value
                 my_meta["QualityCodeCV"] = row[15].value
+                #TODO
                 my_meta["TimeAggregationInterval"] = series_result.IntendedTimeSpacing
                 my_meta["TimeAggregationIntervalUnitsObj"] = series_result.IntendedTimeSpacingUnitsObj
 
-                self.metadata[row[1]] = my_meta
+                metadata[row[1]] = my_meta
 
                 # self._session.add(measure_result_value)
                 self._session.flush()
 
                 self.__updateGauge()
 
-
-
-
-        # data_values.transpose()
-        # data_values = data_values.set_index(['LocalDateTime'])
-        # unstacked_dataframes = data_values.unstack()
-        # avg = unstacked_dataframes['AirTemp_Avg']
-        # avg.values
-        # print data_values
         print "convert from cross tab to serial"
         self.load_time_series_values(data_values, metadata)
 
@@ -805,8 +806,6 @@ class ExcelTimeseries():
         """
         try:
             column_labels = timeSeries[0]
-            # data_values = timeSeries[1:]
-            # meta = timeSeries['ColumnDefinitions']
             date_column = "LocalDateTime"
             utc_column = "UTCOffset"
             cross_tab = pd.DataFrame(timeSeries[1:], columns=column_labels)  # , index=date_column)
@@ -817,7 +816,6 @@ class ExcelTimeseries():
         cross_tab.set_index([date_column, utc_column], inplace=True)
 
         serial = cross_tab.unstack(level=[date_column, utc_column])
-        # meta_dict = self.parse_meta(meta=meta)
 
         serial = serial.append(pd.DataFrame(columns=['ResultID', 'CensorCodeCV', 'QualityCodeCV', 'TimeAggregationInterval',
                                                      'TimeAggregationIntervalUnitsID'])) \
@@ -826,7 +824,7 @@ class ExcelTimeseries():
             .rename(columns={0: 'DataValue'}) \
             .dropna()
 
-        # print serial.columns
+        print serial.columns
 
         for k, v in meta_dict.iteritems():
             serial.ix[serial.level_0 == k, 'ResultID'] = v["Result"].ResultID
