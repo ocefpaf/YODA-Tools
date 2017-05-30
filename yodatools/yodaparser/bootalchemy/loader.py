@@ -12,8 +12,6 @@ except ImportError:
     from sqlalchemy.exceptions import IntegrityError
 from functools import partial
 
-
-from yodatools.timeseries import convertTimeSeries
 import pandas as pd
 # removes the warning message for pandas chained_assignment
 pd.options.mode.chained_assignment = None

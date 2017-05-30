@@ -74,6 +74,7 @@ install: # now just our code
 #  - pip install  -r requirements_tests.txt  --allow-external pyodbc --allow-unverified pyodbc
     # pysqlite
   - pip install pysqlite
+#  - pip install xlrd
   - pip list
 
 

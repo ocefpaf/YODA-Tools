@@ -669,7 +669,7 @@ class ExcelTimeseries():
 
     def is_valid(self, iterable):
         for element in iterable:
-            if not element.value:
+            if element.value is None:
                 return False
         return True
 

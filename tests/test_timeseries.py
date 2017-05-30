@@ -11,7 +11,7 @@
 # from tests.test_util import build_ts_session
 #
 # import openpyxl
-# 
+#
 #
 #
 # class TestTimeseries:
