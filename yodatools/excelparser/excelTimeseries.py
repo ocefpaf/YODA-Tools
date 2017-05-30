@@ -530,7 +530,7 @@ class ExcelTimeseries():
             .reset_index() \
             .rename(columns={0: 'DataValue'}) \
             .rename(columns={'LocalDateTime': 'ValueDateTime'}) \
-            .rename(columns={'LocalDateTime': 'ValueDateTimeUTCOffset'}) \
+            .rename(columns={'UTCOffset': 'ValueDateTimeUTCOffset'}) \
             .dropna()
 
         for k, v in meta_dict.iteritems():
