@@ -121,14 +121,30 @@ class YamlPrinter():
 
         if objname in data:
             # check to see if this is an inherited object
-            if data[objname][0].__class__ != data[objname][0]._sa_instance_state.key[0]:
+            if data[objname][0].__class__ !=data[objname][0]._sa_instance_state.key[0]:
                 file.write(self.handle_inheritance(apiobjs=data[objname]))
             else:
                 file.write(self.print_objects(data[objname]))
 
-    def generate_ts_objects(self, data):
-        return data.to_csv()
+    def generate_ts_objects(self, serial):
+        meta = serial.groupby('ResultID').min()
+        del meta["DataValue"]
+        del meta["ValueID"]
 
+        # timeseriesresultvalues - ColumnDefinitions:, Data:
+        cross_tab = serial.pivot_table(
+            index=["ValueDateTime", "ValueDateTimeUTCOffset"],
+            columns="ResultID",
+            values="DataValue")
+
+        #change column names from ResultID to ...
+
+
+
+        return cross_tab.to_csv()
+
+    def print_column_definition(self):
+        pass
 
     def print_yoda(self, out_file, data):
 
@@ -138,68 +154,60 @@ class YamlPrinter():
             filetype = "TimeSeries"
 
         with open(out_file, 'w') as yaml_schema_file:
-            # print data.keys()
-            #header
-            yaml_schema_file.write(self.get_header(filetype))
-            #dataset
-            self.add_to_db("datasets", yaml_schema_file, data)
-            #organization
-            self.add_to_db("organizations", yaml_schema_file, data)
-            #people
-            self.add_to_db("people", yaml_schema_file, data)
-            #affiliations
-            self.add_to_db("affiliations", yaml_schema_file, data)
-            #citations
-            self.add_to_db("citations", yaml_schema_file, data)
-            #authorlists
-            self.add_to_db("authorlists", yaml_schema_file, data)
-            #datasetcitations
-            self.add_to_db("datasetcitations", yaml_schema_file, data)
-            #spatialreferences
-            self.add_to_db("spatialreferences", yaml_schema_file, data)
-            #samplingfeatures: Not explicitly printed, should be included in sites and specimen objects
-            #sites
-            # self.add_to_db("sites", yaml_schema_file, data)
-            #specimens
-            # self.add_to_db("specimens", yaml_schema_file, data)
-
-            self.add_to_db("samplingfeatures", yaml_schema_file, data)
-            #relatedfeatures
-            self.add_to_db("relatedfeatures", yaml_schema_file, data)
-            #units
-            self.add_to_db("units", yaml_schema_file, data)
-            #annotations
-            self.add_to_db("annotations", yaml_schema_file, data)
-            #methods
-            self.add_to_db("methods", yaml_schema_file, data)
-            #variables
-            self.add_to_db("variables", yaml_schema_file, data)
-            #proc level
-            self.add_to_db("processinglevels", yaml_schema_file, data)
-            #action
-            self.add_to_db("actions", yaml_schema_file, data)
-            #featureaction
-            self.add_to_db("featureactions", yaml_schema_file, data)
-            #actionby
-            self.add_to_db("actionby", yaml_schema_file, data)
-            #relatedActions
-            self.add_to_db("relatedactions", yaml_schema_file, data)
-            #result Not explicitly printed, should be included in measurement or timeseries results
-            self.add_to_db("results", yaml_schema_file, data)
-            # #measurement results
-            # self.add_to_db("measurementresults", yaml_schema_file, data)
-            # #timeseriesresult
-            # self.add_to_db("timeseriesresults", yaml_schema_file, data)
-            #datasetresults
-            self.add_to_db("datasetsresults", yaml_schema_file, data)
-            # measurementResultValues
-            self.add_to_db("measurementresultvalues", yaml_schema_file, data)
-            #timeseriesresultvalues - ColumnDefinitions:, Data:
+            #
+            # #header
+            # yaml_schema_file.write(self.get_header(filetype))
+            # #dataset
+            # self.add_to_db("datasets", yaml_schema_file, data)
+            # #organization
+            # self.add_to_db("organizations", yaml_schema_file, data)
+            # #people
+            # self.add_to_db("people", yaml_schema_file, data)
+            # #affiliations
+            # self.add_to_db("affiliations", yaml_schema_file, data)
+            # #citations
+            # self.add_to_db("citations", yaml_schema_file, data)
+            # #authorlists
+            # self.add_to_db("authorlists", yaml_schema_file, data)
+            # #datasetcitations
+            # self.add_to_db("datasetcitations", yaml_schema_file, data)
+            # #spatialreferences
+            # self.add_to_db("spatialreferences", yaml_schema_file, data)
+            # #samplingfeatures:
+            # self.add_to_db("samplingfeatures", yaml_schema_file, data)
+            # #relatedfeatures
+            # self.add_to_db("relatedfeatures", yaml_schema_file, data)
+            # #units
+            # self.add_to_db("units", yaml_schema_file, data)
+            # #annotations
+            # self.add_to_db("annotations", yaml_schema_file, data)
+            # #methods
+            # self.add_to_db("methods", yaml_schema_file, data)
+            # #variables
+            # self.add_to_db("variables", yaml_schema_file, data)
+            # #proc level
+            # self.add_to_db("processinglevels", yaml_schema_file, data)
+            # #action
+            # self.add_to_db("actions", yaml_schema_file, data)
+            # #featureaction
+            # self.add_to_db("featureactions", yaml_schema_file, data)
+            # #actionby
+            # self.add_to_db("actionby", yaml_schema_file, data)
+            # #relatedActions
+            # self.add_to_db("relatedactions", yaml_schema_file, data)
+            # #result Not explicitly printed, should be included in measurement or timeseries results
+            # self.add_to_db("results", yaml_schema_file, data)
+            # self.add_to_db("datasetsresults", yaml_schema_file, data)
+            # # measurementResultValues
+            # self.add_to_db("measurementresultvalues", yaml_schema_file, data)
+            # # MeasurementResultValueAnnotations
+            # self.add_to_db("measurementresultvalueannotations", yaml_schema_file, data)
+            # #timeseriesresultvalues - ColumnDefinitions:, Data:
             val = "timeseriesresultvalues"
             if val in data:
                 yaml_schema_file.write(self.generate_ts_objects(data[val]))
-            #MeasurementResultValueAnnotations
-            self.add_to_db("measurementresultvalueannotations", yaml_schema_file, data)
+
+
 
 
             yaml_schema_file.write("...")

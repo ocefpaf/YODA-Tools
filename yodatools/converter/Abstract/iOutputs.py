@@ -21,7 +21,7 @@ class iOutputs():
             except Exception as e:
                 # print "error: " + e.message
                 pass
-            if len(tmplist)>0:
+            if len(tmplist) > 0:
                 data[t.__tablename__] = tmplist
         return data
 

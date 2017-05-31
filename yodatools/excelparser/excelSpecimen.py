@@ -61,8 +61,19 @@ class ExcelSpecimen():
         bottom = int(bottom.translate(all, nodigs))
         self.total_rows_to_read += (bottom - top)
 
+
     def get_range_address(self, named_range):
-        return named_range.attr_text.split('!')[1].replace('$', '')
+        if named_range is not None:
+            return named_range.attr_text.split('!')[1].replace('$', '')
+        return None
+
+    def get_range_value(self, range_name, sheet):
+        value = None
+        named_range = self.workbook.get_named_range(range_name)
+        range = self.get_range_address(named_range)
+        if range:
+            value = sheet[range].value
+        return value
 
 
     def parse(self, session_factory):
@@ -80,7 +91,9 @@ class ExcelSpecimen():
 
         start = time.time()
 
+
         self.parse_affiliations()
+        self.parse_datasets()
         self.parse_methods()
         self.parse_variables()
         self.parse_units()
@@ -106,6 +119,24 @@ class ExcelSpecimen():
         value = float(self.rows_read) / self.total_rows_to_read * 100.0
         self.gauge.SetValue(value)
 
+    def parse_datasets(self):
+
+        CONST_DATASET = 'Dataset Citation'
+
+        sheet, tables = self.get_sheet_and_table(CONST_DATASET)
+
+
+        dataset = DataSets()
+        dataset.DataSetUUID = self.get_range_value("DatasetUUID", sheet)
+        dataset.DataSetTypeCV = self.get_range_value("DatasetType", sheet)
+        dataset.DataSetCode = self.get_range_value("DatasetCode", sheet)
+        dataset.DataSetTitle = self.get_range_value("DatasetTitle", sheet)
+        dataset.DataSetAbstract = self.get_range_value("DatasetType", sheet)
+        self._session.add(dataset)
+        self._session.flush()
+        self.dataset = dataset
+
+
     def parse_analysis_results(self):
         SHEET_NAME = "Analysis_Results"
         sheet, tables = self.get_sheet_and_table(SHEET_NAME)
@@ -124,6 +155,7 @@ class ExcelSpecimen():
                 measure_result = MeasurementResults()
                 measure_result_value = MeasurementResultValues()
                 related_action = RelatedActions()
+                dataset_result = DataSetsResults()
 
                 # Action
                 method = self._session.query(Methods).filter_by(MethodCode=row[7].value).first()
@@ -183,6 +215,15 @@ class ExcelSpecimen():
                 measure_result.SampledMediumCV = row[12].value
                 measure_result.ValueCount = 1
                 measure_result.ResultDateTime = collectionAction.ActionObj.BeginDateTime
+                self._session.add(measure_result)
+                self._session.flush()
+
+
+                #DataSet Results
+                if self.data_set is not None:
+                    dataset_result.DataSetObj = self.data_set
+                    dataset_result.ResultObj = measure_result
+                    self._session.add(dataset_result)
 
                 # Measurements Result Value
                 measure_result_value.DataValue = row[3].value
@@ -190,8 +231,10 @@ class ExcelSpecimen():
                 measure_result_value.ValueDateTimeUTCOffset = collectionAction.ActionObj.BeginDateTimeUTCOffset
                 measure_result_value.ResultObj = measure_result
 
-                self._session.add(measure_result)
-                self._session.flush()
+
+
+
+
                 self._session.add(measure_result_value)
                 self._session.flush()
 
@@ -261,9 +304,9 @@ class ExcelSpecimen():
                 org = Organizations()
                 aff = Affiliations()
 
-                ppl.PersonFirstName = row[0].value
-                ppl.PersonMiddleName = row[1].value
-                ppl.PersonLastName = row[2].value
+                ppl.PersonFirstName = row[0].value.strip()
+                ppl.PersonMiddleName = row[1].value.strip()
+                ppl.PersonLastName = row[2].value.strip()
 
                 org.OrganizationName = row[3].value
                 aff.AffiliationStartDate = row[5].value

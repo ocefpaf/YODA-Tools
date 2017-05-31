@@ -27,6 +27,26 @@ class ExcelTimeseries():
         self.tables = {}
         self._init_data(input_file)
 
+    def parse(self, session_factory):
+
+        self._session = session_factory.getSession()
+        self._engine = session_factory.engine
+
+        self.tables = self.get_table_name_ranges()
+
+
+        self.parse_affiliations()
+        self.parse_datasets()
+        self.parse_methods()
+        self.parse_variables()
+        self.parse_units()
+        self.parse_processing_level()
+        self.parse_sampling_feature()
+
+        # self.parse_specimens()
+        # self.parse_analysis_results()
+        self.parse_data_values()
+
     def get_table_name_ranges(self):
         """
         Returns a list of the name range that have a table.
@@ -48,7 +68,17 @@ class ExcelTimeseries():
         return table_name_range
 
     def get_range_address(self, named_range):
-        return named_range.attr_text.split('!')[1].replace('$', '')
+        if named_range is not None:
+            return named_range.attr_text.split('!')[1].replace('$', '')
+        return None
+
+    def get_range_value(self, range_name, sheet):
+        value = None
+        named_range = self.workbook.get_named_range(range_name)
+        range = self.get_range_address(named_range)
+        if range:
+            value = sheet[range].value
+        return value
 
     def _init_data(self, file_path):
         self.workbook = openpyxl.load_workbook(file_path, read_only=True)
@@ -56,26 +86,6 @@ class ExcelTimeseries():
         self.sheets = self.workbook.get_sheet_names()
 
 
-    def parse(self, session_factory):
-
-        self._session = session_factory.getSession()
-        self._engine = session_factory.engine
-
-        self.tables = self.get_table_name_ranges()
-
-        self.parse_affiliations()
-        self.parse_methods()
-        self.parse_variables()
-        self.parse_units()
-        self.parse_processing_level()
-        self.parse_sampling_feature()
-
-        # self.parse_specimens()
-        # self.parse_analysis_results()
-        self.parse_data_values()
-
-
-#
     def count_number_of_rows_to_parse(self, dimensions):
         # http://stackoverflow.com/questions/1450897/python-removing-characters-except-digits-from-string
         top, bottom = dimensions.replace('$', '').split(':')
@@ -85,10 +95,6 @@ class ExcelTimeseries():
         bottom = int(bottom.translate(all, nodigs))
         self.total_rows_to_read += (bottom - top)
 
-    def get_range_address(self, named_range):
-        if named_range is not None:
-            return named_range.attr_text.split('!')[1].replace('$', '')
-        return None
 
     def __updateGauge(self):
         # Objects are passed by reference in Python :)
@@ -99,6 +105,72 @@ class ExcelTimeseries():
         value = float(self.rows_read) / self.total_rows_to_read * 100.0
         self.gauge.SetValue(value)
 
+    def get_sheet_and_table(self, sheet_name):
+        if sheet_name not in self.tables:
+            return [], []
+        sheet = self.workbook.get_sheet_by_name(sheet_name)
+        tables = self.tables[sheet_name]
+
+        return sheet, tables
+
+
+    def parse_datasets(self):
+
+        CONST_DATASET = 'Dataset Citation'
+
+        sheet, tables = self.get_sheet_and_table(CONST_DATASET)
+
+        dataset= DataSets()
+        dataset.DataSetUUID = self.get_range_value("DatasetUUID", sheet)
+        dataset.DataSetTypeCV = self.get_range_value("DatasetType", sheet)
+        dataset.DataSetCode = self.get_range_value("DatasetCode", sheet)
+        dataset.DataSetTitle = self.get_range_value("DatasetTitle", sheet)
+        dataset.DataSetAbstract = self.get_range_value("DatasetType", sheet)
+        self._session.add(dataset)
+        self._session.flush()
+        self.dataset = dataset
+
+
+        citation = Citations()
+        citation.RelationshipTypeCV = self.get_range_value("DatasetCitationRelationship", sheet)
+        citation.Title = self.get_range_value("CitationTitle", sheet)
+        citation.Publisher = self.get_range_value("Publisher", sheet)
+        citation.PublicationYear = self.get_range_value("PublicationYear", sheet)
+        citation.CitationLink = self.get_range_value("CitationLink", sheet)
+        # citation.DOI
+        self._session.add(citation)
+        self._session.flush()
+
+
+        #TODO only do this if the citation is set
+        authors = []
+        author_order = 1
+        #this is for AuthorListInfo
+        for table in tables:
+            cells = sheet[self.get_range_address(table)]
+            if table.name == "AuthorList_Table":
+                for row in cells:
+                    # Action By
+                    names = filter(None, row[1].value.split(' '))
+                    if len(names) > 2:
+                        last_name = names[2].strip()
+                    else:
+                        last_name = names[1].strip()
+                    first_name = names[0].strip()
+                    person = self._session.query(People).filter_by(PersonLastName=last_name,
+                                                                   PersonFirstName=first_name).first()
+
+                    author = AuthorLists()
+                    author.AuthorOrder = author_order
+                    author.PersonObj = person
+                    author.CitationObj = citation
+                    authors.append(author)
+                    author_order += 1
+
+                    self.__updateGauge()
+
+        self._session.add_all(authors)
+        self._session.flush()
 
     def parse_units(self):
         CONST_UNITS = 'Units'
@@ -161,9 +233,9 @@ class ExcelTimeseries():
                 org = Organizations()
                 aff = Affiliations()
 
-                ppl.PersonFirstName = row[0].value
-                ppl.PersonMiddleName = row[1].value
-                ppl.PersonLastName = row[2].value
+                ppl.PersonFirstName = row[0].value.strip()
+                ppl.PersonMiddleName = row[1].value.strip()
+                ppl.PersonLastName = row[2].value.strip()
 
                 org.OrganizationName = row[3].value
                 aff.AffiliationStartDate = row[4].value
@@ -177,6 +249,8 @@ class ExcelTimeseries():
                 aff.PersonObj = ppl
 
                 authors.append(aff)
+
+
             return authors
 
         # Combine table and authors
@@ -197,14 +271,6 @@ class ExcelTimeseries():
 
         self._session.add_all(affiliations)
         self._session.flush()
-
-    def get_sheet_and_table(self, sheet_name):
-        if sheet_name not in self.tables:
-            return [], []
-        sheet = self.workbook.get_sheet_by_name(sheet_name)
-        tables = self.tables[sheet_name]
-
-        return sheet, tables
 
     def parse_processing_level(self):
         CONST_PROC_LEVEL = 'Processing Levels'
@@ -236,30 +302,13 @@ class ExcelTimeseries():
         SHEET_NAME = 'Sampling Features'
         sheet, tables = self.get_sheet_and_table(SHEET_NAME)
 
-        # if SHEET_NAME not in self.tables:
-        #     if 'Sites' in self.tables:
-        #         SHEET_NAME = 'Sites'
-        #     else:
-        #         print "No sampling features/sites found"
-        #         return []
-
-        # sheet = self.workbook.get_sheet_by_name(SHEET_NAME)
-        # tables = self.tables[SHEET_NAME]
-
-        # sites_table = tables[0] if tables[0].name == 'Sites_Table' else None
-        elevation_datum_range = self.workbook.get_named_range("ElevationDatum")
-        spatial_ref_name_range = self.workbook.get_named_range("LatLonDatum")
-
-        spatial_references = self.parse_spatial_reference()
-
         sites = []
         for table in tables:
             cells = sheet[self.get_range_address(table)]
-        # cells = sheet[self.get_range_address(sites_table)]
 
-
-        elevation_datum = sheet[self.get_range_address(elevation_datum_range)].value
-        spatial_ref_name = sheet[self.get_range_address(spatial_ref_name_range)].value.encode('utf-8')
+        spatial_references = self.parse_spatial_reference()
+        elevation_datum = self.get_range_value("ElevationDatum", sheet)
+        spatial_ref_name = self.get_range_value("LatLonDatum", sheet)
         spatial_references_obj = spatial_references[spatial_ref_name]
 
         for row in cells:
@@ -411,8 +460,8 @@ class ExcelTimeseries():
                     feat_act = FeatureActions()
                     act_by = ActionBy()
                     series_result = TimeSeriesResults()
-                    # measure_result_value = TimeSeriesResultValues()
-                    # related_action = RelatedActions()
+                    dataset_result = DataSetsResults()
+
 
                     # Action
                     method = self._session.query(Methods).filter_by(MethodCode=row[4].value).first()
@@ -431,12 +480,12 @@ class ExcelTimeseries():
                     feat_act.ActionObj = action
 
                     # Action By
-                    names = row[5].value.split(' ')
+                    names = filter(None, row[5].value.split(' '))
                     if len(names) > 2:
-                        last_name = names[2]
+                        last_name = names[2].strip()
                     else:
-                        last_name = names[1]
-                    first_name = names[0]
+                        last_name = names[1].strip()
+                    first_name = names[0].strip()
 
                     person = self._session.query(People).filter_by(PersonLastName=last_name, PersonFirstName=first_name).first()
                     affiliations = self._session.query(Affiliations).filter_by(PersonID=person.PersonID).first()
@@ -444,14 +493,6 @@ class ExcelTimeseries():
                     act_by.ActionObj = action
                     act_by.IsActionLead = True
 
-                    # related_action.ActionObj = action
-                    # related_action.RelationshipTypeCV = "Is child of"
-                    # collectionAction = self._session.query(FeatureActions)\
-                    #     .filter(FeatureActions.FeatureActionID == SamplingFeatures.SamplingFeatureID)\
-                    #     .filter(SamplingFeatures.SamplingFeatureCode == row[1].value)\
-                    #     .first()
-                    #
-                    # related_action.RelatedActionObj = collectionAction.ActionObj
 
                     # self._session.no_autoflush
                     self._session.flush()
@@ -471,8 +512,8 @@ class ExcelTimeseries():
 
                     units_for_agg = self._session.query(Units).filter_by(UnitsName=row[12].value).first()
 
-                    series_result.IntendedTimeSpacing = row[11].value
-                    series_result.IntendedTimeSpacingUnitsObj = units_for_agg
+                    # series_result.IntendedTimeSpacing = row[11].value
+                    # series_result.IntendedTimeSpacingUnitsObj = units_for_agg
                     series_result.AggregationStatisticCV = row[13].value
                     series_result.ResultUUID = row[2].value
                     series_result.FeatureActionObj = feat_act
@@ -481,7 +522,7 @@ class ExcelTimeseries():
                     series_result.UnitsObj = units_for_result
                     series_result.ProcessingLevelObj = proc_level
                     #TODO
-                    series_result.StatusCV = "Complete"
+                    series_result.StatusCV = "Ongoing"
                     series_result.SampledMediumCV = row[11].value
                     series_result.ValueCount = value_count
                     #TODO
@@ -490,6 +531,12 @@ class ExcelTimeseries():
                     self._session.add(series_result)
                     self._session.flush()
 
+                    if self.data_set is not None:
+                        #DataSetsResults
+                        dataset_result.DataSetObj = self.data_set
+                        dataset_result.ResultObj = series_result
+                        self._session.add(dataset_result)
+
                     # Timeseries Result Value Metadata
 
                     my_meta = {}
@@ -497,8 +544,8 @@ class ExcelTimeseries():
                     my_meta["CensorCodeCV"] = row[14].value
                     my_meta["QualityCodeCV"] = row[15].value
                     #TODO
-                    my_meta["TimeAggregationInterval"] = series_result.IntendedTimeSpacing
-                    my_meta["TimeAggregationIntervalUnitsObj"] = series_result.IntendedTimeSpacingUnitsObj
+                    my_meta["TimeAggregationInterval"] = row[11].value
+                    my_meta["TimeAggregationIntervalUnitsObj"] = units_for_agg
 
                     metadata[row[1].value] = my_meta
 
