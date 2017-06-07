@@ -125,7 +125,6 @@ class ExcelSpecimen():
 
         sheet, tables = self.get_sheet_and_table(CONST_DATASET)
 
-
         dataset = DataSets()
         dataset.DataSetUUID = self.get_range_value("DatasetUUID", sheet)
         dataset.DataSetTypeCV = self.get_range_value("DatasetType", sheet)
@@ -134,7 +133,7 @@ class ExcelSpecimen():
         dataset.DataSetAbstract = self.get_range_value("DatasetType", sheet)
         self._session.add(dataset)
         self._session.flush()
-        self.dataset = dataset
+        self.data_set = dataset
 
 
     def parse_analysis_results(self):
@@ -304,9 +303,9 @@ class ExcelSpecimen():
                 org = Organizations()
                 aff = Affiliations()
 
-                ppl.PersonFirstName = row[0].value.strip()
-                ppl.PersonMiddleName = row[1].value.strip()
-                ppl.PersonLastName = row[2].value.strip()
+                ppl.PersonFirstName = row[0].value.strip() if row[0].value else ""
+                ppl.PersonMiddleName = row[1].value.strip() if row[1].value else ""
+                ppl.PersonLastName = row[2].value.strip() if row[2].value else ""
 
                 org.OrganizationName = row[3].value
                 aff.AffiliationStartDate = row[5].value
@@ -342,10 +341,15 @@ class ExcelSpecimen():
         self._session.flush()
 
     def get_sheet_and_table(self, sheet_name):
-        if sheet_name not in self.tables:
-            return [], []
+        # if sheet_name not in self.tables:
+        #     return [], []
+        # sheet = self.workbook.get_sheet_by_name(sheet_name)
+        # tables = self.tables[sheet_name]
         sheet = self.workbook.get_sheet_by_name(sheet_name)
-        tables = self.tables[sheet_name]
+        if sheet_name not in self.tables:
+            tables = []
+        else:
+            tables = self.tables[sheet_name]
 
         return sheet, tables
 
