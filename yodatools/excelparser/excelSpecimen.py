@@ -298,6 +298,7 @@ class ExcelSpecimen():
         def parse_authors(author_table):
             authors = []
             cells = sheet[self.get_range_address(author_table)]
+            #TODO check if required people have value
             for row in cells:
                 ppl = People()
                 org = Organizations()

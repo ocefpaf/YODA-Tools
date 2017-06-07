@@ -12,18 +12,18 @@ class TestExcel:
         self.curr_folder = os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
         self.excel = ExcelInput()
 
-    # def test_parse_ts(self):
-    #     file_path = os.path.join(self.curr_folder, 'test_files', 'YODA_v0.3.3_TS_climate(wHeaders).xlsm')
-    #     self.excel.parse(file_path)
-    #
-    #     session = self.excel.sendODM2Session()
-    #
-    #     assert session is not None
-    #
-    #     assert len(session.query(People).all()) > 0
-    #     assert len(session.query(SamplingFeatures).all()) > 0
-    #     assert session.query(TimeSeriesResultValues).first() is not None
-    #     session.close()
+    def test_parse_ts(self):
+        file_path = os.path.join(self.curr_folder, 'test_files', 'YODA_v0.3.3_TS_climate(wHeaders).xlsm')
+        self.excel.parse(file_path)
+
+        session = self.excel.sendODM2Session()
+
+        assert session is not None
+
+        assert len(session.query(People).all()) > 0
+        assert len(session.query(SamplingFeatures).all()) > 0
+        assert session.query(TimeSeriesResultValues).first() is not None
+        session.close()
 
 
     def test_parse_specimen(self):
@@ -39,8 +39,8 @@ class TestExcel:
         assert session is not None
         people = session.query(People).all()
         numpeople = len(people)
-        print numpeople
-        print people
+        # print numpeople
+        # print people
         assert numpeople > 0
         assert len(session.query(SamplingFeatures).all()) > 0
         assert session.query(MeasurementResultValues).first() is not None
