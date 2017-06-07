@@ -443,8 +443,8 @@ class ExcelTimeseries():
         tables = self.tables[CONST_COLUMNS]
 
         data_values = pd.read_excel(io=self.input_file, sheetname='Data Values')
-        start_date = data_values["LocalDateTime"][0].to_pydatetime()
-        end_date = data_values["LocalDateTime"][-1].to_pydatetime()
+        start_date = data_values["LocalDateTime"].iloc[0].to_pydatetime()
+        end_date = data_values["LocalDateTime"].iloc[-1].to_pydatetime()
         utc_offset = int(data_values["UTCOffset"][0])
         value_count = len(data_values.index)
 
