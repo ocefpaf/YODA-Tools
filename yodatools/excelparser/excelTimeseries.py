@@ -234,7 +234,7 @@ class ExcelTimeseries():
                 aff = Affiliations()
 
                 ppl.PersonFirstName = row[0].value.strip()
-                ppl.PersonMiddleName = row[1].value.strip()
+                ppl.PersonMiddleName = row[1].value
                 ppl.PersonLastName = row[2].value.strip()
 
                 org.OrganizationName = row[3].value
@@ -531,9 +531,9 @@ class ExcelTimeseries():
                     self._session.add(series_result)
                     self._session.flush()
 
-                    if self.data_set is not None:
+                    if self.dataset is not None:
                         #DataSetsResults
-                        dataset_result.DataSetObj = self.data_set
+                        dataset_result.DataSetObj = self.dataset
                         dataset_result.ResultObj = series_result
                         self._session.add(dataset_result)
 
@@ -572,12 +572,11 @@ class ExcelTimeseries():
         #add all the columns we need and clean up the dataframe
         serial = serial.append(
             pd.DataFrame(columns=['ResultID', 'CensorCodeCV', 'QualityCodeCV', 'TimeAggregationInterval',
-                                                     'TimeAggregationIntervalUnitsID'])) \
+                                  'TimeAggregationIntervalUnitsID'])) \
             .fillna(0) \
             .reset_index() \
             .rename(columns={0: 'DataValue'}) \
-            .rename(columns={'LocalDateTime': 'ValueDateTime'}) \
-            .rename(columns={'UTCOffset': 'ValueDateTimeUTCOffset'}) \
+            .rename(columns={'LocalDateTime': 'ValueDateTime', 'UTCOffset': 'ValueDateTimeUTCOffset'}) \
             .dropna()
 
         for k, v in meta_dict.iteritems():

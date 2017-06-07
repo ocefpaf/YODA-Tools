@@ -34,4 +34,5 @@ class yamlInput(iInputs):
 
 
     def sendODM2Session(self):
+        self._session.commit()
         return self._session

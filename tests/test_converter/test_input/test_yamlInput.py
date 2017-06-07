@@ -8,7 +8,6 @@ class TestYaml:
     def setup(self):
         self.yi = yamlInput()
 
-
     def test_parse_ts(self):
         file_path = os.path.join(curr_folder, 'test_files', 'test_ts.yaml')
         # file_path = os.path.join(curr_folder, 'test_files', 'test_ts_output.yaml')

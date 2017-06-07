@@ -80,11 +80,11 @@ class YamlFunctions(object):
         yl.from_list(self._session, [s])
 
         # load the Time Series Result information
-        # self._session.flush()
+        self._session.flush()
         if timeSeries:
-            ts_values = yl.loadTimeSeriesResults(timeSeries)
+            ts_values = yl.loadTimeSeriesResults(timeSeries, self._session, self._engine)
 
-
+        # self._session.commit()
         self._session.flush()
 
 

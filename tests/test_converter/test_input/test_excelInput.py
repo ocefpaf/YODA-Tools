@@ -18,7 +18,7 @@ class TestExcel:
 
         session = self.excel.sendODM2Session()
 
-        assert session != None
+        assert session is not None
 
         assert len(session.query(People).all()) > 0
         assert len(session.query(SamplingFeatures).all()) > 0
@@ -35,7 +35,7 @@ class TestExcel:
         self.excel.parse(file_path)
         session = self.excel.sendODM2Session()
 
-        assert session != None
+        assert session is not None
         assert len(session.query(People).all()) > 0
         assert len(session.query(SamplingFeatures).all()) > 0
         assert session.query(MeasurementResultValues).first() is not None

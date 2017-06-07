@@ -12,6 +12,8 @@ except ImportError:
     from sqlalchemy.exceptions import IntegrityError
 from functools import partial
 
+
+# from yodatools.timeseries import convertTimeSeries
 import pandas as pd
 # removes the warning message for pandas chained_assignment
 pd.options.mode.chained_assignment = None
@@ -465,7 +467,7 @@ class Loader(object):
         return col_dict
 
 
-    def loadTimeSeriesResults(self, timeSeries):
+    def loadTimeSeriesResults(self, timeSeries, session, engine):
         """
         Loads TimeSeriesResultsValues into pandas DataFrame
         """
@@ -504,81 +506,19 @@ class Loader(object):
         del serial['level_0']
 
         # TODO does this fail for sqlite in memory
-        # self._session.close()
+        # session.close()
         from odm2api.ODM2.models import TimeSeriesResultValues
         tablename = TimeSeriesResultValues.__tablename__
         serial.to_sql(name=tablename,
                          schema=TimeSeriesResultValues.__table_args__['schema'],
                          if_exists='append',
                          chunksize=1000,
-                         con=self._engine,
+                         con=engine,
                          index=False)
-        self._session.commit()
+        # session.commit()
+        # todo add timeseriesresult values objects, should be done with result object
         return serial
-        # print serial
 
-        # print dfUnstacked["AirTemp_Avg"]
-        # data = self.obtain_time_series(timeSeries)
-        # df2 = pd.DataFrame(data, columns=['Label',  'ODM2Field', 'ResultID', 'CensorCodeCV', 'QualityCodeCV', 'TimeAggregationInterval',
-        #                                   'TimeAggregationIntervalUnitsID'])
-        #
-        # dfUnstacked = dfUnstacked.reset_index()
-        # df3 = pd.merge(df2, dfUnstacked, left_on="Label", right_on="level_0")
-        #
-        # print df3
-        #
-        # # Remove unnecessary column
-        # colval= df3['ODM2Field'][0]
-        # del df3['ODM2Field']
-        # del df3['level_0']
-        #
-        # # print df3
-        #
-        # # Construct the sql queries
-        # AVGDataFrame = df3[df3['Label'] == 'AirTemp_Avg']
-        # MaxDataFrame = df3[df3['Label'] == 'AirTemp_Max']
-        # MinDataFrame = df3[df3['Label'] == 'AirTemp_Min']
-        #
-        # # Remove unnecessary column
-        # del AVGDataFrame['Label']
-        # del MaxDataFrame['Label']
-        # del MinDataFrame['Label']
-        # del df3
-        # del dfUnstacked
-        # del df2
-        # del df
-        #
-        # # set column names for the last element
-        # AVGDataFrame.columns.values[-1] = colval
-        # MinDataFrame.columns.values[-1] = colval
-        # MaxDataFrame.columns.values[-1] = colval
-        #
-        # # add missing values
-        # # AVGDataFrame['QualityCodeCV'] = 'Unknown'
-        # # MinDataFrame['QualityCodeCV'] = 'Unknown'
-        # # MaxDataFrame['QualityCodeCV'] = 'Unknown'
-        #
-        # klass = self.get_klass("TimeSeriesResultValues")
-        #
-        # AVGValues = AVGDataFrame.to_dict('records')
-        # MinValues = MinDataFrame.to_dict('records')
-        # MaxValues = MaxDataFrame.to_dict('records')
-        #
-        # merged_dicts = self.merge_dicts(AVGValues, MinValues, MaxValues)
-        # AVGValues = None
-        # MinValues = None
-        # MaxValues = None
-        #
-        # self.session.flush()
-        # for value in merged_dicts:
-        #     resolved_values = self._check_types(klass, value)
-        #     obj = self.create_obj(klass, resolved_values)
-        #     try:
-        #         self.session.add(obj)
-        #         self.session.flush()
-        #     except  Exception as e :
-        #         print "error adding obj: %s. %s" % (obj, e)
-        #         self.session.rollback()
 
     def add_klasses(self, klass, items):
         """
