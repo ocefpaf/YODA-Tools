@@ -52,16 +52,17 @@ class dbOutput(iOutputs):
         self.check("variables", self.data)
         # proc level
         self.check("processinglevels", self.data)
-        # action
-        self.check("actions", self.data)
+        # # action
+        # self.check("actions", self.data)
+        # # result
+        # self.check("results", self.data)
+        self.check_results(self.data)
         # featureaction
         self.check("featureactions", self.data)
         # actionby
         self.check("actionby", self.data)
         # relatedActions
         self.check("relatedactions", self.data)
-        # result
-        self.check("results", self.data)
         # datasetresults
         self.check("datasetsresults", self.data)
         # measurementResultValues
@@ -79,10 +80,26 @@ class dbOutput(iOutputs):
         pass
 
     def check(self, objname, data):
-
         if objname in data:
             vals = self.add_to_db(data[objname])
             # self.added_objs[objname] = vals
+
+    def check_results(self, data):
+        #TODO must handle differently
+
+
+        if False:
+        # if result uuid exists then use the existing action associated with it (result.featureactionobj.actionobj,
+        #  and change the end date time
+            pass
+        else:
+        # else create objects as they exist in memory
+        # action
+            self.check("actions", self.data)
+
+            # result
+            self.check("results", self.data)
+
 
     def add_to_db(self,  values):
         # added = []
@@ -156,46 +173,6 @@ class dbOutput(iOutputs):
                     self._session_out.rollback()
         return valuedict
 
-    # def get_new_objects(self, obj, valuedict):
-    #     for key in dir(obj):
-    #         if "obj" in key.lower():  # key.contains("Obj"):
-    #             try:
-    #                 _changeSchema(None)
-    #                 att = getattr(obj, key)
-    #                 if att is not None:
-    #                     self.fill_dict(obj)
-    #                     attdict = att.__dict__.copy()
-    #                     for k in attdict.keys():
-    #                         if k.lower() == att.__mapper__.primary_key[0].name:
-    #
-    #                             del attdict[k]
-    #                         elif "obj" in k.lower():
-    #                             del attdict[k]
-    #                     attdict.pop("_sa_instance_state")
-    #                     attdict = self.get_new_objects(att, attdict)
-    #
-    #                     # model = self.check_model(attr =att)
-    #                     model= type(att)
-    #                     # new_obj = self._session_out.query(model).filter_by(**attdict).first()
-    #                     new_obj = self.get_or_create(self._session_out, model, **attdict)
-    #
-    #                     objkey = key.replace("Obj", "ID")
-    #                     if objkey == "RelatedFeatureID":
-    #                         newkey = "SamplingFeatureID"
-    #                     elif objkey == "RelatedActionID":
-    #                         newkey = "ActionID"
-    #                     elif "units" in objkey.lower():
-    #                         newkey = "UnitsID"
-    #                     elif "resultvalue" in objkey.lower():
-    #                         newkey = "ValueID"
-    #                     else:
-    #                         newkey = objkey
-    #                     valuedict[objkey] = getattr(new_obj, newkey)
-    #
-    #             except Exception as e:
-    #                 # print ("cannot find {} in {}. Error:{} in dbOutput".format(key, obj.__class__.__name__, e))
-    #                 self._session_out.rollback()
-    #     return valuedict
 
     def get_inherited(self, sess, model, **kwargs):
         uuid = {}

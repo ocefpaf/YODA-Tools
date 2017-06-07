@@ -444,6 +444,7 @@ class ExcelTimeseries():
 
         data_values = pd.read_excel(io=self.input_file, sheetname='Data Values')
         start_date = data_values["LocalDateTime"][0].to_pydatetime()
+        end_date = data_values["LocalDateTime"][-1].to_pydatetime()
         utc_offset = int(data_values["UTCOffset"][0])
         value_count = len(data_values.index)
 
@@ -470,6 +471,8 @@ class ExcelTimeseries():
                     action.ActionTypeCV = "Observation"
                     action.BeginDateTime = start_date
                     action.BeginDateTimeUTCOffset = utc_offset
+                    action.EndDateTime = end_date
+                    action.EndDateTimeUTCOffset = utc_offset
 
                     # Feature Actions
                     sampling_feature = self._session.query(SamplingFeatures)\
@@ -522,7 +525,7 @@ class ExcelTimeseries():
                     series_result.UnitsObj = units_for_result
                     series_result.ProcessingLevelObj = proc_level
                     #TODO
-                    series_result.StatusCV = "Ongoing"
+                    series_result.StatusCV = "Unknown"
                     series_result.SampledMediumCV = row[11].value
                     series_result.ValueCount = value_count
                     #TODO
@@ -597,5 +600,5 @@ class ExcelTimeseries():
                       chunksize=1000,
                       con=self._engine,
                       index=False)
-        self._session.commit()
+        self._session.flush()
         return serial
