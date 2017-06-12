@@ -79,7 +79,7 @@ class Loader(object):
         if references is None:
             self._references = {}
         else:
-            self._references = references
+            self. _references = references
 
         if not isinstance(model, list):
             model = [model]
@@ -306,10 +306,6 @@ class Loader(object):
 
         for key, value in resolved_values.iteritems():
 
-            # if "ID" in key and "UUID" not in key:
-            # if key == 'SamplingFeatureObj':
-            #     key = 'SamplingFeatureID'
-            #     value = self.obtain_object_id(key, value)
             if value and isinstance(value, basestring) and value.startswith('*'):
                 value = self.obtain_object_id(key, value)
                 # key, value = self.obtain_key_value(key, value, resolved_values)
@@ -343,16 +339,6 @@ class Loader(object):
         return obj
 
 
-
-    def try_parsing_date(self, text):
-        for fmt in ('%Y-%m-%d %H:%M:%S', '%Y-%m-%d %H:%M', '%Y-%m-%d'):
-            try:
-                return datetime.strptime(text, fmt)
-            except ValueError:
-                pass
-        raise ValueError('no valid date format found')
-
-
     def obtain_object_id(self, key, value):
         self.session.flush()
         ref = None
@@ -375,65 +361,6 @@ class Loader(object):
             return value
 
 
-    def resolve_references(self, session, values):
-        """
-
-        :param values:
-        :return:
-        """
-
-        dictOfValues = {}
-
-        self.session = session
-
-        """
-        Find the ID for each of the anchors/aliases without adding
-        it to a session but pulling references from available session
-        """
-        dictOfValues = {}
-
-        columnValues = None
-        if isinstance(values, dict) and "ColumnDefinitions" in values:
-            columnValues = values.pop('ColumnDefinitions')
-
-
-            for i in columnValues:
-                values = []
-                for k, v in i.iteritems():
-                    newValue = self.resolve_value(v)
-                    if "Result" in k:#k == "ResultID":
-                        newValue = newValue.ResultID
-                    elif "TimeAggregationIntervalUnits" in k: #k == "TimeAggregationIntervalUnitsID":
-                        newValue = newValue.UnitsID
-
-                    values.append(newValue)
-                dictOfValues[i['Label']] = values
-
-        return dictOfValues
-
-    def obtain_time_series(self, timeSeries):
-        """
-        Clean up time series data to be put into a pandas dataframe
-        """
-
-        data = self.resolve_references(self.session, timeSeries)
-
-        try:
-            data.pop('ValueDateTime')
-            data.pop('ValueDateTimeUTCOffset')
-        except:
-            pass
-
-        # convert dictionary of data into a list of data with the first element removed
-        tmp_list = []
-        for k, v in data.iteritems():
-            v.pop(0)
-            tmp_list.append(v)
-        data = tmp_list
-        tmp_list = None
-
-        return data
-
 
     def parse_meta(self, meta):
 
@@ -447,30 +374,18 @@ class Loader(object):
 
                 for key, value in col.iteritems():
                     if key not in ["ColumnNumber", "ODM2Field"]:
-                        if value and isinstance(value, basestring) and value.startswith('*'):
-                            if value[1:] in self._references:
-                                #TODO need to set this to the ID
-                                value_list[key] = self._references[value[1:]]
-                            else:
-                                raise Exception(
-                                    'The pointer %(val)s could not be found. Make sure that %(val)s is declared before it is used.' % {
-                                        'val': value})
-
-                            # col_dict[key] = self._references[value[1:]]
-                        else:
-                            value_list[key] = value
-
+                        value_list[key]= self.resolve_value(value)
 
                 col_dict[col["Label"]] = value_list
 
-                # col_dict[col["ODM2Field"]]= col
         return col_dict
 
 
-    def loadTimeSeriesResults(self, timeSeries, session, engine):
+    def loadTimeSeriesResults(self, timeSeries,  session, engine):
         """
         Loads TimeSeriesResultsValues into pandas DataFrame
         """
+
         try:
             column_labels = timeSeries["Data"][0][0]
             # data_values = timeSeries["Data"][0][1:]
@@ -506,7 +421,9 @@ class Loader(object):
         del serial['level_0']
 
         # TODO does this fail for sqlite in memory
+        # session.commit()
         # session.close()
+
         from odm2api.ODM2.models import TimeSeriesResultValues
         tablename = TimeSeriesResultValues.__tablename__
         serial.to_sql(name=tablename,
@@ -636,6 +553,7 @@ class Loader(object):
         #    raise
 
         self.session = None
+        return self._references
 
     def log_error(self, e, data, klass, item):
         log.error('error occured while loading yaml data with output:\n%s'%pformat(data))

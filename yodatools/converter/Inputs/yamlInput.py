@@ -17,7 +17,7 @@ class yamlInput(iInputs):
         yaml_load.loadFromFile(file_path)
 
 
-        #dont close the session, you wont be able to access it :-)
+        #dont close the in memory session, you wont be able to access it :-)
         #_session.close()
 
     def verify(self):
