@@ -34,8 +34,8 @@ before_install:
   - conda install --channel conda-forge --yes flake8-print flake8-quotes flake8-import-order flake8-builtins flake8-comprehensions flake8-mutable
 
 # FIXME: Test source distribution.
-# install:
-  # - python setup.py sdist && version=$(python setup.py --version) && pushd dist  && pip install yodatools-${version}.tar.gz && popd
+install:
+  - python setup.py sdist && version=$(python setup.py --version) && pushd dist  && pip install yodatools-${version}.tar.gz && popd
 
 script:
   - if [[ $TEST_TARGET == 'default' ]]; then
