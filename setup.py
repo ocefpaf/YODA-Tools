@@ -23,6 +23,20 @@ with open('requirements.txt') as f:
     requirements = f.readlines()
 install_requires = [t.strip() for t in requirements]
 
+
+def walk_subpkg(name):
+    data_files = []
+    package_dir = 'yodatools'
+    for parent, dirs, files in os.walk(os.path.join(package_dir, name)):
+        # Remove package_dir from the path.
+        sub_dir = os.sep.join(parent.split(os.sep)[1:])
+        for f in files:
+            data_files.append(os.path.join(sub_dir, f))
+    return data_files
+
+
+pkg_data = {'': walk_subpkg('dataloader/templates') + walk_subpkg('yodaparser')}
+
 setup(
     name='YODA-Tools',
     version=versioneer.get_version(),
@@ -32,6 +46,7 @@ setup(
     description='Tools to validate and manage YODA files',
     long_description=long_description,
     packages=find_packages(),
+    package_data=pkg_data,
     include_package_data=True,
     zip_safe=False,
     platforms='any',
