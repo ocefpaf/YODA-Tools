@@ -15,7 +15,6 @@ here = os.path.abspath(os.path.dirname(__file__))
 def read(*parts):
     return codecs.open(os.path.join(here, *parts), 'r').read()
 
-LICENSE = read('LICENSE')
 long_description = read('README.md')
 
 # Dependencies.
@@ -40,7 +39,6 @@ pkg_data = {'': walk_subpkg('dataloader/templates') + walk_subpkg('yodaparser')}
 setup(
     name='YODA-Tools',
     version=versioneer.get_version(),
-    license=LICENSE,
     author='Stephanie Reeder',
     author_email='stephanie.reeder@usu.edu',
     description='Tools to validate and manage YODA files',
