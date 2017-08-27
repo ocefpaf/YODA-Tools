@@ -45,6 +45,10 @@ setup(
     long_description=long_description,
     packages=find_packages(),
     package_data=pkg_data,
+    entry_points='''
+        [console_scripts]
+        yodatools=yodatools.dataloader.controller.Main:main
+        ''',
     include_package_data=True,
     zip_safe=False,
     platforms='any',
