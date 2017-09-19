@@ -1,9 +1,14 @@
 import os
-import openpyxl
-from odm2api.ODM2.models import *
-import pandas
-import time
 import string
+import time
+
+from odm2api.ODM2.models import (Affiliations, Methods, Organizations, People,
+                                 ProcessingLevels, Sites, SpatialReferences,
+                                 Units, Variables)
+
+import openpyxl
+
+import pandas
 
 
 class ExcelTimeseries():
@@ -27,8 +32,9 @@ class ExcelTimeseries():
         Returns a list of the name range that have a table.
         The name range should contain the cells locations of the data.
         :rtype: list
+
         """
-        CONST_NAME = "_Table"
+        CONST_NAME = '_Table'
         table_name_range = {}
         for name_range in self.name_ranges:
             if CONST_NAME in name_range.name:
@@ -47,23 +53,24 @@ class ExcelTimeseries():
     def count_number_of_rows_to_parse(self, dimensions):
         # http://stackoverflow.com/questions/1450897/python-removing-characters-except-digits-from-string
         top, bottom = dimensions.replace('$', '').split(':')
-        all = string.maketrans('', '')
-        nodigs = all.translate(all, string.digits)
-        top = int(top.translate(all, nodigs))
-        bottom = int(bottom.translate(all, nodigs))
+        all_str = string.maketrans('', '')
+        nodigs = all_str.translate(all_str, string.digits)
+        top = int(top.translate(all_str, nodigs))
+        bottom = int(bottom.translate(all_str, nodigs))
         self.total_rows_to_read += (bottom - top)
 
-    #     def parse(self, file_path=None):
     def parse(self, session):
         """
-        If any of the methods return early, then check that they have the table ranges
+        If any of the methods return early,
+        then check that they have the table ranges
         The table range should exist in the tables from get_table_name_range()
         :param file_path:
         :return:
+
         """
         self._session = session
         if not self.verify(self.input_file):
-            print "Something is wrong with the file but what?"
+            print('Something is wrong with the file but what?')
             return False
 
         self.tables = self.get_table_name_ranges()
@@ -77,9 +84,9 @@ class ExcelTimeseries():
         self.parse_processing_level()
         self.parse_sampling_feature()
         self.parse_sites()
-        #TODO change to timeseries
+        # TODO change to timeseries
         # self.parse_specimens()
-        #TODO change to timeseries
+        # TODO change to timeseries
         # self.parse_analysis_results()
         self.parse_data_values(self)
 
@@ -100,11 +107,11 @@ class ExcelTimeseries():
         self.gauge.SetValue(value)
 
     # def parse_analysis_results(self):
-    #     SHEET_NAME = "Analysis_Results"
+    #     SHEET_NAME = 'Analysis_Results'
     #     sheet, tables = self.get_sheet_and_table(SHEET_NAME)
     #
     #     if not len(tables):
-    #         print "No analysis result found"
+    #         print('No analysis result found')
     #         return
     #
     #     for table in tables:
@@ -118,9 +125,9 @@ class ExcelTimeseries():
     #             related_action = RelatedActions()
     #
     #             # Action
-    #             method = self._session.query(Methods).filter_by(MethodCode=row[7].value).first()
+    #             method = self._session.query(Methods).filter_by(MethodCode=row[7].value).first()  # noqa
     #             action.MethodObj = method
-    #             action.ActionTypeCV = "Specimen analysis"
+    #             action.ActionTypeCV = 'Specimen analysis'
     #             action.BeginDateTime = row[5].value
     #             action.BeginDateTimeUTCOffset = row[6].value
     #
@@ -134,17 +141,17 @@ class ExcelTimeseries():
     #
     #             # Action By
     #             first_name, last_name = row[8].value.split(' ')
-    #             person = self._session.query(People).filter_by(PersonLastName=last_name).first()
-    #             affiliations = self._session.query(Affiliations).filter_by(PersonID=person.PersonID).first()
+    #             person = self._session.query(People).filter_by(PersonLastName=last_name).first()  # noqa
+    #             affiliations = self._session.query(Affiliations).filter_by(PersonID=person.PersonID).first()  # noqa
     #             act_by.AffiliationObj = affiliations
     #             act_by.ActionObj = action
     #             act_by.IsActionLead = True
     #
     #             related_action.ActionObj = action
-    #             related_action.RelationshipTypeCV = "Is child of"
+    #             related_action.RelationshipTypeCV = 'Is child of'
     #             collectionAction = self._session.query(FeatureActions) \
-    #                 .filter(FeatureActions.FeatureActionID == SamplingFeatures.SamplingFeatureID) \
-    #                 .filter(SamplingFeatures.SamplingFeatureCode == row[1].value) \
+    #                 .filter(FeatureActions.FeatureActionID == SamplingFeatures.SamplingFeatureID) \  # noqa
+    #                 .filter(SamplingFeatures.SamplingFeatureCode == row[1].value) \  # noqa
     #                 .first()
     #
     #             related_action.RelatedActionObj = collectionAction.ActionObj
@@ -154,32 +161,32 @@ class ExcelTimeseries():
     #             self._session.add(act_by)
     #             self._session.add(related_action)
     #
-    #             # Measurement Result (Different from Measurement Result Value) also creates a Result
-    #             variable = self._session.query(Variables).filter_by(VariableCode=row[2].value).first()
-    #             units_for_result = self._session.query(Units).filter_by(UnitsName=row[4].value).first()
-    #             proc_level = self._session.query(ProcessingLevels).filter_by(ProcessingLevelCode=row[11].value).first()
+    #             # Measurement Result (Different from Measurement Result Value) also creates a Result  # noqa
+    #             variable = self._session.query(Variables).filter_by(VariableCode=row[2].value).first()  # noqa
+    #             units_for_result = self._session.query(Units).filter_by(UnitsName=row[4].value).first()  # noqa
+    #             proc_level = self._session.query(ProcessingLevels).filter_by(ProcessingLevelCode=row[11].value).first()  # noqa
     #
-    #             units_for_agg = self._session.query(Units).filter_by(UnitsName=row[14].value).first()
+    #             units_for_agg = self._session.query(Units).filter_by(UnitsName=row[14].value).first()  # noqa
     #             measure_result.CensorCodeCV = row[9].value
     #             measure_result.QualityCodeCV = row[10].value
     #             measure_result.TimeAggregationInterval = row[13].value
-    #             measure_result.TimeAggregationIntervalUnitsObj = units_for_agg
+    #             measure_result.TimeAggregationIntervalUnitsObj = units_for_agg  # noqa
     #             measure_result.AggregationStatisticCV = row[15].value
     #             measure_result.ResultUUID = row[0].value
     #             measure_result.FeatureActionObj = feat_act
-    #             measure_result.ResultTypeCV = "Measurement"
+    #             measure_result.ResultTypeCV = 'Measurement'
     #             measure_result.VariableObj = variable
     #             measure_result.UnitsObj = units_for_result
     #             measure_result.ProcessingLevelObj = proc_level
-    #             measure_result.StatusCV = "Complete"
+    #             measure_result.StatusCV = 'Complete'
     #             measure_result.SampledMediumCV = row[12].value
     #             measure_result.ValueCount = 1
-    #             measure_result.ResultDateTime = collectionAction.ActionObj.BeginDateTime
+    #             measure_result.ResultDateTime = collectionAction.ActionObj.BeginDateTime  # noqa
     #
     #             # Measurements Result Value
     #             measure_result_value.DataValue = row[3].value
-    #             measure_result_value.ValueDateTime = collectionAction.ActionObj.BeginDateTime
-    #             measure_result_value.ValueDateTimeUTCOffset = collectionAction.ActionObj.BeginDateTimeUTCOffset
+    #             measure_result_value.ValueDateTime = collectionAction.ActionObj.BeginDateTime  # noqa
+    #             measure_result_value.ValueDateTimeUTCOffset = collectionAction.ActionObj.BeginDateTimeUTCOffset  # noqa
     #             measure_result_value.ResultObj = measure_result
     #
     #             self._session.add(measure_result)
@@ -197,7 +204,7 @@ class ExcelTimeseries():
         sheet, tables = self.get_sheet_and_table(CONST_UNITS)
 
         if not len(tables):
-            print "No Units found"
+            print('No Units found')
             return
 
         units = []
@@ -220,11 +227,12 @@ class ExcelTimeseries():
         self._session.flush()
 
     def parse_data_values(self):
-        dataframes = pandas.read_excel(io=self.input_file, sheetname='Data Values')
+        dataframes = pandas.read_excel(io=self.input_file, sheetname='Data Values')  # noqa
         # dataframes.transpose()
         dataframes = dataframes.set_index(['LocalDateTime'])
-        unstacked_dataframes = dataframes.unstack()
-        avg = unstacked_dataframes['AirTemp_Avg']
+        # FIXME: the next two lines are assigned but never used.
+        # unstacked_dataframes = dataframes.unstack()
+        # avg = unstacked_dataframes['AirTemp_Avg']
         # avg.values
         # print dataframes
 
@@ -233,7 +241,7 @@ class ExcelTimeseries():
         sheet, tables = self.get_sheet_and_table(SHEET_NAME)
 
         if not len(tables):
-            print "No affiliations found"
+            print('No affiliations found')
             return []
 
         def parse_organizations(org_table, session):
@@ -255,7 +263,7 @@ class ExcelTimeseries():
 
         def parse_authors(author_table):
             authors = []
-            cells = sheet[author_table.attr_text.split('!')[1].replace('$', '')]
+            cells = sheet[author_table.attr_text.split('!')[1].replace('$', '')]  # noqa
             for row in cells:
                 ppl = People()
                 org = Organizations()
@@ -293,7 +301,7 @@ class ExcelTimeseries():
 
         for aff in affiliations:
             if aff.OrganizationObj.OrganizationName in orgs:
-                aff.OrganizationObj = orgs[aff.OrganizationObj.OrganizationName]
+                aff.OrganizationObj = orgs[aff.OrganizationObj.OrganizationName]  # noqa
 
         self._session.add_all(affiliations)
         self._session.flush()
@@ -311,7 +319,7 @@ class ExcelTimeseries():
         sheet, tables = self.get_sheet_and_table(CONST_PROC_LEVEL)
 
         if not len(tables):
-            print "No processing levels found"
+            print('No processing levels found')
             return []
 
         processing_levels = []
@@ -338,18 +346,18 @@ class ExcelTimeseries():
             if 'Sites' in self.tables:
                 SHEET_NAME = 'Sites'
             else:
-                print "No sampling features/sites found"
+                print('No sampling features/sites found')
                 return []
 
         sheet = self.workbook.get_sheet_by_name(SHEET_NAME)
         tables = self.tables[SHEET_NAME]
 
-        sites_table = tables[0] if tables[0].name == 'Sites_Table' else tables[1]
-        spatial_ref_table = tables[0] if tables[0].name == 'SitesDatumCV_Table' else tables[1]
+        sites_table = tables[0] if tables[0].name == 'Sites_Table' else tables[1]  # noqa
+        spatial_ref_table = tables[0] if tables[0].name == 'SitesDatumCV_Table' else tables[1]  # noqa
 
         def parse_sites_datum_cv(sheet, spatial_reference_table):
             result = {}
-            cells = sheet[spatial_reference_table.attr_text.split('!')[1].replace('$', '')]
+            cells = sheet[spatial_reference_table.attr_text.split('!')[1].replace('$', '')]  # noqa
             result['elevation_datum_cv'] = cells[0][1].value
             result['latlon_datum_cv'] = cells[1][1].value
             return result
@@ -372,7 +380,7 @@ class ExcelTimeseries():
             site.SamplingFeatureDescription = row[3].value
             site.FeatureGeometryWKT = row[4].value
             site.Elevation_m = row[5].value
-            site.SamplingFeatureTypeCV = "Site"
+            site.SamplingFeatureTypeCV = 'Site'
             site.SiteTypeCV = row[6].value
             site.Latitude = row[7].value
             site.Longitude = row[8].value
@@ -387,7 +395,7 @@ class ExcelTimeseries():
             self.__updateGauge()
 
     def parse_spatial_reference(self):
-        SHEET_NAME = "SpatialReferences"
+        SHEET_NAME = 'SpatialReferences'
         sheet, tables = self.get_sheet_and_table(SHEET_NAME)
 
         if not len(tables):
@@ -412,7 +420,7 @@ class ExcelTimeseries():
     #     sheet, tables = self.get_sheet_and_table(SPECIMENS)
     #
     #     if not len(tables):
-    #         print "No specimens found"
+    #         print('No specimens found')
     #         return []
     #
     #     for table in tables:
@@ -429,7 +437,7 @@ class ExcelTimeseries():
     #             specimen.SamplingFeatureCode = row[1].value
     #             specimen.SamplingFeatureName = row[2].value
     #             specimen.SamplingFeatureDescription = row[3].value
-    #             specimen.SamplingFeatureTypeCV = "Specimen"
+    #             specimen.SamplingFeatureTypeCV = 'Specimen'
     #             specimen.SpecimenMediumCV = row[5].value
     #             specimen.IsFieldSpecimen = row[6].value
     #             specimen.ElevationDatumCV = 'Unknown'
@@ -438,7 +446,7 @@ class ExcelTimeseries():
     #
     #             # Related Features
     #             related_feature.RelationshipTypeCV = 'Was Collected at'
-    #             sampling_feature = self._session.query(SamplingFeatures).filter_by(
+    #             sampling_feature = self._session.query(SamplingFeatures).filter_by(  # noqa
     #                 SamplingFeatureCode=row[7].value).first()
     #             related_feature.SamplingFeatureObj = specimen
     #             related_feature.RelatedFeatureObj = sampling_feature
@@ -447,7 +455,7 @@ class ExcelTimeseries():
     #             action.ActionTypeCV = 'Specimen collection'
     #             action.BeginDateTime = row[8].value
     #             action.BeginDateTimeUTCOffset = row[9].value
-    #             method = self._session.query(Methods).filter_by(MethodCode=row[10].value).first()
+    #             method = self._session.query(Methods).filter_by(MethodCode=row[10].value).first()  # noqa
     #             action.MethodObj = method
     #
     #             feature_action.ActionObj = action
@@ -459,15 +467,15 @@ class ExcelTimeseries():
     #             self._session.add(feature_action)
     #
     #             self.__updateGauge()
-    #
-    #     self._session.flush()  # Need to set the RelatedFeature.RelatedFeatureID before flush will work
+    #     # Need to set RelatedFeature.RelatedFeatureID before flush will work
+    #     self._session.flush()
 
     def parse_methods(self):
-        CONST_METHODS = "Methods"
+        CONST_METHODS = 'Methods'
         sheet, tables = self.get_sheet_and_table(CONST_METHODS)
 
         if not len(tables):
-            print "No methods found"
+            print('No methods found')
             return []
 
         for table in tables:
@@ -482,7 +490,7 @@ class ExcelTimeseries():
                 method.MethodLink = row[4].value
 
                 # If organization does not exist then it returns None
-                org = self._session.query(Organizations).filter_by(OrganizationName=row[5].value).first()
+                org = self._session.query(Organizations).filter_by(OrganizationName=row[5].value).first()  # noqa
                 method.OrganizationObj = org
 
                 if method.MethodCode:  # Cannot store empty/None objects
@@ -494,10 +502,10 @@ class ExcelTimeseries():
 
     def parse_variables(self):
 
-        CONST_VARIABLES = "Variables"
+        CONST_VARIABLES = 'Variables'
 
         if CONST_VARIABLES not in self.tables:
-            print "No Variables found"
+            print('No Variables found')
             return []
 
         sheet = self.workbook.get_sheet_by_name(CONST_VARIABLES)
@@ -514,7 +522,7 @@ class ExcelTimeseries():
                 var.SpeciationCV = row[4].value
 
                 if row[5].value is not None:
-                    var.NoDataValue = None if row[5].value == 'NULL' else row[5].value
+                    var.NoDataValue = None if row[5].value == 'NULL' else row[5].value  # noqa
 
                 if var.NoDataValue is not None:  # NoDataValue cannot be None
                     self._session.add(var)
@@ -529,7 +537,7 @@ class ExcelTimeseries():
             self.input_file = file_path
 
         if not os.path.isfile(self.input_file):
-            print "File does not exist"
+            print('File does not exist')
             return False
 
         self.workbook = openpyxl.load_workbook(self.input_file, read_only=True)
@@ -537,4 +545,3 @@ class ExcelTimeseries():
         self.sheets = self.workbook.get_sheet_names()
 
         return True
-

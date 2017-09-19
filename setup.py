@@ -2,7 +2,6 @@ from __future__ import (absolute_import, division, print_function)
 
 import codecs
 import os
-import re
 
 from setuptools import find_packages, setup
 
@@ -14,6 +13,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 
 def read(*parts):
     return codecs.open(os.path.join(here, *parts), 'r').read()
+
 
 long_description = read('README.md')
 
@@ -34,7 +34,9 @@ def walk_subpkg(name):
     return data_files
 
 
-pkg_data = {'': walk_subpkg('dataloader/templates') + walk_subpkg('yodaparser')}
+pkg_data = {
+    '': walk_subpkg('dataloader/templates') + walk_subpkg('yodaparser')
+}
 
 setup(
     name='YODA-Tools',
@@ -45,10 +47,10 @@ setup(
     long_description=long_description,
     packages=find_packages(),
     package_data=pkg_data,
-    entry_points='''
+    entry_points="""
         [console_scripts]
         yodatools=yodatools.dataloader.controller.Main:main
-        ''',
+        """,
     include_package_data=True,
     zip_safe=False,
     platforms='any',
