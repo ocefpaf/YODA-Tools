@@ -1,4 +1,4 @@
-# wxpython
+wxpython==3.0.0.0
 numpy
 odm2api
 pandas
