@@ -1,9 +1,10 @@
 import wx
+
 from yodatools.dataloader.view.WizardHomePageView import WizardHomePageView
 
 
 class WizardHomePageController(WizardHomePageView):
-    def __init__(self, parent, title=""):
+    def __init__(self, parent, title=''):
         super(WizardHomePageController, self).__init__(parent)
         self.parent = parent
         self.title = title
@@ -20,7 +21,7 @@ class WizardHomePageController(WizardHomePageView):
     def on_browse_button(self, event):
         dialog = wx.FileDialog(
             self,
-            message="Add file",
+            message='Add file',
             style=wx.FD_CHANGE_DIR
         )
 

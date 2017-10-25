@@ -1,8 +1,7 @@
-from yodatools.dataloader.view.WizardSummaryPageView import WizardSummaryPageView
 from yodatools.converter.Inputs.excelInput import ExcelInput
 from yodatools.converter.Inputs.yamlInput import yamlInput
 from yodatools.converter.Outputs.yamlOutput import yamlOutput
-from yodatools.converter.Outputs.dbOutput import dbOutput
+from yodatools.dataloader.view.WizardSummaryPageView import WizardSummaryPageView
 
 
 class WizardSummaryPageController(WizardSummaryPageView):
@@ -21,7 +20,7 @@ class WizardSummaryPageController(WizardSummaryPageView):
         file_type = verify_file_type(input_file)
 
         if file_type == 'invalid':  # Accept only excel and yaml files
-            print "File extension isvalid or no file"
+            print('File extension invalid or no file')
             return
 
         if file_type == 'excel':
@@ -45,7 +44,8 @@ class WizardSummaryPageController(WizardSummaryPageView):
         #     print 'export to odm2'
         #     """
         #     create connection string
-        #     call dboutput and do same as yoda export and send in connection string as filepath
+        #     call dboutput and do same as yoda export and send in
+        #     connection string as filepath
         #     """
 
         session.close_all()

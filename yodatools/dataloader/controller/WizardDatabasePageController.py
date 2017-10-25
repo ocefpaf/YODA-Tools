@@ -2,6 +2,6 @@ from yodatools.dataloader.view.WizardDatabasePageView import WizardDatabasePageV
 
 
 class WizardDatabasePageController(WizardDatabasePageView):
-    def __init__(self, parent, title=""):
+    def __init__(self, parent, title=''):
         super(WizardDatabasePageController, self).__init__(parent)
         self.title = title

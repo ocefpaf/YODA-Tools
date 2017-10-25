@@ -1,28 +1,30 @@
-from yaml import load
-import sys
 import logging
-from pprint import pformat
-from converters import timestamp, timeonly
-from sqlalchemy.orm import class_mapper
-from sqlalchemy import Unicode, Date, DateTime, Time, Integer, Float, Boolean, String, Binary, inspect
 from datetime import datetime
-try:
-    from sqlalchemy.exc import IntegrityError
-except ImportError:
-    from sqlalchemy.exceptions import IntegrityError
 from functools import partial
+from pprint import pformat
+
+from converters import timeonly, timestamp
+
+from sqlalchemy import (Binary, Boolean, Date, DateTime, Float, Integer,
+                        String, Time, Unicode, inspect)
+from sqlalchemy.orm import class_mapper
+
+from yaml import load
+
 
 log = logging.Logger('bootalchemy', level=logging.INFO)
 ch = logging.StreamHandler()
 ch.setLevel(logging.DEBUG)
 log.addHandler(ch)
 
-# Support for SQLAlchemy 0.5 while 0.6 is in beta. This will be removed in future versions.
+# Support for SQLAlchemy 0.5 while 0.6 is in beta.
+# This will be removed in future versions.
 try:
     from sqlalchemy.dialects.postgresql.base import PGArray
 except ImportError:
-    log.error('You really should upgrade to SQLAlchemy=>0.6 to get the full bootalchemy experience')
+    log.error('You really should upgrade to SQLAlchemy=>0.6 to get the full bootalchemy experience')  # noqa
     PGArray = None
+
 
 class Loader(object):
     """
@@ -34,17 +36,17 @@ class Loader(object):
           references
             references from an sqlalchemy session to initialize with.
           check_types
-            introspect the target converter class to re-cast the data appropriately.
+            introspect the target converter class to re-cast the data
+            appropriately.
     """
 
     def try_parsing_date(self, text):
-        for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M", "%Y-%m-%d %H"):
+        for fmt in ('%Y-%m-%d %H:%M:%S', '%Y-%m-%d %H:%M', '%Y-%m-%d %H'):
             try:
                 return datetime.strptime(text, fmt)
             except ValueError:
                 pass
         raise ValueError('no valid date format found')
-
 
     default_encoding = 'utf-8'
 
@@ -55,14 +57,15 @@ class Loader(object):
             return cast_func(value)
 
     def __init__(self, model, references=None, check_types=True):
-        self.default_casts = {Integer:int,
-                              Unicode: partial(self.cast, unicode, lambda x: unicode(x, self.default_encoding)),
-                              Date: timestamp,
-                              DateTime: timestamp,
-                              Time: timeonly,
-                              Float:float,
-                              Boolean: partial(self.cast, bool, lambda x: x.lower() not in ('f', 'false', 'no', 'n')),
-                              Binary: partial(self.cast, str, lambda x: x.encode('base64'))
+        self.default_casts = {
+            Integer: int,
+            Unicode: partial(self.cast, unicode, lambda x: unicode(x, self.default_encoding)),  # noqa
+            Date: timestamp,
+            DateTime: timestamp,
+            Time: timeonly,
+            Float: float,
+            Boolean: partial(self.cast, bool, lambda x: x.lower() not in ('f', 'false', 'no', 'n')),  # noqa
+            Binary: partial(self.cast, str, lambda x: x.encode('base64'))  # noqa
         }
         if PGArray:
             self.default_casts[PGArray] = list
@@ -96,30 +99,37 @@ class Loader(object):
         """
         create an object with the given data
         """
-        # xxx: introspect the class constructor and pull the items out of item that you can, assign the rest
+        # xxx: introspect the class constructor and pull the items out of
+        # item that you can, assign the rest
         try:
             obj = klass(**item)
         except TypeError, e:
             self.log_error(e, None, klass, item)
-            raise TypeError("The class, %s, cannot be given the items %s. Original Error: %s" %
-                            (klass.__name__, str(item), str(e)))
+            raise TypeError(
+                'The class %s cannot be given the items %s. Original Error: %s'
+                % (klass.__name__, str(item), str(e))
+            )
         except AttributeError, e:
             self.log_error(e, None, klass, item)
-            raise AttributeError("Object creation failed while initializing a %s with the items %s. Original Error: %s" %
-                                 (klass.__name__, str(item), str(e)))
+            raise AttributeError(
+                'Object creation failed while initializing a %s with the items %s. Original Error: %s'  # noqa
+                % (klass.__name__, str(item), str(e))
+            )
         except KeyError, e:
             self.log_error(e, None, klass, item)
-            raise KeyError("On key, %s, failed while initializing a %s with the items %s. %s.keys() = %s" %
-                           (str(e), klass.__name__, str(item), klass.__name__, str(klass.__dict__.keys())))
+            raise KeyError(
+                'On key, %s, failed while initializing a %s with the items %s. %s.keys() = %s'  # noqa
+                % (str(e), klass.__name__, str(item), klass.__name__, str(klass.__dict__.keys()))  # noqa
+            )
 
         return obj
 
     def resolve_value(self, value):
         """
         `value` is a string or list that will be applied to an ObjectName's attribute.
-        Link in references when it hits a value that starts with an "*"
-        Ignores values that start with an "&"
-        Nesting also happens here: Create new objects for values that start with a "!"
+        Link in references when it hits a value that starts with an '*'
+        Ignores values that start with an '&'
+        Nesting also happens here: Create new objects for values that start with a '!'
         Recurse through lists.
         """
         if isinstance(value, basestring):
@@ -129,7 +139,7 @@ class Loader(object):
                 if value[1:] in self._references:
                     return self._references[value[1:]]
                 else:
-                    raise Exception('The pointer %(val)s could not be found. Make sure that %(val)s is declared before it is used.' % { 'val': value })
+                    raise Exception('The pointer %(val)s could not be found. Make sure that %(val)s is declared before it is used.' % { 'val': value })  # noqa
         elif isinstance(value, dict):
             keys = value.keys()
             if len(keys) == 1 and keys[0].startswith('!'):
@@ -142,13 +152,16 @@ class Loader(object):
                 elif isinstance(items, list):
                     return self.add_klasses(klass, items)
                 else:
-                    raise TypeError('You can only give a nested value a list or a dict. You tried to feed a %s into a %s.' %
-                                    (items.__class__.__name__, klass_name))
+                    raise TypeError(
+                        'You can only give a nested value a list or a dict. You tried to feed a %s into a %s.'  # noqa
+                        % (items.__class__.__name__, klass_name)
+                    )
 
         elif isinstance(value, list):
             return [self.resolve_value(list_item) for list_item in value]
 
-        # an 'assert isinstance(value, basestring) and value[0:1] not in ('&', '*', '!') could probably go here.
+        # an 'assert isinstance(value, basestring) and value[0:1] not in
+        # ('&', '*', '!') could probably go here.
         return value
 
     def has_references(self, item):
@@ -201,7 +214,7 @@ class Loader(object):
             # pass
         # check that the class was found.
         if klass is None:
-            raise AttributeError('Class %s from %s not found in any module' % (klass_name , self.source))
+            raise AttributeError('Class %s from %s not found in any module' % (klass_name , self.source))  # noqa
         return klass
 
     def obtain_key_value(self, key, value, resolved_values):
@@ -214,7 +227,8 @@ class Loader(object):
         # save off key
         new_obj_key = key
 
-        # pop off old key in order to maintain size of resolved_values when the object version is added to the dictionary
+        # pop off old key in order to maintain size of resolved_values when
+        # the object version is added to the dictionary
         resolved_values.pop(key)
 
         # Convert the sqlalchemy object equivalent of <table>Obj from <table>ID
@@ -231,7 +245,8 @@ class Loader(object):
         """
         Turn <Table>ID into <Table>Obj
 
-        Since <Table>ID can only store Integers and we are following bootAlchemy's work flow, we need to change <Table>ID into <Table>Obj
+        Since <Table>ID can only store Integers and we are following
+        bootAlchemy's work flow, we need to change <Table>ID into <Table>Obj
 
         Example:
             If we are working with '<class ODM2.models.AuthorLists>', we are working with the following schema
@@ -244,11 +259,12 @@ class Loader(object):
                     PersonObj
                 }
 
-            The algorithm is to change the incoming key value of PersonID into PersonObj and CitationID into CitationObj. The Key
+            The algorithm is to change the incoming key value of PersonID into
+            PersonObj and CitationID into CitationObj. The Key
                 is paired with the yodaparser object in resolved_values.
         """
         tmp_key = key
-        ## Turn Person into People
+        # Turn Person into People
         tmp_key = tmp_key[:-2] + 'Obj'
         return tmp_key
 
@@ -267,13 +283,12 @@ class Loader(object):
 
         tmp_key = key
 
-
         # Need to handle special cases
         if tmp_key[:-2] == 'Person':
             tmp_key = 'People'
 
         elif 'Units' in tmp_key[:-2]:
-            tmp_key = "Units"
+            tmp_key = 'Units'
 
         # Handle plural cases
         else:
@@ -291,35 +306,34 @@ class Loader(object):
 
         if len(keys) == 1 and keys[0].startswith('&') and isinstance(values[keys[0]], dict):
             ref_name = keys[0]
-            values = values[ref_name] # ie. item.values[0]
+            values = values[ref_name]  # ie. item.values[0]
 
         # Values is a dict of attributes and their values for any ObjectName.
-        # Copy the given dict, iterate all key-values and process those with special directions (nested creations or links).
+        # Copy the given dict, iterate all key-values and process those with
+        # special directions (nested creations or links).
         resolved_values = values.copy()
 
         for key, value in resolved_values.iteritems():
 
-            # if "ID" in key and "UUID" not in key:
+            # if 'ID' in key and 'UUID' not in key:
             # if key == 'SamplingFeatureObj':
             #     key = 'SamplingFeatureID'
             #     value = self.obtain_object_id(key, value)
             if value and isinstance(value, basestring) and value.startswith('*'):
                 value = self.obtain_object_id(key, value)
                 # key, value = self.obtain_key_value(key, value, resolved_values)
-            elif "date" in key.lower() and not ("utc" in key.lower()):
-                #this has been added to support sqlite,
-                #print "%s is a date type. %s"%(key, value)
+            elif 'date' in key.lower() and not ('utc' in key.lower()):
+                # this has been added to support sqlite,
+                # print('%s is a date type. %s' % (key, value))
                 if value is not None:
                     try:
-
-                        value = self.try_parsing_date(value)#datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+                        # datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
+                        value = self.try_parsing_date(value)
                     except Exception as e:
-                        print ("error converting datetime {}".format(e))
-                        # value = datetime.strptime(value, "%Y-%m-%d")
-
+                        print('error converting datetime {}'.format(e))
+                        # value = datetime.strptime(value, '%Y-%m-%d')
 
             resolved_values[key] = self.resolve_value(value)
-
 
         # _check_types currently does nothingublssdf (unless you call the loaded with a check_types parameter)
         resolved_values = self._check_types(klass, resolved_values)
@@ -335,8 +349,7 @@ class Loader(object):
 
         return obj
 
-
-
+    # FIXME: redefinition of unused 'try_parsing_date' from line 43
     def try_parsing_date(self, text):
         for fmt in ('%Y-%m-%d %H:%M:%S', '%Y-%m-%d %H:%M', '%Y-%m-%d'):
             try:
@@ -345,28 +358,25 @@ class Loader(object):
                 pass
         raise ValueError('no valid date format found')
 
-
     def obtain_object_id(self, key, value):
         self.session.flush()
         ref = None
         try:
             ref = self._references[value[1:]]
 
-            if key.endswith("ID"):
+            if key.endswith('ID'):
                 # obtain the primary key value
                 value = inspect(ref).identity[0]
 
-            elif key.endswith("Obj"):
+            elif key.endswith('Obj'):
                 # if not 'SamplingFeatureObj' in key:
                 #     value = ref
                 # else:
                 value = inspect(ref.identity[0])
 
-
             return value
-        except Exception as e:
+        except Exception:
             return value
-
 
     def resolve_references(self, session, values):
         """
@@ -386,24 +396,23 @@ class Loader(object):
         dictOfValues = {}
 
         columnValues = None
-        if isinstance(values, dict) and "ColumnDefinitions" in values:
+        if isinstance(values, dict) and 'ColumnDefinitions' in values:
             columnValues = values.pop('ColumnDefinitions')
-
 
             for i in columnValues:
                 values = []
-                # print "I: ", i
+                # print('I: {}'.format(i))
                 for k, v in i.iteritems():
                     newValue = self.resolve_value(v)
-                    if "Result" in k:#k == "ResultID":
+                    if 'Result' in k:  # k == 'ResultID':
                         newValue = newValue.ResultID
-                    elif "TimeAggregationIntervalUnits" in k: #k == "TimeAggregationIntervalUnitsID":
+                    elif 'TimeAggregationIntervalUnits' in k:  # k == 'TimeAggregationIntervalUnitsID':
                         newValue = newValue.UnitsID
 
                     values.append(newValue)
-                    # print "K: ", k, " Value: ", newValue
+                    # print('K: {} Value: '.format(k, newValue))
                 dictOfValues[i['Label']] = values
-                print
+                print()
 
         return dictOfValues
 
@@ -452,17 +461,27 @@ class Loader(object):
         df.set_index(['ValueDateTime', 'ValueDateTimeUTCOffset'], inplace=True)
         dfUnstacked = df.unstack(level=['ValueDateTime', 'ValueDateTimeUTCOffset'])
 
-        df2 = pd.DataFrame(data, columns=['Label',  'ODM2Field', 'ResultID', 'CensorCodeCV', 'QualityCodeCV', 'TimeAggregationInterval',
-                                          'TimeAggregationIntervalUnitsID'])
+        df2 = pd.DataFrame(
+            data,
+            columns=[
+                'Label',
+                'ODM2Field',
+                'ResultID',
+                'CensorCodeCV',
+                'QualityCodeCV',
+                'TimeAggregationInterval',
+                'TimeAggregationIntervalUnitsID'
+            ]
+        )
         dfUnstacked = dfUnstacked.reset_index()
-        df3 = pd.merge(df2, dfUnstacked, left_on="Label", right_on="level_0")
+        df3 = pd.merge(df2, dfUnstacked, left_on='Label', right_on='level_0')
 
         # Remove unnecessary column
-        colval= df3['ODM2Field'][0]
+        colval = df3['ODM2Field'][0]
         del df3['ODM2Field']
         del df3['level_0']
 
-        # print df3
+        # print(df3)
 
         # Construct the sql queries
         AVGDataFrame = df3[df3['Label'] == 'AirTemp_Avg']
@@ -488,7 +507,7 @@ class Loader(object):
         # MinDataFrame['QualityCodeCV'] = 'Unknown'
         # MaxDataFrame['QualityCodeCV'] = 'Unknown'
 
-        klass = self.get_klass("TimeSeriesResultValues")
+        klass = self.get_klass('TimeSeriesResultValues')
 
         AVGValues = AVGDataFrame.to_dict('records')
         MinValues = MinDataFrame.to_dict('records')
@@ -506,13 +525,15 @@ class Loader(object):
             try:
                 self.session.add(obj)
                 self.session.flush()
-            except  Exception as e :
-                print "error adding obj: %s. %s" % (obj, e)
+            except Exception as e:
+                print('error adding obj: %s. %s' % (obj, e))
                 self.session.rollback()
 
     def add_klasses(self, klass, items):
         """
-        Returns a list of the new objects. These objects are already in session, so you don't *need* to do anything with them.
+        Returns a list of the new objects.
+        These objects are already in session,
+        so you don't *need* to do anything with them.
         """
         objects = []
         for item in items:
@@ -573,11 +594,12 @@ class Loader(object):
             ranges: ['*blue-ridge', '*peidmont']
             valleys: ['*hudson', '*susq']
 
-        However, the nested data is not and cannot be added to the list of references. It is anonymous in that sense.
+        However, the nested data is not and cannot be added to the list of references.
+        It is anonymous in that sense.
 
         Careful! Here are some pitfalls:
 
-        This would double list the valleys. Not good. Like saying "valleys: [['*hudson', '*susq']]"
+        This would double list the valleys. Not good. Like saying 'valleys: [['*hudson', '*susq']]'
             valleys:
               - '!ValleyArea': [ { name: Hudson River Crevasse }, { name: Susquehanna Valleyway } ]
 
@@ -593,18 +615,16 @@ class Loader(object):
         skip_keys = ['flush', 'commit', 'clear']
         try:
             for group in data:
-                # print "Group: ", group
+                # print('Group: {}'.format(group))
                 for name, items in group.iteritems():
                     if name not in skip_keys:
-                        # print "Name: ", name
-                        # print "Items: ", items
+                        # print('Name: '.format(name))
+                        # print('Items: '.format(items))
 
                         klass = self.get_klass(name)
-                        # print klass, '\n'
+                        # print('{}\n'.format(klass))
                         self.add_klasses(klass, items)
-
                 # session.flush()
-
                 if 'flush' in group:
                     session.flush()
                 if 'commit' in group:
@@ -614,37 +634,42 @@ class Loader(object):
 
         except AttributeError, e:
             if hasattr(item, 'iteritems'):
-                missing_refs = [(key, value) for key, value in item.iteritems() if isinstance(value,basestring) and value.startswith('*')]
+                missing_refs = [
+                    (key, value) for key, value in item.iteritems() if
+                    isinstance(value, basestring) and value.startswith('*')
+                ]
                 self.log_error(e, data, klass, item)
                 if missing_refs:
                     log.error('*'*80)
-                    log.error('It is very possible you are missing a reference, or require a "flush:" between blocks to store the references')
-                    log.error('here is a list of references that were not accessible (key, value): %s'%missing_refs)
+                    log.error('It is very possible you are missing a reference, '
+                              'or require a "flush:" between blocks to store the references')
+                    log.error('here is a list of references that were not accessible (key, value): %s' % missing_refs) # noqa
                     log.error('*'*80)
             else:
                 self.log_error(e, data, klass, item)
-        ## except IntegrityError, e:
-        ##     raise IntegrityError("Error while inserting %s. Original Error: %s" %
-        ##         (klass.__name__, str(item), str(e)))
-        #except Exception, e:
-        #    self.log_error(sys.exc_info()[2], data, klass, item)
-        #    raise
+        # except IntegrityError, e:
+        #     raise IntegrityError('Error while inserting %s. Original Error: %s' %
+        #         (klass.__name__, str(item), str(e)))
+        # except Exception, e:
+        #     self.log_error(sys.exc_info()[2], data, klass, item)
+        #     raise
 
         self.session = None
 
     def log_error(self, e, data, klass, item):
-        log.error('error occured while loading yaml data with output:\n%s'%pformat(data))
-        log.error('references:\n%s'%pformat(self._references))
-        log.error('class: %s'%klass)
-        log.error('item: %s'%item)
+        log.error('error occured while loading yaml data with output:\n%s' % pformat(data))
+        log.error('references:\n%s' % pformat(self._references))
+        log.error('class: %s' % klass)
+        log.error('item: %s' % item)
         import traceback
         log.error(traceback.format_exc(e))
 
     def merge_dicts(self, *dict_args):
-        '''
+        """
         Given any number of dicts, shallow copy and merge into a new dict,
         precedence goes to key value pairs in latter dicts.
-        '''
+
+        """
         result = []
 
         if isinstance(dict_args, tuple):
@@ -652,6 +677,7 @@ class Loader(object):
                 for dictionary in i:
                     result.append(dictionary)
         return result
+
 
 class YamlLoader(Loader):
 
