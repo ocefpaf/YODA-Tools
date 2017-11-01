@@ -1,20 +1,25 @@
+
+from odm2api.ODM2.models import Base
+
 class iOutputs():
+
+
     def parseObjects(self, session):
         data = {}
         for t in self.get_table_names():
             tmplist = []
             try:
-                if t.__tablename__ == 'timeseriesresultvalues':
+                if t.__tablename__ == "timeseriesresultvalues":
                     import pandas as pd
                     sql = """SELECT * FROM TimeSeriesResultValues"""
-                    tbl = pd.read_sql(sql, session.connection().connection.connection)  # noqa
-                    tmplist = tbl
+                    tbl = pd.read_sql(sql, session.connection().connection.connection)
+                    tmplist=tbl
                 else:
                     for o in session.query(t).all():
                         # session.expunge(o)
                         tmplist.append(o)
             except Exception as e:
-                # print('error: {}'.format(e.message))
+                # print "error: " + e.message
                 pass
             if len(tmplist) > 0:
                 data[t.__tablename__] = tmplist
@@ -25,10 +30,8 @@ class iOutputs():
         import inspect
         import sys
         # get a list of all of the classes in the module
-        clsmembers = inspect.getmembers(
-            sys.modules['odm2api.ODM2.models'],
-            lambda member: inspect.isclass(member) and member.__module__ == 'odm2api.ODM2.models'  # noqa
-        )
+        clsmembers = inspect.getmembers(sys.modules["odm2api.ODM2.models"],
+                                        lambda member: inspect.isclass(member) and member.__module__ == "odm2api.ODM2.models")
 
         for name, Tbl in clsmembers:
             import sqlalchemy.ext.declarative.api as api
