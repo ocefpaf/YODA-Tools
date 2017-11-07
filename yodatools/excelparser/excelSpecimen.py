@@ -1,17 +1,10 @@
 import os
-import string
-import time
-
-# FIXME: I am not sure about these imports
-from odm2api.ODM2.models import (
-    ActionBy, Actions, Affiliations, FeatureActions, MeasurementResultValues,
-    MeasurementResults, Methods, Organizations, People, ProcessingLevels,
-    RelatedActions, RelatedFeatures, SamplingFeatures, Sites,
-    SpatialReferences, Specimens, Units, Variables
-)
-
-
 import openpyxl
+from odm2api.ODM2.models import *
+from yodatools.converter.Abstract import iInputs
+import pandas
+import time
+import string
 
 
 class ExcelSpecimen():
@@ -30,15 +23,15 @@ class ExcelSpecimen():
         self.sheets = []
         self.name_ranges = None
         self.tables = {}
+        self._init_data(input_file)
 
     def get_table_name_ranges(self):
         """
         Returns a list of the name range that have a table.
         The name range should contain the cells locations of the data.
         :rtype: list
-
         """
-        CONST_NAME = '_Table'
+        CONST_NAME = "_Table"
         table_name_range = {}
         for name_range in self.name_ranges:
             if CONST_NAME in name_range.name:
@@ -54,36 +47,53 @@ class ExcelSpecimen():
 
         return table_name_range
 
+    def _init_data(self, file_path):
+        self.workbook = openpyxl.load_workbook(file_path, read_only=True)
+        self.name_ranges = self.workbook.get_named_ranges()
+        self.sheets = self.workbook.get_sheet_names()
+
     def count_number_of_rows_to_parse(self, dimensions):
         # http://stackoverflow.com/questions/1450897/python-removing-characters-except-digits-from-string
         top, bottom = dimensions.replace('$', '').split(':')
-        all_str = string.maketrans('', '')
-        nodigs = all_str.translate(all_str, string.digits)
-        top = int(top.translate(all_str, nodigs))
-        bottom = int(bottom.translate(all_str, nodigs))
+        all = string.maketrans('', '')
+        nodigs = all.translate(all, string.digits)
+        top = int(top.translate(all, nodigs))
+        bottom = int(bottom.translate(all, nodigs))
         self.total_rows_to_read += (bottom - top)
 
-    # def parse(self, file_path=None):
-    def parse(self, session):
+
+    def get_range_address(self, named_range):
+        if named_range is not None:
+            return named_range.attr_text.split('!')[1].replace('$', '')
+        return None
+
+    def get_range_value(self, range_name, sheet):
+        value = None
+        named_range = self.workbook.get_named_range(range_name)
+        range = self.get_range_address(named_range)
+        if range:
+            value = sheet[range].value
+        return value
+
+
+    def parse(self, session_factory):
         """
-        If any of the methods return early,
-        then check that they have the table ranges
+        If any of the methods return early, then check that they have the table ranges
         The table range should exist in the tables from get_table_name_range()
         :param :
         :return:
-
         """
-        self._session = session
 
-        if not self.verify(self.input_file):
-            print('Something is wrong with the file but what?')
-            return False
+        self._session = session_factory.getSession()
+        self._engine = session_factory.engine
 
         self.tables = self.get_table_name_ranges()
 
         start = time.time()
 
+
         self.parse_affiliations()
+        self.parse_datasets()
         self.parse_methods()
         self.parse_variables()
         self.parse_units()
@@ -109,16 +119,33 @@ class ExcelSpecimen():
         value = float(self.rows_read) / self.total_rows_to_read * 100.0
         self.gauge.SetValue(value)
 
+    def parse_datasets(self):
+
+        CONST_DATASET = 'Dataset Citation'
+
+        sheet, tables = self.get_sheet_and_table(CONST_DATASET)
+
+        dataset = DataSets()
+        dataset.DataSetUUID = self.get_range_value("DatasetUUID", sheet)
+        dataset.DataSetTypeCV = self.get_range_value("DatasetType", sheet)
+        dataset.DataSetCode = self.get_range_value("DatasetCode", sheet)
+        dataset.DataSetTitle = self.get_range_value("DatasetTitle", sheet)
+        dataset.DataSetAbstract = self.get_range_value("DatasetType", sheet)
+        self._session.add(dataset)
+        self._session.flush()
+        self.data_set = dataset
+
+
     def parse_analysis_results(self):
-        SHEET_NAME = 'Analysis_Results'
+        SHEET_NAME = "Analysis_Results"
         sheet, tables = self.get_sheet_and_table(SHEET_NAME)
 
         if not len(tables):
-            print('No analysis result found')
+            print "No analysis result found"
             return
 
         for table in tables:
-            cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
+            cells = sheet[self.get_range_address(table)]
             for row in cells:
 
                 action = Actions()
@@ -127,11 +154,12 @@ class ExcelSpecimen():
                 measure_result = MeasurementResults()
                 measure_result_value = MeasurementResultValues()
                 related_action = RelatedActions()
+                dataset_result = DataSetsResults()
 
                 # Action
-                method = self._session.query(Methods).filter_by(MethodCode=row[7].value).first()  # noqa
+                method = self._session.query(Methods).filter_by(MethodCode=row[7].value).first()
                 action.MethodObj = method
-                action.ActionTypeCV = 'Specimen analysis'
+                action.ActionTypeCV = "Specimen analysis"
                 action.BeginDateTime = row[5].value
                 action.BeginDateTimeUTCOffset = row[6].value
 
@@ -145,20 +173,18 @@ class ExcelSpecimen():
 
                 # Action By
                 first_name, last_name = row[8].value.split(' ')
-                person = self._session.query(People).filter_by(PersonLastName=last_name).first()  # noqa
-                affiliations = self._session.query(Affiliations).filter_by(PersonID=person.PersonID).first()  # noqa
+                person = self._session.query(People).filter_by(PersonLastName=last_name).first()
+                affiliations = self._session.query(Affiliations).filter_by(PersonID=person.PersonID).first()
                 act_by.AffiliationObj = affiliations
                 act_by.ActionObj = action
                 act_by.IsActionLead = True
 
                 related_action.ActionObj = action
-                related_action.RelationshipTypeCV = 'Is child of'
-                collectionAction = (
-                    self._session.query(FeatureActions)
-                    .filter(FeatureActions.FeatureActionID == SamplingFeatures.SamplingFeatureID)  # noqa
-                    .filter(SamplingFeatures.SamplingFeatureCode == row[1].value)  # noqa
+                related_action.RelationshipTypeCV = "Is child of"
+                collectionAction = self._session.query(FeatureActions)\
+                    .filter(FeatureActions.FeatureActionID == SamplingFeatures.SamplingFeatureID)\
+                    .filter(SamplingFeatures.SamplingFeatureCode == row[1].value)\
                     .first()
-                )
 
                 related_action.RelatedActionObj = collectionAction.ActionObj
 
@@ -167,13 +193,12 @@ class ExcelSpecimen():
                 self._session.add(act_by)
                 self._session.add(related_action)
 
-                # Measurement Result (Different from Measurement Result Value)
-                # also creates a Result
-                variable = self._session.query(Variables).filter_by(VariableCode=row[2].value).first()  # noqa
-                units_for_result = self._session.query(Units).filter_by(UnitsName=row[4].value).first()  # noqa
-                proc_level = self._session.query(ProcessingLevels).filter_by(ProcessingLevelCode=row[11].value).first()  # noqa
+                # Measurement Result (Different from Measurement Result Value) also creates a Result
+                variable = self._session.query(Variables).filter_by(VariableCode=row[2].value).first()
+                units_for_result = self._session.query(Units).filter_by(UnitsName=row[4].value).first()
+                proc_level = self._session.query(ProcessingLevels).filter_by(ProcessingLevelCode=row[11].value).first()
 
-                units_for_agg = self._session.query(Units).filter_by(UnitsName=row[14].value).first()  # noqa
+                units_for_agg = self._session.query(Units).filter_by(UnitsName=row[14].value).first()
                 measure_result.CensorCodeCV = row[9].value
                 measure_result.QualityCodeCV = row[10].value
                 measure_result.TimeAggregationInterval = row[13].value
@@ -181,22 +206,34 @@ class ExcelSpecimen():
                 measure_result.AggregationStatisticCV = row[15].value
                 measure_result.ResultUUID = row[0].value
                 measure_result.FeatureActionObj = feat_act
-                measure_result.ResultTypeCV = 'Measurement'
+                measure_result.ResultTypeCV = "Measurement"
                 measure_result.VariableObj = variable
                 measure_result.UnitsObj = units_for_result
                 measure_result.ProcessingLevelObj = proc_level
-                measure_result.StatusCV = 'Complete'
+                measure_result.StatusCV = "Complete"
                 measure_result.SampledMediumCV = row[12].value
                 measure_result.ValueCount = 1
-                measure_result.ResultDateTime = collectionAction.ActionObj.BeginDateTime  # noqa
+                measure_result.ResultDateTime = collectionAction.ActionObj.BeginDateTime
+                self._session.add(measure_result)
+                self._session.flush()
+
+
+                #DataSet Results
+                if self.data_set is not None:
+                    dataset_result.DataSetObj = self.data_set
+                    dataset_result.ResultObj = measure_result
+                    self._session.add(dataset_result)
 
                 # Measurements Result Value
                 measure_result_value.DataValue = row[3].value
-                measure_result_value.ValueDateTime = collectionAction.ActionObj.BeginDateTime  # noqa
-                measure_result_value.ValueDateTimeUTCOffset = collectionAction.ActionObj.BeginDateTimeUTCOffset  # noqa
+                measure_result_value.ValueDateTime = collectionAction.ActionObj.BeginDateTime
+                measure_result_value.ValueDateTimeUTCOffset = collectionAction.ActionObj.BeginDateTimeUTCOffset
                 measure_result_value.ResultObj = measure_result
 
-                self._session.add(measure_result)
+
+
+
+
                 self._session.add(measure_result_value)
                 self._session.flush()
 
@@ -211,12 +248,12 @@ class ExcelSpecimen():
         sheet, tables = self.get_sheet_and_table(CONST_UNITS)
 
         if not len(tables):
-            print('No Units found')
+            print "No Units found"
             return
 
         units = []
         for table in tables:
-            cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
+            cells = sheet[self.get_range_address(table)]
 
             for row in cells:
                 unit = Units()
@@ -238,13 +275,13 @@ class ExcelSpecimen():
         sheet, tables = self.get_sheet_and_table(SHEET_NAME)
 
         if not len(tables):
-            print('No affiliations found')
+            print "No affiliations found"
             return []
 
         def parse_organizations(org_table, session):
             organizations = {}
 
-            cells = sheet[org_table.attr_text.split('!')[1].replace('$', '')]
+            cells = sheet[self.get_range_address(org_table)]
             for row in cells:
                 org = Organizations()
                 org.OrganizationTypeCV = row[0].value
@@ -260,15 +297,16 @@ class ExcelSpecimen():
 
         def parse_authors(author_table):
             authors = []
-            cells = sheet[author_table.attr_text.split('!')[1].replace('$', '')]  # noqa
+            cells = sheet[self.get_range_address(author_table)]
+            #TODO check if required people have value
             for row in cells:
                 ppl = People()
                 org = Organizations()
                 aff = Affiliations()
 
-                ppl.PersonFirstName = row[0].value
-                ppl.PersonMiddleName = row[1].value
-                ppl.PersonLastName = row[2].value
+                ppl.PersonFirstName = row[0].value.strip() if row[0].value else ""
+                ppl.PersonMiddleName = row[1].value.strip() if row[1].value else ""
+                ppl.PersonLastName = row[2].value.strip() if row[2].value else ""
 
                 org.OrganizationName = row[3].value
                 aff.AffiliationStartDate = row[5].value
@@ -289,7 +327,7 @@ class ExcelSpecimen():
         orgs = {}
         affiliations = []
         for table in tables:
-            if 'Authors_Table' == table.name:
+            if 'People_Table' == table.name:
                 affiliations = parse_authors(table)
             else:
                 orgs = parse_organizations(table, self._session)
@@ -298,16 +336,21 @@ class ExcelSpecimen():
 
         for aff in affiliations:
             if aff.OrganizationObj.OrganizationName in orgs:
-                aff.OrganizationObj = orgs[aff.OrganizationObj.OrganizationName]  # noqa
+                aff.OrganizationObj = orgs[aff.OrganizationObj.OrganizationName]
 
         self._session.add_all(affiliations)
         self._session.flush()
 
     def get_sheet_and_table(self, sheet_name):
-        if sheet_name not in self.tables:
-            return [], []
+        # if sheet_name not in self.tables:
+        #     return [], []
+        # sheet = self.workbook.get_sheet_by_name(sheet_name)
+        # tables = self.tables[sheet_name]
         sheet = self.workbook.get_sheet_by_name(sheet_name)
-        tables = self.tables[sheet_name]
+        if sheet_name not in self.tables:
+            tables = []
+        else:
+            tables = self.tables[sheet_name]
 
         return sheet, tables
 
@@ -316,12 +359,12 @@ class ExcelSpecimen():
         sheet, tables = self.get_sheet_and_table(CONST_PROC_LEVEL)
 
         if not len(tables):
-            print('No processing levels found')
+            print "No processing levels found"
             return []
 
         processing_levels = []
         for table in tables:
-            cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
+            cells = sheet[self.get_range_address(table)]
 
             for row in cells:
                 proc_lvl = ProcessingLevels()
@@ -343,30 +386,36 @@ class ExcelSpecimen():
             if 'Sites' in self.tables:
                 SHEET_NAME = 'Sites'
             else:
-                print('No sampling features/sites found')
+                print "No sampling features/sites found"
                 return []
 
         sheet = self.workbook.get_sheet_by_name(SHEET_NAME)
         tables = self.tables[SHEET_NAME]
 
-        sites_table = tables[0] if tables[0].name == 'Sites_Table' else tables[1]  # noqa
-        spatial_ref_table = tables[0] if tables[0].name == 'SitesDatumCV_Table' else tables[1]  # noqa
+        sites_table = tables[0] if tables[0].name == 'Sites_Table' else None
+        elevation_datum_range = self.workbook.get_named_range("ElevationDatum")
+        spatial_ref_name_range = self.workbook.get_named_range("LatLonDatum")
 
-        def parse_sites_datum_cv(sheet, spatial_reference_table):
-            result = {}
-            cells = sheet[spatial_reference_table.attr_text.split('!')[1].replace('$', '')]  # noqa
-            result['elevation_datum_cv'] = cells[0][1].value
-            result['latlon_datum_cv'] = cells[1][1].value
-            return result
+        # spatial_ref_table = tables[0] if tables[0].name == 'SitesDatumCV_Table' else tables[1]
 
-        sites_datum = parse_sites_datum_cv(sheet, spatial_ref_table)
+        # def parse_sites_datum_cv(sheet, spatial_reference_table):
+        #     result = {}
+        #     cells = sheet[spatial_reference_table.attr_text.split('!')[1].replace('$', '')]
+        #     result['elevation_datum_cv'] = cells[0][1].value
+        #     result['latlon_datum_cv'] = cells[1][1].value
+        #     return result
+
+        # sites_datum = parse_sites_datum_cv(sheet, spatial_ref_table)
         spatial_references = self.parse_spatial_reference()
 
         sites = []
-        cells = sheet[sites_table.attr_text.split('!')[1].replace('$', '')]
+        cells = sheet[self.get_range_address(sites_table)]
 
-        elevation_datum = sites_datum['elevation_datum_cv']
-        spatial_ref_name = sites_datum['latlon_datum_cv']
+
+        elevation_datum = sheet[self.get_range_address(elevation_datum_range)].value
+        # elevation_datum = sites_datum['elevation_datum_cv']
+        spatial_ref_name = sheet[self.get_range_address(spatial_ref_name_range)].value.encode('utf-8')
+        # spatial_ref_name = sites_datum['latlon_datum_cv']
         spatial_references_obj = spatial_references[spatial_ref_name]
 
         for row in cells:
@@ -377,7 +426,7 @@ class ExcelSpecimen():
             site.SamplingFeatureDescription = row[3].value
             site.FeatureGeometryWKT = row[4].value
             site.Elevation_m = row[5].value
-            site.SamplingFeatureTypeCV = 'Site'
+            site.SamplingFeatureTypeCV = "Site"
             site.SiteTypeCV = row[6].value
             site.Latitude = row[7].value
             site.Longitude = row[8].value
@@ -392,7 +441,7 @@ class ExcelSpecimen():
             self.__updateGauge()
 
     def parse_spatial_reference(self):
-        SHEET_NAME = 'SpatialReferences'
+        SHEET_NAME = "SpatialReferences"
         sheet, tables = self.get_sheet_and_table(SHEET_NAME)
 
         if not len(tables):
@@ -400,7 +449,7 @@ class ExcelSpecimen():
 
         spatial_references = {}
         for table in tables:
-            cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
+            cells = sheet[self.get_range_address(table)]
             for row in cells:
                 sr = SpatialReferences()
                 sr.SRSCode = row[0].value
@@ -417,11 +466,11 @@ class ExcelSpecimen():
         sheet, tables = self.get_sheet_and_table(SPECIMENS)
 
         if not len(tables):
-            print('No specimens found')
+            print "No specimens found"
             return []
 
         for table in tables:
-            cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
+            cells = sheet[self.get_range_address(table)]
 
             for row in cells:
                 specimen = Specimens()
@@ -434,7 +483,7 @@ class ExcelSpecimen():
                 specimen.SamplingFeatureCode = row[1].value
                 specimen.SamplingFeatureName = row[2].value
                 specimen.SamplingFeatureDescription = row[3].value
-                specimen.SamplingFeatureTypeCV = 'Specimen'
+                specimen.SamplingFeatureTypeCV = "Specimen"
                 specimen.SpecimenMediumCV = row[5].value
                 specimen.IsFieldSpecimen = row[6].value
                 specimen.ElevationDatumCV = 'Unknown'
@@ -443,7 +492,7 @@ class ExcelSpecimen():
 
                 # Related Features
                 related_feature.RelationshipTypeCV = 'Was Collected at'
-                sampling_feature = self._session.query(SamplingFeatures).filter_by(SamplingFeatureCode=row[7].value).first()  # noqa
+                sampling_feature = self._session.query(SamplingFeatures).filter_by(SamplingFeatureCode=row[7].value).first()
                 related_feature.SamplingFeatureObj = specimen
                 related_feature.RelatedFeatureObj = sampling_feature
 
@@ -451,7 +500,7 @@ class ExcelSpecimen():
                 action.ActionTypeCV = 'Specimen collection'
                 action.BeginDateTime = row[8].value
                 action.BeginDateTimeUTCOffset = row[9].value
-                method = self._session.query(Methods).filter_by(MethodCode=row[10].value).first()  # noqa
+                method = self._session.query(Methods).filter_by(MethodCode=row[10].value).first()
                 action.MethodObj = method
 
                 feature_action.ActionObj = action
@@ -464,19 +513,18 @@ class ExcelSpecimen():
 
                 self.__updateGauge()
 
-        # Need to set RelatedFeature.RelatedFeatureID before flush will work.
-        self._session.flush()
+        self._session.flush()  # Need to set the RelatedFeature.RelatedFeatureID before flush will work
 
     def parse_methods(self):
-        CONST_METHODS = 'Methods'
+        CONST_METHODS = "Methods"
         sheet, tables = self.get_sheet_and_table(CONST_METHODS)
 
         if not len(tables):
-            print('No methods found')
+            print "No methods found"
             return []
 
         for table in tables:
-            cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
+            cells = sheet[self.get_range_address(table)]
 
             for row in cells:
                 method = Methods()
@@ -487,7 +535,7 @@ class ExcelSpecimen():
                 method.MethodLink = row[4].value
 
                 # If organization does not exist then it returns None
-                org = self._session.query(Organizations).filter_by(OrganizationName=row[5].value).first()  # noqa
+                org = self._session.query(Organizations).filter_by(OrganizationName=row[5].value).first()
                 method.OrganizationObj = org
 
                 if method.MethodCode:  # Cannot store empty/None objects
@@ -499,17 +547,17 @@ class ExcelSpecimen():
 
     def parse_variables(self):
 
-        CONST_VARIABLES = 'Variables'
+        CONST_VARIABLES = "Variables"
 
         if CONST_VARIABLES not in self.tables:
-            print('No Variables found')
+            print "No Variables found"
             return []
 
         sheet = self.workbook.get_sheet_by_name(CONST_VARIABLES)
         tables = self.tables[CONST_VARIABLES]
 
         for table in tables:
-            cells = sheet[table.attr_text.split('!')[1].replace('$', '')]
+            cells = sheet[self.get_range_address(table)]
             for row in cells:
                 var = Variables()
                 var.VariableTypeCV = row[0].value
@@ -519,7 +567,12 @@ class ExcelSpecimen():
                 var.SpeciationCV = row[4].value
 
                 if row[5].value is not None:
-                    var.NoDataValue = None if row[5].value == 'NULL' else row[5].value  # noqa
+                    if row[5].value == 'NULL':
+                        #TODO break somehow because not all required data is not filled out
+                        print "All Variables must contain a valid No Data Value!"
+                        var.NoDataValue = None
+                    else:
+                        var.NoDataValue = row[5].value
 
                 if var.NoDataValue is not None:  # NoDataValue cannot be None
                     self._session.add(var)
@@ -528,17 +581,5 @@ class ExcelSpecimen():
 
         self._session.flush()
 
-    def verify(self, file_path=None):
 
-        if file_path is not None:
-            self.input_file = file_path
 
-        if not os.path.isfile(self.input_file):
-            print('File does not exist')
-            return False
-
-        self.workbook = openpyxl.load_workbook(self.input_file, read_only=True)
-        self.name_ranges = self.workbook.get_named_ranges()
-        self.sheets = self.workbook.get_sheet_names()
-
-        return True

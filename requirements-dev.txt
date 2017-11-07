@@ -1,5 +1,3 @@
-# pyspatialite
-# pysqlite
 mysql-python
 openpyxl
 psycopg2

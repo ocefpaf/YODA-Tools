@@ -1,6 +1,5 @@
-from odm2api.ODM2.models import Base, setSchema
 from odm2api.ODMconnection import dbconnection
-
+from odm2api.ODM2.models import Base, setSchema
 
 class iInputs(object):
     def __init__(self):
@@ -16,11 +15,11 @@ class iInputs(object):
         raise NotImplementedError()
 
     def create_memory_db(self):
-
         # create connection to temp sqlite db
-        self.session_factory = dbconnection.createConnection('sqlite', ':memory:', 2.0)  # noqa
-        # self.session_factory = dbconnection.createConnection('sqlite', 'ODM2_ts_specimen.sqlite', 2.0)  # noqa
-        self._session = self.session_factory.getSession()
-        self._engine = self.session_factory.engine
+        # self._session_factory = dbconnection.createConnection('sqlite', r'D:\DEV\YODA-Tools\tests\test_files\ODM2_ts.sqlite', 2.0)
+        self._session_factory = dbconnection.createConnection('sqlite', ':memory:', 2.0)
+        self._session = self._session_factory.getSession()
+        self._engine = self._session_factory.engine
         setSchema(self._engine)
         Base.metadata.create_all(self._engine)
+
