@@ -19,7 +19,7 @@ class ExcelTest(unittest.TestCase):
 
     def test_parse_specimen(self):
         # D:\DEV\YODA - Tools\tests\test_files\test_ts_specimen_output.yaml
-        file_path = os.path.join(self.curr_folder, 'test_files', 'YODA_TimeSeriesSpecimen_RB_2014-15_pub.xlsx')
+        file_path = os.path.join(self.curr_folder, 'test_files', "YODA_SpecimenTimeSeries_Template_0.3.1-alpha_LR_example.xlsx")
         # file_path = os.path.join(curr_folder, 'test_files', 'test_ts_specimen_output.yaml')
 
         self.excel.parse(file_path)
@@ -31,16 +31,16 @@ class ExcelTest(unittest.TestCase):
         session.close()
 
 
-    # def test_parse_ts(self):
-    #     file_path = os.path.join(self.curr_folder, 'test_files', 'YODA_v0.3.3_TS_climate(wHeaders).xlsm')
-    #     # file_path = os.path.join(curr_folder, 'test_files', 'test_ts_output.yaml')
-    #     self.excel.parse(file_path)
-    #
-    #     session = self.excel.sendODM2Session()
-    #
-    #     assert session != None
-    #
-    #     assert len(session.query(People).all()) > 0
-    #     assert len(session.query(SamplingFeatures).all()) > 0
-    #     session.close()
+    def test_parse_ts(self):
+        file_path = os.path.join(self.curr_folder, 'test_files', 'YODA_v0.3.3_TS_climate(wHeaders).xlsm')
+        # file_path = os.path.join(curr_folder, 'test_files', 'test_ts_output.yaml')
+        self.excel.parse(file_path)
+
+        session = self.excel.sendODM2Session()
+
+        assert session != None
+
+        assert len(session.query(People).all()) > 0
+        assert len(session.query(SamplingFeatures).all()) > 0
+        session.close()
 

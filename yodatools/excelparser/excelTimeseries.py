@@ -1,6 +1,29 @@
 import os
 import openpyxl
-from odm2api.ODM2.models import *
+from odm2api.ODM2.models import \
+    (DataSets,
+     Citations,
+     AuthorLists,
+     People,
+     Units,
+     SamplingFeatures,
+     Organizations,
+     Affiliations,
+     ProcessingLevels,
+     Sites,
+     SpatialReferences,
+     Methods,
+     Variables,
+     Actions,
+     FeatureActions,
+     ActionBy,
+     TimeSeriesResults,
+     DataSetsResults,
+     TimeSeriesResultValues,
+     setSchema)
+
+
+
 import time
 import string
 
@@ -303,6 +326,7 @@ class ExcelTimeseries():
         sheet, tables = self.get_sheet_and_table(SHEET_NAME)
 
         sites = []
+        cells = []
         for table in tables:
             cells = sheet[self.get_range_address(table)]
 
@@ -316,7 +340,7 @@ class ExcelTimeseries():
                 site = Sites()
                 site.SamplingFeatureUUID = row[0].value
                 site.SamplingFeatureTypeCV = row[1].value
-                site.SamplingFeatureGeotypeCV= row[2].value
+                site.SamplingFeatureGeotypeCV = row[2].value
                 site.SamplingFeatureCode = row[3].value
                 site.SamplingFeatureName = row[4].value
                 site.SamplingFeatureDescription = row[5].value
@@ -524,11 +548,11 @@ class ExcelTimeseries():
                     series_result.VariableObj = variable
                     series_result.UnitsObj = units_for_result
                     series_result.ProcessingLevelObj = proc_level
-                    #TODO
+
                     series_result.StatusCV = "Unknown"
                     series_result.SampledMediumCV = row[11].value
                     series_result.ValueCount = value_count
-                    #TODO
+
                     series_result.ResultDateTime = start_date
 
                     self._session.add(series_result)
@@ -546,7 +570,7 @@ class ExcelTimeseries():
                     my_meta["Result"] = series_result
                     my_meta["CensorCodeCV"] = row[14].value
                     my_meta["QualityCodeCV"] = row[15].value
-                    #TODO
+
                     my_meta["TimeAggregationInterval"] = row[11].value
                     my_meta["TimeAggregationIntervalUnitsObj"] = units_for_agg
 
@@ -558,7 +582,7 @@ class ExcelTimeseries():
                     self.__updateGauge()
 
         print "convert from cross tab to serial"
-        self.load_time_series_values(data_values, metadata)
+        return self.load_time_series_values(data_values, metadata)
 
     def load_time_series_values(self, cross_tab, meta_dict):
         """
@@ -572,14 +596,14 @@ class ExcelTimeseries():
 
         serial = cross_tab.unstack(level=[date_column, utc_column])
 
-        #add all the columns we need and clean up the dataframe
+        # add all the columns we need and clean up the dataframe
         serial = serial.append(
             pd.DataFrame(columns=['ResultID', 'CensorCodeCV', 'QualityCodeCV', 'TimeAggregationInterval',
                                   'TimeAggregationIntervalUnitsID'])) \
             .fillna(0) \
             .reset_index() \
             .rename(columns={0: 'DataValue'}) \
-            .rename(columns={'LocalDateTime': 'ValueDateTime', 'UTCOffset': 'ValueDateTimeUTCOffset'}) \
+            .rename(columns={date_column: 'ValueDateTime', 'UTCOffset': 'ValueDateTimeUTCOffset'}) \
             .dropna()
 
         for k, v in meta_dict.iteritems():
@@ -593,8 +617,8 @@ class ExcelTimeseries():
 
         # TODO does this fail for sqlite in memory
         # self._session.close()
-        tablename = TimeSeriesResultValues.__tablename__
-        serial.to_sql(name=tablename,
+        setSchema(self._engine)
+        serial.to_sql(TimeSeriesResultValues.__tablename__,
                       schema=TimeSeriesResultValues.__table_args__['schema'],
                       if_exists='append',
                       chunksize=1000,

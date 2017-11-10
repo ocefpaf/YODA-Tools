@@ -1,6 +1,6 @@
 ---
 YODA:
- - {Version: "0.1.0", Profile: "SpecimenTimeSeries", CreationTool: "YodaConverter", DateCreated: "2017-05-12", DateUpdated: "2017-05-12"}
+ - {Version: "0.1.0", Profile: "SpecimenTimeSeries", CreationTool: "YodaConverter", DateCreated: "2017-11-10", DateUpdated: "2017-11-10"}
 DataSets:
  - &DataSetID0001 {DataSetTypeCV: "Specimen time series", DataSetCode: "LR_SpecTS", DataSetAbstract: "This dataset consists of results from the 2013-2014 iUTAH GAMUT synoptic sample collection and analysis effort for the Logan River. Samples were collected by grab sampling once per month each month between June 2013 and June 2014. Analyses were performed for nutrients (total nigrogen and total phosphorus) at the USU Aquatic Biogeochemistry Laboratory, isotopes (D18O and D2H) at the University of Utah Stable Isotope Ratio for Environmental Research Laboratory, and bacteria (E.coli and total coliform) at the BYU Aanderud laboratory.", DataSetTitle: "iUTAH synoptic sampling 2013-2014 for the Logan River specimen time series", DataSetUUID: "F2BA669F-7E03-412B-AC5A-1793C85B7113"}
 Organizations:

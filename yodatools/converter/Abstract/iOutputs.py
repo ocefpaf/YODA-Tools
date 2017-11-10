@@ -1,6 +1,7 @@
 
 from odm2api.ODM2.models import Base
 
+
 class iOutputs():
 
 
