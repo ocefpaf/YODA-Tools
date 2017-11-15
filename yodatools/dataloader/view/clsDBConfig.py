@@ -37,7 +37,7 @@ class clsDBConfiguration(wx.Panel):
         self.stVersion.Wrap(-1)
         connectionSizer.Add(self.stVersion, 0, wx.ALL | wx.ALIGN_RIGHT | wx.EXPAND, 5)  # noqa
 
-        cbDatabaseType1Choices = ['2.0', '1.1.1']
+        cbDatabaseType1Choices = ['2.0']#, '1.1.1']
         self.cbDatabaseType1 = wx.ComboBox(self, wx.ID_ANY, '2.0', wx.DefaultPosition, wx.DefaultSize, cbDatabaseType1Choices, wx.CB_READONLY )  # noqa
         self.cbDatabaseType1.SetSelection(1)
         connectionSizer.Add(self.cbDatabaseType1, 1, wx.ALL | wx.EXPAND, 5)
@@ -95,14 +95,15 @@ class clsDBConfiguration(wx.Panel):
         btnSizer.SetFlexibleDirection(wx.VERTICAL)
         btnSizer.SetNonFlexibleGrowMode(wx.FLEX_GROWMODE_ALL)
 
+
         self.btnTest = wx.Button(self, wx.ID_ANY, 'Test Connection', wx.DefaultPosition, wx.DefaultSize, 0)  # noqa
         btnSizer.Add(self.btnTest, 0, wx.ALL | wx.EXPAND | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_CENTER_HORIZONTAL, 5)  # noqa
 
-        self.btnSave = wx.Button(self, wx.ID_ANY, 'Save Connection', wx.DefaultPosition, wx.DefaultSize, 0)  # noqa
-        btnSizer.Add(self.btnSave, 0, wx.ALL | wx.EXPAND | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_CENTER_HORIZONTAL, 5)  # noqa
+        # self.btnSave = wx.Button(self, wx.ID_ANY, 'Save Connection', wx.DefaultPosition, wx.DefaultSize, 0)  # noqa
+        # btnSizer.Add(self.btnSave, 0, wx.ALL | wx.EXPAND | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_CENTER_HORIZONTAL, 5)  # noqa
 
-        self.btnCancel = wx.Button(self, wx.ID_ANY, 'Cancel', wx.DefaultPosition, wx.DefaultSize, 0)  # noqa
-        btnSizer.Add(self.btnCancel, 0, wx.ALL | wx.EXPAND | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_CENTER_HORIZONTAL, 5)  # noqa
+        # self.btnCancel = wx.Button(self, wx.ID_ANY, 'Cancel', wx.DefaultPosition, wx.DefaultSize, 0)  # noqa
+        # btnSizer.Add(self.btnCancel, 0, wx.ALL | wx.EXPAND | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_CENTER_HORIZONTAL, 5)  # noqa
 
         formSizer.Add(btnSizer, 10, wx.EXPAND, 2)
 
@@ -111,8 +112,10 @@ class clsDBConfiguration(wx.Panel):
 
         # Connect Events.
         self.btnTest.Bind(wx.EVT_BUTTON, self.OnBtnTest)
-        self.btnSave.Bind(wx.EVT_BUTTON, self.OnBtnSave)
-        self.btnCancel.Bind(wx.EVT_BUTTON, self.OnBtnCancel)
+        # self.btnSave.Bind(wx.EVT_BUTTON, self.OnBtnSave)
+        # self.btnCancel.Bind(wx.EVT_BUTTON, self.OnBtnCancel)
+        self.btnSizer = btnSizer
+        self.formSizer = formSizer
 
         self.btnTest.SetFocus()
 
@@ -123,8 +126,8 @@ class clsDBConfiguration(wx.Panel):
     def OnBtnTest(self, event):
         event.Skip()
 
-    def OnBtnSave(self, event):
-        event.Skip()
-
-    def OnBtnCancel(self, event):
-        event.Skip()
+    # def OnBtnSave(self, event):
+    #     event.Skip()
+    #
+    # def OnBtnCancel(self, event):
+    #     event.Skip()

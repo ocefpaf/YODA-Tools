@@ -8,6 +8,7 @@ class WizardSummaryPageView(wx.Panel):
         # Components
         self.gauge = wx.Gauge(self, range=100)
 
+
         # Sizers
         sizer = wx.BoxSizer(wx.VERTICAL)
 

@@ -25,7 +25,7 @@ class ExcelInput(iInputs):
 
 
 #     def parse(self, file_path=None):
-    def parse(self, file_path):
+    def parse(self, file_path, **kwargs):
         """
         If any of the methods return early, then check that they have the table ranges
         The table range should exist in the tables from get_table_name_range()

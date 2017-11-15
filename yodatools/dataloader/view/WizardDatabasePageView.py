@@ -7,9 +7,9 @@ class WizardDatabasePageView(wx.Panel):
     def __init__(self, parent):
         super(WizardDatabasePageView, self).__init__(parent)
 
-        self.panel = pnlDBConfig(self, service_manager=None, is_main=False)
+        self.panel = pnlDBConfig(self,  is_main=False)
         self.sizer = wx.BoxSizer(wx.VERTICAL)
-        self.sizer.AddWindow(self.panel, 1, border=1, flag=wx.EXPAND | wx.GROW | wx.ALL)  # noqa
+        self.sizer.Add(self.panel, 1, border=1, flag=wx.EXPAND | wx.GROW | wx.ALL)  # noqa
         self.SetSizer(self.sizer)
         self.sizer.Fit(self.panel)
         # Components

@@ -1,6 +1,8 @@
 import wx
 from yodatools.dataloader.controller.WizardController import WizardController
 
+import pyodbc
+import psycopg2
 
 def main():
     app = wx.App()

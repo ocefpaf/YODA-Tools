@@ -4,7 +4,8 @@ from WizardDatabasePageController import WizardDatabasePageController
 from WizardExcelPageController import WizardExcelPageController
 from WizardHomePageController import WizardHomePageController
 from WizardSummaryPageController import WizardSummaryPageController
-from WizardYodaPageController import WizardYodaPageViewController
+from WizardYodaPageController import WizardYodaPageController
+from WizardSQLitePageController import WizardSQLitePageController
 
 import wx
 
@@ -15,9 +16,10 @@ class WizardController(WizardView):
     def __init__(self, parent):
         super(WizardController, self).__init__(parent)
         self.parent = parent
-        self.yoda_page = WizardYodaPageViewController(self.body_panel, title='Yoda')  # noqa
+        self.yoda_page = WizardYodaPageController(self.body_panel, title='Yoda')  # noqa
         self.excel_page = WizardExcelPageController(self.body_panel, title='Excel')  # noqa
         self.database_page = WizardDatabasePageController(self.body_panel, title='ODM2')  # noqa
+        self.sqlite_page = WizardSQLitePageController(self.body_panel, title='SQLite')  # noqa
         self.summary_page = WizardSummaryPageController(self, self.body_panel, title='Summary')  # noqa
         self.home_page = WizardHomePageController(self.body_panel, title='Loader Wizard')  # noqa
         self.execution_finished = False
@@ -31,13 +33,15 @@ class WizardController(WizardView):
             1: False,  # yoda page
             2: False,  # excel page
             3: False,  # database page
-            4: True    # summary page
+            4: False,  # sqlite page
+            5: True    # summary page
         }
 
         self.add_page(self.home_page)
         self.add_page(self.yoda_page)
         self.add_page(self.excel_page)
         self.add_page(self.database_page)
+        self.add_page(self.sqlite_page)
         self.add_page(self.summary_page)
         self.next_button.Disable()
 
@@ -162,6 +166,8 @@ class WizardController(WizardView):
             pages['excel'] = self.excel_page
         if self.home_page.pages_enabled[3]:
             pages['odm2'] = self.database_page
+        if self.home_page.pages_enabled[4]:
+            pages['sqlite'] = self.sqlite_page
 
         return pages
 
@@ -173,10 +179,26 @@ class WizardController(WizardView):
 
         input_file = self.home_page.input_file_text_ctrl.GetValue()
 
+        yoda_output_file_path=sqlite_conn= odm2_conn =None
+
         # Get the directory to save the yaml output
-        yoda_page = self.selected_pages()['yoda']
-        file_path = yoda_page.file_text_ctrl.GetValue()
-        yoda_output_file_path = None if file_path == '' else file_path
+        sp = self.selected_pages()
+        if sp.has_key('yoda'):
+            yoda_page = self.selected_pages()['yoda']
+            file_path = yoda_page.file_text_ctrl.GetValue()
+            yoda_output_file_path = None if file_path == '' else file_path
+
+        # Get the engine to save the ODM2 output
+        if sp.has_key('odm2'):
+            database_page = self.selected_pages()['odm2']
+            conn_str = database_page.panel.connection_string
+            odm2_conn = None if conn_str == '' else conn_str
+
+        # Get the directory to save the sqlite output
+        if sp.has_key('sqlite'):
+            sqlite_page = self.selected_pages()['sqlite']
+            conn_str = sqlite_page.panel.connection_string
+            sqlite_conn = None if conn_str == '' else conn_str
 
         ##################################
         # Uncomment the lines below to have it threading
@@ -200,4 +222,4 @@ class WizardController(WizardView):
         # the line below
         ##################################
 
-        self.summary_page.run(input_file, yoda_output_file_path)
+        self.summary_page.run(input_file, yoda_output_file_path, odm2_conn, sqlite_conn)

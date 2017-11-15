@@ -3,19 +3,25 @@ import wx
 from yodatools.dataloader.view.WizardYodaPageView import WizardYodaPageView
 
 
-class WizardYodaPageViewController(WizardYodaPageView):
+class WizardYodaPageController(WizardYodaPageView):
     def __init__(self, parent, title=''):
-        super(WizardYodaPageViewController, self).__init__(parent)
+        super(WizardYodaPageController, self).__init__(parent)
         self.title = title
 
     def on_browse_button(self, event):
-        dialog = wx.DirDialog(
+        # dialog = wx.FileDialog(
+        #     self,
+        #     message='Save to...',
+        #     style=wx.DD_CHANGE_DIR
+        # )
+        dialog = wx.FileDialog(
             self,
-            message='Save to...',
-            style=wx.DD_CHANGE_DIR
+            'YAML Output file',
+            wildcard="YAML File (*.yaml)|*.yaml",
+            style=wx.FD_SAVE
         )
 
         if dialog.ShowModal() != wx.ID_OK:
             return
 
-        self.file_text_ctrl.SetValue(dialog.GetPath() + '\\yoda_export.yaml')
+        self.file_text_ctrl.SetValue(dialog.GetPath())

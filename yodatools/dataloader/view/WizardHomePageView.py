@@ -13,6 +13,7 @@ class WizardHomePageView(wx.Panel):
         self.yoda_check_box = wx.CheckBox(self, id=1, label='YODA')
         self.excel_check_box = wx.CheckBox(self, id=2, label='Excel Template (Not implemented yet)')  # noqa
         self.odm2_check_box = wx.CheckBox(self, id=3, label='ODM2 Database')
+        self.sqlite_check_box = wx.CheckBox(self, id=4, label='SQLite ODM2 Database')
 
         # Style components
         self.input_file_text_ctrl.SetHint('Input file...')
@@ -28,6 +29,7 @@ class WizardHomePageView(wx.Panel):
         static_box_sizer.Add(self.yoda_check_box, 0, flag=wx.EXPAND | wx.ALL, border=15)  # noqa
         static_box_sizer.Add(self.excel_check_box, 0, flag=wx.EXPAND | wx.ALL, border=15)  # noqa
         static_box_sizer.Add(self.odm2_check_box, 0, flag=wx.EXPAND | wx.ALL, border=15) # noqa
+        static_box_sizer.Add(self.sqlite_check_box, 0, flag=wx.EXPAND | wx.ALL, border=15)  # noqa
 
         sizer.Add(instructions_text, 0, wx.EXPAND | wx.ALL, 5)
         sizer.Add(input_sizer, 0, wx.EXPAND | wx.ALL, 5)
@@ -41,6 +43,7 @@ class WizardHomePageView(wx.Panel):
         self.yoda_check_box.Bind(wx.EVT_CHECKBOX, self.on_check_box)
         self.excel_check_box.Bind(wx.EVT_CHECKBOX, self.on_check_box)
         self.odm2_check_box.Bind(wx.EVT_CHECKBOX, self.on_check_box)
+        self.sqlite_check_box.Bind(wx.EVT_CHECKBOX, self.on_check_box)
 
     def on_check_box(self, event):
         pass
