@@ -24,14 +24,12 @@ before_install:
   - export PATH="$HOME/miniconda/bin:$PATH"
   - conda config --set always_yes yes --set changeps1 no --set show_channel_urls true
   - conda update conda
-  - conda config --add channels odm2 --force
-  - conda create --yes -n TEST python=$TRAVIS_PYTHON_VERSION --file requirements.txt --file requirements-dev.txt
+  - conda config --add channels conda-forge --force
+  - conda create --name TEST python=$TRAVIS_PYTHON_VERSION --file requirements.txt --file requirements-dev.txt
   - source activate TEST
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
-      conda install --yes mock ;
+      conda install  mock ;
     fi
-  # Coding standards.
-  - conda install --channel conda-forge --yes flake8-print flake8-quotes flake8-import-order flake8-builtins flake8-comprehensions flake8-mutable
 
 # FIXME: Test source distribution.
 install:

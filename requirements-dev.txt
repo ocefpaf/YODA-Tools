@@ -8,3 +8,10 @@ pytest
 pytest-cov
 pyyaml
 sqlalchemy
+# coding standards
+flake8-print
+flake8-quotes
+flake8-import-order
+flake8-builtins
+flake8-comprehensions
+flake8-mutable
